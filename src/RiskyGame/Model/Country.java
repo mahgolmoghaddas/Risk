@@ -67,35 +67,35 @@ public class Country {
     }
 
     /**
-     * Getter for number of armies in the country
+     * Getter for Quantity of armies in the country
      * @return armyQuantity
      */
-    public int getNoOfArmiesPresent() {
+    public int getQuantityOfArmies() {
         return this.armyQuantity;
     }
 
     /**
      * Setter for setting armies into country.
-     * @param noOfArmiesPresent number of armies
+     * @param armyQuantity quantity of armies
      */
-    public void setNoOfArmiesPresent(int noOfArmiesPresent) {
-        this.armyQuantity = noOfArmiesPresent;
+    public void setQuantityOfArmies(int armyQuantity) {
+        this.armyQuantity = armyQuantity;
     }
 
     /**
-     * Getter for list of neighbours for the country
-     * @return listOfNeighbours
+     * Getter for determining neighbors.
+     * @return neighbors.
      */
-    public List<String> getListOfNeighbours() {
+    public List<String> getNeighbors() {
         return neighbors;
     }
 
     /**
-     * Setter for setting neighbours attribute.
-     * @param listOfNeighbours list of neighbours
+     * Setter for determining neighbors.
+     * @param neighbors list of neighbours
      */
-    public void setListOfNeighbours(List<String> listOfNeighbours) {
-        this.neighbors = listOfNeighbours;
+    public void setNeighbors(List<String> neighbors) {
+        this.neighbors = neighbors;
     }
 
     /**

@@ -1,10 +1,6 @@
 package RiskyGame.Model;
 
-
-
 import java.util.*;
-
-
 
 /**
  * Creating a new country and defining the properties
@@ -13,11 +9,10 @@ import java.util.*;
 
 public class Country {
     private String countryName;
-    private List<String> neighbors;
+    private ArrayList<String> neighbors;
     private Player owner;
     private int armyQuantity;
-    private double X;
-    private double Y;
+    private double X, Y;
 
     /**
      * Constructor of Country
@@ -34,7 +29,7 @@ public class Country {
 
 
     /**
-     * Getter for countryName
+     * Getter for naming the Country.
      * @return countryName
      */
     public String getCountryName() {
@@ -43,7 +38,7 @@ public class Country {
 
 
     /**
-     * Setter for countryName attribute.
+     * Setter for sset the Country name.
      * @param countryName Country Name
      */
     public void setCountryName(String countryName) {
@@ -51,7 +46,7 @@ public class Country {
     }
 
     /**
-     * Getter for owner name
+     * Getter for owner of the Country.
      * @return owner
      */
     public Player getOwner() {
@@ -59,7 +54,7 @@ public class Country {
     }
 
     /**
-     * Setter for owner attribute.
+     * Setter for owner of the Country
      * @param owner owner
      */
     public void setOwner(Player owner) {
@@ -67,7 +62,7 @@ public class Country {
     }
 
     /**
-     * Getter for Quantity of armies in the country
+     * Getter for Quantity of armies in the Country
      * @return armyQuantity
      */
     public int getQuantityOfArmies() {
@@ -75,7 +70,7 @@ public class Country {
     }
 
     /**
-     * Setter for setting armies into country.
+     * Setter for assigning the quantity of the armies in the Country.
      * @param armyQuantity quantity of armies
      */
     public void setQuantityOfArmies(int armyQuantity) {
@@ -94,12 +89,12 @@ public class Country {
      * Setter for determining neighbors.
      * @param neighbors list of neighbours
      */
-    public void setNeighbors(List<String> neighbors) {
+    public void setNeighbors(ArrayList<String> neighbors) {
         this.neighbors = neighbors;
     }
 
     /**
-     * Getter for X
+     * Getter for X attribute.
      * @return X
      */
     public double getCoordinateX() {
@@ -115,7 +110,7 @@ public class Country {
     }
 
     /**
-     * Getter for Y
+     * Getter for Y attribute.
      * @return Y
      */
     public double getCoordianteY() {
@@ -132,14 +127,14 @@ public class Country {
 
 
     /**
-     * Adds the quantity of armies  asoociated with a country.
+     * Adds the quantity of armies  associated with a country.
      */
     public void addToCountryQuant() {
         this.armyQuantity++;
     }
 
     /**
-     * Removes quantity of armies  asoociated with a country.
+     * Removes quantity of armies  associated with a country.
      */
     public void minusToCountryQuant() {
         this.armyQuantity--;

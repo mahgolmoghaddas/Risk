@@ -1,4 +1,4 @@
-package RiskyGame.Model;
+package com.riskgame.model;
 import java.util.*;
 
 /**

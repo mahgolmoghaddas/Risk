@@ -27,6 +27,10 @@ public class Country {
 
     }
 
+    public Country() {
+        neighbors = new ArrayList<String>();
+    }
+
 
     /**
      * Getter for naming the Country.
@@ -106,7 +110,7 @@ public class Country {
      * @param X X value
      */
     public void setCoordinateX( double X) {
-        X = X;
+        this.X = X;
     }
 
     /**
@@ -122,7 +126,7 @@ public class Country {
      * @param Y Y value
      */
     public void setCoordinateY(double Y) {
-        Y = Y;
+        this.Y = Y;
     }
 
 

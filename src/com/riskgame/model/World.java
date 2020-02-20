@@ -51,4 +51,34 @@ public class World {
     public void setMapName(String mapName) {
         this.mapName = mapName;
     }
+
+    /**
+     * List of country names.
+     *
+     * @return the list
+     */
+    public List<String> countryNames() {
+        List<String> countryNames = new ArrayList<String>();
+        for (Continent continent : getContinents()) {
+            for (Country country : continent.getContainedCountries()) {
+                countryNames.add(country.getCountryName());
+            }
+        }
+        return countryNames;
+    }
+
+
+    /**
+     * List of continent names.
+     *
+     * @return the list
+     */
+    public List<String> continentNames() {
+        List<String> continentNames = new ArrayList<String>();
+        for (Continent continent : getContinents()) {
+            continentNames.add(continent.getContinentName());
+        }
+        return continentNames;
+    }
+
 }

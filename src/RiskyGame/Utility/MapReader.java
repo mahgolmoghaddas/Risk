@@ -29,15 +29,15 @@ public class MapReader {
             importedFile = chooser.getSelectedFile().getAbsolutePath();
 
             if (importedFile.trim().substring(importedFile.length() - 4).equals(".map")){
-                    File file = new File(importedFile);
-                    map.setMapName(file.getName());
-                    map.setMapPath(importedFile.substring(0, importedFile.lastIndexOf("\\")));
-                    fileName=map.getMapPath();
-                }
+                File file = new File(importedFile);
+                map.setMapName(file.getName());
+                map.setMapPath(importedFile.substring(0, importedFile.lastIndexOf("\\")));
+                fileName=map.getMapPath();
+            }
 
         }
 
-    return fileName;
+        return fileName;
 
     }
 
@@ -50,48 +50,47 @@ public class MapReader {
     public void pareseMap(World map) throws Exception{
 
 
-            FileReader mapFile=new FileReader(map.getMapPath() + "\\" + map.getMapName());
-            String line;
-            BufferedReader reader = new BufferedReader(mapFile);
-            String text="";
-            while ((line = reader.readLine()) != null) {
-                if (line != "\n") {
-                    text += line + "\n";
-                }
+        FileReader mapFile=new FileReader(map.getMapPath() + "\\" + map.getMapName());
+        String line;
+        BufferedReader reader = new BufferedReader(mapFile);
+        String text="";
+        while ((line = reader.readLine()) != null) {
+            if (line != "\n") {
+                text += line + "\n";
             }
-
-            String continents = text.substring(text.indexOf("[Continents]"), text.indexOf("[Territories]"));
-            String countries = text.substring(text.indexOf("[Territories]"));
-            String[] countriesSplit = countries.split("\n");
-            String[] continentsSplit = continents.split("\n");
-            for (String data : continentsSplit) {
-                if (data.equalsIgnoreCase("[Continents]")) {
-                    Continent continent = new Continent();
-                    continent.setContinentName(data.substring(0, data.indexOf("=")));
-                    continent.setControlValue(Integer.parseInt(data.substring(data.indexOf("=") + 1)));
-                    map.getContinents().add(continent);
-                }
-            }
-            for (String data : countriesSplit) {
-                if ((!data.equalsIgnoreCase("[Territories]"))) {
-
-                    Country country = new Country();
-                    String[] countryAttributes = data.split(",");
-                    country.setCountryName(countryAttributes[0]);
-                    country.setCoordinateX(Double.parseDouble(countryAttributes[1]));
-                    country.setCoordinateY(Double.parseDouble(countryAttributes[2]));
-                    for (int i = 4; i < countryAttributes.length; i++) {
-                        country.getNeighbors().add(countryAttributes[i]);
-                    }
-                    for (Continent countryContinent : map.getContinents()) {
-                        if (countryContinent.getContinentName().toLowerCase().indexOf(countryAttributes[3].trim().toLowerCase()) >= 0) {
-                            countryContinent.getContainedCountries().add(country);
-                        }
-                    }
-                }
-                }
-
         }
 
+        String continents = text.substring(text.indexOf("[Continents]"), text.indexOf("[Territories]"));
+        String countries = text.substring(text.indexOf("[Territories]"));
+        String[] countriesSplit = countries.split("\n");
+        String[] continentsSplit = continents.split("\n");
+        for (String data : continentsSplit) {
+            if (data.equalsIgnoreCase("[Continents]")) {
+                Continent continent = new Continent();
+                continent.setContinentName(data.substring(0, data.indexOf("=")));
+                continent.setControlValue(Integer.parseInt(data.substring(data.indexOf("=") + 1)));
+                map.getContinents().add(continent);
+            }
+        }
+        for (String data : countriesSplit) {
+            if ((!data.equalsIgnoreCase("[Territories]"))) {
+
+                Country country = new Country();
+                String[] countryAttributes = data.split(",");
+                country.setCountryName(countryAttributes[0]);
+                country.setCoordinateX(Double.parseDouble(countryAttributes[1]));
+                country.setCoordinateY(Double.parseDouble(countryAttributes[2]));
+                for (int i = 4; i < countryAttributes.length; i++) {
+                    country.getNeighbors().add(countryAttributes[i]);
+                }
+                for (Continent countryContinent : map.getContinents()) {
+                    if (countryContinent.getContinentName().toLowerCase().indexOf(countryAttributes[3].trim().toLowerCase()) >= 0) {
+                        countryContinent.getContainedCountries().add(country);
+                    }
+                }
+            }
         }
 
+    }
+
+}

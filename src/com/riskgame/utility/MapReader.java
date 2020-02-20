@@ -2,7 +2,7 @@ package com.riskgame.utility;
 import com.riskgame.model.Country;
 import com.riskgame.model.Continent;
 import com.riskgame.model.World;
-
+import java.util.*;
 import javax.swing.*;
 import javax.swing.filechooser.*;
 import java.io.*;
@@ -21,7 +21,6 @@ public class MapReader {
         String fileName="";
         String importedFile;
         JFileChooser chooser=new JFileChooser();
-        chooser.setDialogTitle("CHOOSE THE MAP");
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setAcceptAllFileFilterUsed(false);
         chooser.addChoosableFileFilter(new FileNameExtensionFilter("*.map", "map"));
@@ -38,6 +37,52 @@ public class MapReader {
         }
 
     return fileName;
+
+    }
+    public boolean checkEmptyContinent(World map){
+        if(map.getContinents().isEmpty()){
+            return true;
+        }
+        else{
+            for(Continent c:map.getContinents()){
+                if(c.getContainedCountries().isEmpty()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean checkIfNeigbourExist(World map) {
+        List<String> list =  map.listOfCountryNames();
+        List<String> listOfCountries = new ArrayList<String>();
+        for(String name : list) {
+            listOfCountries.add(name.toLowerCase());
+        }
+        for (Continent c : map.getContinents()) {
+            for (Country country : c.getCountriesPresent()) {
+                for (String neighbour : country.getListOfNeighbours()) {
+                    if (!listOfCountries.contains(neighbour.toLowerCase())) {
+                        map.setErrorMessage("Neighbour not part of countries list "+neighbour+" neighbour");
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    public boolean mapValidity(World map, String mapPath){
+        boolean valid=false;
+        if (mapPath.trim().substring(mapPath.length() - 4).equals(".map")){
+            if (!checkEmptyContinent(map)) {
+                if (checkIfNeigbourExist(map)) {
+                    valid=true;
+                    return valid;
+                }
+                else return valid;
+
+            }else return valid;
+        }else return valid;
 
     }
 

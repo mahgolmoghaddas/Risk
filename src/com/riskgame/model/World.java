@@ -57,7 +57,7 @@ public class World {
      *
      * @return the list
      */
-    public List<String> countryNames() {
+    public List<String> countryNamesList() {
         List<String> countryNames = new ArrayList<String>();
         for (Continent continent : getContinents()) {
             for (Country country : continent.getContainedCountries()) {
@@ -73,7 +73,7 @@ public class World {
      *
      * @return the list
      */
-    public List<String> continentNames() {
+    public List<String> continentNamesList() {
         List<String> continentNames = new ArrayList<String>();
         for (Continent continent : getContinents()) {
             continentNames.add(continent.getContinentName());

@@ -1,4 +1,4 @@
-package RiskyGame.Model;
+package com.riskgame.model;
 import java.util.ArrayList;
 
 /**
@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * @author Himani
  */
 
-public class Units {
+public class Unit {
 
     private String territoryName;
     private int Position_x;
@@ -14,7 +14,7 @@ public class Units {
     private ArrayList<String> adjacentTerritories;
     private int armiesHeld;
     private Boolean hasPlayer;
-    private String playerName;
+    private String player_name;
     private String continentName;
     
     /**
@@ -25,7 +25,7 @@ public class Units {
      * @param armiesHeld
      * @param hasPlayer
      */
-    public Units(String territoryName, int Position_x, int Position_y, int armiesHeld, Boolean hasPlayer) {
+    public Unit(String territoryName, int Position_x, int Position_y, int armiesHeld, Boolean hasPlayer) {
         this.territoryName = territoryName;
         this.Position_x = Position_x;
         this.Position_y = Position_y;
@@ -41,7 +41,7 @@ public class Units {
      * @param continentName
      * @param adjacentTerritories
      */
-    public Units(String territoryName, int Position_x, int Position_y, String continentName, ArrayList<String> adjacentTerritories) {
+    public Unit(String territoryName, int Position_x, int Position_y, String continentName, ArrayList<String> adjacentTerritories) {
         this.territoryName = territoryName;
         this.Position_x = Position_x;
         this.Position_y = Position_y;
@@ -87,10 +87,10 @@ public class Units {
 
     /**
      * Set the player occupied the territory.
-     * @param playerName
+     * @param player_name
      */
-    public void setPlayer(String playerName) {
-        this.playerName = playerName;
+    public void setPlayer(String player_name) {
+        this.player_name = player_name;
     }
 
     /**
@@ -134,7 +134,7 @@ public class Units {
     }
 
     /**
-     * get the number of armies held by the territorie.
+     * get the number of armies held by the territory.
      * @return armiesHeld
      */
     public int getArmiesHeld() {
@@ -154,7 +154,7 @@ public class Units {
      * @return player
      */
     public String getPlayer() {
-        return playerName;
+        return player_name;
     }
 
     /**
@@ -196,5 +196,3 @@ public class Units {
     }
 
 }
-
-

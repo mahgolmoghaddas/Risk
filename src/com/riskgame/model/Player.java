@@ -1,5 +1,7 @@
 package com.riskgame.model;
 import java.util.List;
+import java.util.*;
+import java.util.Map;
 
 /**
  * This class is used for player module which contains variables for 
@@ -16,6 +18,7 @@ public class Player {
 	private int armiesFromCards;
 	private Score playerScore;
     private List<Card> cardsHeld;
+    private HashMap<String, Continent> continentHeld;
     private Integer startDiceNo;
 
 	/**
@@ -97,6 +100,12 @@ public class Player {
 	public void setStartDiceNo(Integer startUpDiceNo) {
 		this.startDiceNo = startUpDiceNo;
 	}
-    
+	 /**
+     * Set number of continents held by the player.
+     * @param continentHeld
+     */
+    public void setContinentHeld(HashMap<String, Continent> continentHeld) {
+        this.continentHeld = continentHeld;
+    }
     
 }

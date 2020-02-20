@@ -1,5 +1,5 @@
 package com.riskgame.utility;
-import RiskyGame.Model.Country;
+import com.riskgame.model.Country;
 import com.riskgame.model.Continent;
 import com.riskgame.model.World;
 
@@ -49,7 +49,7 @@ public class MapReader {
 
     public void pareseMap(World map) throws Exception{
 
-
+            boolean valid=true;
             FileReader mapFile=new FileReader(map.getMapPath() + "\\" + map.getMapName());
             String line;
             BufferedReader reader = new BufferedReader(mapFile);
@@ -90,6 +90,7 @@ public class MapReader {
                     }
                 }
                 }
+
 
         }
 

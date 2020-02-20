@@ -1,15 +1,16 @@
 package com.riskgame.model;
-
+import java.util.*;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Observable;
 
 import com.riskgame.utility.CardType;
 import com.riskgame.utility.RiskUtility;
 
-public class Game {
+public class Game extends Observable {
 	
 	private List<Card> cardDeck ;
-
+	private  ArrayList<Player> players;
 	RiskUtility utility = new RiskUtility();
 
 	public Game() {
@@ -27,5 +28,9 @@ public class Game {
 		Card card = new Card(territoryName, cardType);
 		cardDeck.add(card);
 	}
-	
+	public ArrayList<Player> getPlayers() {
+		return players;
+	}
+
+
 }

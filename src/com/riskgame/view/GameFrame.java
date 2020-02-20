@@ -1,33 +1,22 @@
-package RiskyGame.View;
-import com.concordia.riskgame.controller.CommandController;
-import com.concordia.riskgame.controller.StartupPhaseController;
-import com.concordia.riskgame.model.Modules.Map;
-import RiskyGame.Utility.MapReader;
+package com.riskgame.view;
+import com.riskgame.utility.MapReader;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-public class GameFrame{
+public class GameFrame {
 
 
 
-
-
-
-
-    /**
-     * ===============================================
-     * THIS IS THE DRIVER CLASS FOR PROJECT
-     * ================================================
-     * THIS CLASS IS THE INITAL VIEW OF THE GAME.
-     */
 
 
         private static final long serialVersionUID = 1L;
-        private JFrame gameWindow;
+
+    private JFrame gameWindow;
         final static String GAMELAUNCHERPANEL = "Card with Game Launching View";
         private CardLayout cardLayout;
         private JPanel cardsContainerPanel;
@@ -85,15 +74,7 @@ public class GameFrame{
         /* (non-Javadoc)
          * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
          */
-        @Override
-        public void actionPerformed(ActionEvent event) {
 
-            if(event.getSource()==startButton)
-            {
-                new com.concordia.riskgame.controller.BoardController(new BoardView(gameWindow,cardsContainerPanel));
-            }
-
-        }
 
 
         /**

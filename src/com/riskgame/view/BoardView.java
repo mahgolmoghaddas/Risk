@@ -1,18 +1,20 @@
-package RiskyGame.View;
+package com.riskgame.view;
 
-import RiskyGame.Model.Gameplay;
+import com.riskgame.model.Game;
 
 import java.awt.*;
 import java.util.*;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.*;
-import RiskyGame.Utility.MapReader;
-import RiskyGame.Model.Player;
-public class BoardView extends JFrame implements Observer {
+import com.riskgame.utility.MapReader;
+import com.riskgame.model.Player;
+import com.riskgame.view.GameFrame;
+public class BoardView extends JFrame {
     public static JPanel cardHolder;
+    public static JPanel cardsContainerPanel;
     public static CardLayout cardLayout;
-    private Gameplay gamePlay;
+    private Game gamePlay;
     private JFrame gameWindow;
     private JPanel gameLaunchPanel;
     private JPanel StartupViewPanel;
@@ -33,12 +35,10 @@ public class BoardView extends JFrame implements Observer {
     private JLabel playerListLabel;
     private JPanel placeArmiesViewPanel;
     private String[] numberOfPlayers={"2","3", "4","5"};
-    public BoardView(){
-        JFrame.setDefaultLookAndFeelDecorated(true);
-        gameWindow=new JFrame();
-        gameWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        gamePlay=new Gameplay();
-        gamePlay.addObserver(this);
+    public BoardView(JFrame frame,JPanel panel){
+        this.gameWindow=frame;
+        BoardView.cardsContainerPanel=panel;
+        gamePlay=new Game();
         gameLaunchPanel = new JPanel();
         gameLaunchPanel.setLayout(null);
         gameLaunchPanel.setVisible(true);
@@ -49,12 +49,12 @@ public class BoardView extends JFrame implements Observer {
 
     public void placeCards() {
 
-        cardHolder=new JPanel(new CardLayout());
-        cardHolder.add(gameLaunchPanel, "Card with Game Launching View");
+        cardsContainerPanel=new JPanel(new CardLayout());
+        cardsContainerPanel.add(gameLaunchPanel, "Card with Game Launching View");
 
-        gameWindow.getContentPane().add(cardHolder, BorderLayout.CENTER);
-        cardLayout=(CardLayout) cardHolder.getLayout();
-        cardLayout.show(cardHolder, "Card with Game Launching View");
+        gameWindow.getContentPane().add(cardsContainerPanel, BorderLayout.CENTER);
+        cardLayout=(CardLayout) cardsContainerPanel.getLayout();
+        cardLayout.show(cardsContainerPanel, "Card with Game Launching View");
 
         gameWindow.pack();
         gameWindow.setSize(700, 700);
@@ -71,12 +71,12 @@ public class BoardView extends JFrame implements Observer {
         placeArmiesUI();
 
 
-        cardHolder.add(StartupViewPanel,"");
-        cardHolder.add(placeArmiesViewPanel, "");
+        cardsContainerPanel.add(StartupViewPanel,"");
+        cardsContainerPanel.add(placeArmiesViewPanel, "");
 
-        gameWindow.getContentPane().add(cardHolder, BorderLayout.CENTER);
-        cardLayout=(CardLayout) cardHolder.getLayout();
-        cardLayout.show(cardHolder, "");
+        gameWindow.getContentPane().add(cardsContainerPanel, BorderLayout.CENTER);
+        cardLayout=(CardLayout) cardsContainerPanel.getLayout();
+        cardLayout.show(cardsContainerPanel, "");
     }
 
 
@@ -183,24 +183,6 @@ public class BoardView extends JFrame implements Observer {
 
     }
 
-
-
-
-    /* (non-Javadoc)
-     * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-     */
-    @Override
-    public void update(Observable o, Object arg) {
-        System.out.println("<--------------------------OBSERVER TRIGGERED--------------------->");
-        if(Integer.parseInt(arg.toString())==gamePlay.getPlayerCount()) {
-
-            JOptionPane.showMessageDialog(gameWindow,
-                    "Player limit reached.Cannot add anymore players", "Error Message",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-
-    }
-
     /**
      * Getter to the element shopMapButton
      * @return shopMapButton
@@ -225,21 +207,6 @@ public class BoardView extends JFrame implements Observer {
         return populateCountriesButton;
     }
 
-    /**
-     * Getter method for removeplayer Button
-     * @return removePlayerButton
-     */
-    public JButton getRemovePlayerButton() {
-        return removePlayerButton;
-    }
-
-    /**
-     * Getter method for the getRemovePlayerName text field
-     * @return removePlayerName
-     */
-    public JTextField getRemovePlayerName() {
-        return removePlayerName;
-    }
 
     /**
      * Getter method for the addplayerbutton

@@ -1,14 +1,15 @@
 package com.riskgame.view;
 import com.riskgame.utility.MapReader;
+import com.riskgame.controller.*;
+import com.riskgame.view.*;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-public class GameFrame {
+public class GameFrame implements ActionListener {
 
 
 
@@ -21,7 +22,7 @@ public class GameFrame {
         private CardLayout cardLayout;
         private JPanel cardsContainerPanel;
 
-        private JPanel gameLaunchPanel;
+        private JPanel panel;
         private JButton startButton;
         private MapReader reader;
 
@@ -37,29 +38,20 @@ public class GameFrame {
 
             gameWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             reader=new MapReader();
-            gameLaunchPanel = new JPanel();
-            gameLaunchPanel.setLayout(null);
-            gameLaunchPanel.setVisible(true);
-
-
+            panel = new JPanel();
+            panel.setLayout(null);
+            panel.setVisible(true);
             startButton=new JButton("Start The Game");
             startButton.setVisible(true);
-            startButton.setBounds(280, 210, 155, 21);
-            gameLaunchPanel.add(startButton);
-
-            //startButton.addActionListener(this);
-
+            startButton.setBounds(230, 220, 155, 31);
+            panel.add(startButton);
+            startButton.addActionListener(this);
             cardsContainerPanel=new JPanel(new CardLayout());
-            cardsContainerPanel.add(gameLaunchPanel,GAMELAUNCHERPANEL);
-
+            cardsContainerPanel.add(panel,GAMELAUNCHERPANEL);
             gameWindow.getContentPane().add(cardsContainerPanel, BorderLayout.CENTER);
             cardLayout=(CardLayout) cardsContainerPanel.getLayout();
             cardLayout.show(cardsContainerPanel, GAMELAUNCHERPANEL);
-
-            gameWindow.pack();
-            //gameWindow.setFont(Font.CE);
             gameWindow.setSize(700, 700);
-            gameWindow.setLocationRelativeTo(null);
             gameWindow.setVisible(true);
 
 
@@ -71,9 +63,6 @@ public class GameFrame {
 
 
 
-        /* (non-Javadoc)
-         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-         */
 
 
 
@@ -93,6 +82,13 @@ public class GameFrame {
         }
 
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource()==startButton)
+        {
+            new BoardController(new BoardView(gameWindow,cardsContainerPanel));
+        }
     }
+}
 
 

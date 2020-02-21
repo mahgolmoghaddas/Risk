@@ -12,9 +12,16 @@ import com.riskgame.model.Player;
 import com.riskgame.view.GameFrame;
 public class BoardView extends JFrame {
     public static JPanel cardHolder;
-    public static JPanel cardsContainerPanel;
+    //public static JPanel cardsContainerPanel;
     public static CardLayout cardLayout;
-    private Game gamePlay;
+    private JMenu GameMenu;
+    private JMenu fileMenu;
+    private JMenu editMenu;
+    private JMenu playMenu;
+    private JLabel removeplayerLabel;
+    private JTextField removePlayerName;
+    private JButton removePlayerButton;
+    private JMenuBar menuBar;
     private JFrame gameWindow;
     private JPanel gameLaunchPanel;
     private JPanel StartupViewPanel;
@@ -33,15 +40,32 @@ public class BoardView extends JFrame {
     private MapReader reader;
     private JComboBox<String> playerList;
     private JLabel playerListLabel;
-    private JPanel placeArmiesViewPanel;
+    private JMenu helpMenu;
+    private JMenuItem open;
+    private JMenuItem save;
+    private JMenuItem placearmiesoncountry;
+    private JMenuItem addContinent;
+    private JMenuItem addCountry;
+    private JMenuItem removeContinent;
+    private JMenuItem endreinforcementphase;
+    private JMenuItem removeCountry;
+    private JMenuItem showplayercountries;
+    private JMenuItem addPlayer;
+    private JMenuItem ExchangeCardsforplayer;
+    private JMenuItem createMap;
+    private JMenuItem ShowCurrentPlayer;
+    private JMenuItem numberofplayers;
+    private JMenuItem startgame;
+    private JMenuItem help;
+    private JMenuItem start, pause;
     private String[] numberOfPlayers={"2","3", "4","5"};
     public BoardView(JFrame frame,JPanel panel){
         this.gameWindow=frame;
-        BoardView.cardsContainerPanel=panel;
-        gamePlay=new Game();
+        BoardView.cardHolder=panel;
         gameLaunchPanel = new JPanel();
         gameLaunchPanel.setLayout(null);
         gameLaunchPanel.setVisible(true);
+
         placeCards();
 
 
@@ -49,77 +73,82 @@ public class BoardView extends JFrame {
 
     public void placeCards() {
 
-        cardsContainerPanel=new JPanel(new CardLayout());
-        cardsContainerPanel.add(gameLaunchPanel, "Card with Game Launching View");
+        cardHolder=new JPanel(new CardLayout());
+        cardHolder.add(gameLaunchPanel, "Card with Game Launching View");
 
-        gameWindow.getContentPane().add(cardsContainerPanel, BorderLayout.CENTER);
-        cardLayout=(CardLayout) cardsContainerPanel.getLayout();
-        cardLayout.show(cardsContainerPanel, "Card with Game Launching View");
+        gameWindow.getContentPane().add(cardHolder, BorderLayout.CENTER);
+        cardLayout=(CardLayout) cardHolder.getLayout();
+        cardLayout.show(cardHolder, "Card with Game Launching View");
 
         gameWindow.pack();
-        gameWindow.setSize(700, 700);
+        gameWindow.setSize(600, 700);
         gameWindow.setLocationRelativeTo(null);
         gameWindow.setVisible(true);
-
         initaliseUI();
     }
 
     public void initaliseUI(){
         JFrame.setDefaultLookAndFeelDecorated(true);
-        mapSelectUI();
-        editPlayerUI();
-        placeArmiesUI();
+        menuBar = new JMenuBar();
+        menuBar.setBackground(Color.LIGHT_GRAY);
+        fileMenu = new JMenu("File");
+        fileMenu.setFont(new Font("Rockwell Extra Bold", Font.PLAIN, 13));
+        editMenu = new JMenu("Edit");
+        editMenu.setFont(new Font("Rockwell Extra Bold", Font.PLAIN, 13));
+        GameMenu = new JMenu("Game");
+        GameMenu.setFont(new Font("Rockwell Extra Bold", Font.PLAIN, 13));
+        helpMenu = new JMenu("Help");
+        helpMenu.setFont(new Font("Rockwell Extra Bold", Font.PLAIN, 13));
+        playMenu = new JMenu("Play");
+        playMenu.setFont(new Font("Rockwell Extra Bold", Font.PLAIN, 13));
 
+        open = new JMenuItem("Open");
+        save = new JMenuItem("Save to file");
+        addContinent = new JMenuItem("Add Continent");
+        addCountry = new JMenuItem("Add  Country");
+        removeContinent = new JMenuItem("Remove Continent");
+        removeCountry = new JMenuItem("Remove Country");
+        showplayercountries = new JMenuItem("Show Player Countries");
+        numberofplayers = new JMenuItem(" Start Game");
+        endreinforcementphase = new JMenuItem("End reinforcement phase");
+        createMap = new JMenuItem("Create Map");
+        ShowCurrentPlayer = new JMenuItem("Show Current Player");
+        placearmiesoncountry = new JMenuItem("Place Armies On Country");
+        placearmiesoncountry = new JMenuItem("Place Armies On Country");
+        ExchangeCardsforplayer = new JMenuItem("Exchange Cards");
+        /*
+         * Create the menu items for the simulation menu.
+         */
+        help = new JMenuItem("Help");
+        start = new JMenuItem("Start");
+        pause = new JMenuItem("Pause");
 
-        cardsContainerPanel.add(StartupViewPanel,"");
-        cardsContainerPanel.add(placeArmiesViewPanel, "");
+        fileMenu.add(open);
+        fileMenu.addSeparator();
+        fileMenu.add(save);
+        fileMenu.add(createMap);
 
-        gameWindow.getContentPane().add(cardsContainerPanel, BorderLayout.CENTER);
-        cardLayout=(CardLayout) cardsContainerPanel.getLayout();
-        cardLayout.show(cardsContainerPanel, "");
-    }
-
-
-    /**
-     * Initalise UI.
-     */
-    public void mapSelectUI() {
+        editMenu.add(addContinent);
+        editMenu.add(removeContinent);
+        editMenu.addSeparator();
+        editMenu.add(addCountry);
+        editMenu.add(removeCountry);
+        GameMenu.add(numberofplayers);
+        GameMenu.add(ShowCurrentPlayer);
+        GameMenu.add(showplayercountries);
+        GameMenu.add(endreinforcementphase);
+        GameMenu.add(ExchangeCardsforplayer);
+        playMenu.add(placearmiesoncountry);
+        helpMenu.add(help);
+        menuBar.add(fileMenu);
+        menuBar.add(editMenu);
+        menuBar.add(GameMenu);
+        menuBar.add(playMenu);
+        menuBar.add(helpMenu);
         StartupViewPanel = new JPanel();
         StartupViewPanel.setVisible(true);
         StartupViewPanel.setLayout(null);
 
-
-        mapSelectorLabel = new JLabel("Please Select The Map File");
-        mapSelectorButton=(new JButton("Browse"));
-        StartupViewPanel.add(getMapSelectorButton());
-        StartupViewPanel.add(mapSelectorLabel);
-        mapSelectorLabel.setVisible(true);
-        mapSelectorLabel.setBounds(36, 60, 121, 20);
-        mapSelectorButton.setBounds(216, 60, 121, 20);
-        mapSelectorButton.setVisible(true);
-
-
-
-        model = new DefaultListModel<String>();
-        currentPlayerList=new JList<String>(model);
-        playerListLabel=new JLabel("Player List");
-        StartupViewPanel.add(currentPlayerList);
-        StartupViewPanel.add(playerListLabel);
-        playerListLabel.setBounds(530, 30, 121, 21);
-        currentPlayerList.setBounds(530, 50, 121, 200);
-        currentPlayerList.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        currentPlayerList.setVisible(true);
-
-
-
-
-    }
-
-
-    /**
-     * Edits the player UI.
-     */
-    public void editPlayerUI() {
 
         playerCount = new JComboBox<String>(numberOfPlayers);
         playerCountLabel = new JLabel("Select player count");
@@ -132,7 +161,7 @@ public class BoardView extends JFrame {
 
 
 
-        playerNameLabel = new JLabel("Enter Your Name Please");
+        playerNameLabel = new JLabel("Enter Player name to add");
         StartupViewPanel.add(playerNameLabel);
         playerNameLabel.setVisible(true);
         playerNameLabel.setBounds(36, 120, 200, 21);
@@ -148,6 +177,22 @@ public class BoardView extends JFrame {
         StartupViewPanel.add(addPlayerButton);
         //addPlayerButton.color(Black);
 
+        removeplayerLabel = new JLabel("Enter Player name to remove");
+        StartupViewPanel.add(removeplayerLabel);
+        removeplayerLabel.setVisible(true);
+        removeplayerLabel.setBounds(36, 150, 200, 21);
+
+        removePlayerName = new JTextField();
+        StartupViewPanel.add(removePlayerName);
+        removePlayerName.setVisible(true);
+        removePlayerName.setBounds(216, 150, 121, 20);
+
+        removePlayerButton=new JButton("Remove Player");
+        removePlayerButton.setBounds(350, 150, 121, 20);
+        removePlayerButton.setVisible(true);
+        StartupViewPanel.add(removePlayerButton);
+
+
         populateCountriesButton = new JButton("Populate Countries and Assign Armies");
         StartupViewPanel.add(populateCountriesButton);
         populateCountriesButton.setBounds(36, 180, 250, 30);
@@ -160,28 +205,16 @@ public class BoardView extends JFrame {
         showMapButton.setBounds(300, 180, 200, 30);
         //showMapButton.setHorizontalAlignment(SwingConstants.LEFT);
         showMapButton.setVisible(true);
-
+        gameWindow.setJMenuBar(menuBar);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        cardHolder.add(StartupViewPanel,"");
+        gameWindow.getContentPane().add(cardHolder, BorderLayout.CENTER);
+        cardLayout=(CardLayout) cardHolder.getLayout();
+        cardLayout.show(cardHolder, "");
     }
 
 
 
-    /**
-     * Place armies UI.
-     */
-    public void placeArmiesUI() {
-        placeArmiesViewPanel=new JPanel();
-        ArrayList<String> playerNames=new ArrayList<String>();
-        for(Player player:gamePlay.getPlayers())
-            playerNames.add(player.GetName());
-        playerList=new JComboBox<String>(playerNames.toArray(new String[playerNames.size()]));
-        placeArmiesViewPanel.add(playerList);
-
-
-        playerListLabel=new JLabel("Select the player ");
-        placeArmiesViewPanel.setVisible(true);
-
-
-    }
 
     /**
      * Getter to the element shopMapButton
@@ -207,53 +240,20 @@ public class BoardView extends JFrame {
         return populateCountriesButton;
     }
 
-
     /**
-     * Getter method for the addplayerbutton
-     * @return addPlayerButton
+     * Getter method for removeplayer Button
+     * @return removePlayerButton
      */
-    public JButton getAddPlayerButton() {
-        return addPlayerButton;
+    public JButton getRemovePlayerButton() {
+        return removePlayerButton;
     }
 
     /**
-     * Getter method for the mapPath text field
-     * @return mapPath
+     * Getter method for the getRemovePlayerName text field
+     * @return removePlayerName
      */
-    public JTextField getMapPath() {
-        return mapPath;
-    }
-
-    /**
-     * Setter method for mappath TextField
-     * @param mapPath mapPath
-     */
-    public void setMapPath(JTextField mapPath) {
-        this.mapPath = mapPath;
-    }
-
-    /**
-     * Getter method for the Map selection button
-     * @return mapSelectorButton
-     */
-    public JButton getMapSelectorButton() {
-        return mapSelectorButton;
-    }
-
-    /**
-     * Getter method for the playercount drop down
-     * @return playerCount
-     */
-    public JComboBox<String> getPlayerCount() {
-        return playerCount;
-    }
-
-    /**
-     * Getter method for the cardLayout
-     * @return cardLayout
-     */
-    public CardLayout getCardLayout() {
-        return cardLayout;
+    public JTextField getRemovePlayerName() {
+        return removePlayerName;
     }
 
     /**
@@ -264,12 +264,7 @@ public class BoardView extends JFrame {
         return model;
     }
 
-    /**
-     * Getter method for the currentplayerlist
-     * @return currentPlayerList
-     */
-    public JList<String> getCurrentPlayerList() {
-        return currentPlayerList;
-    }
+
+
 
 }

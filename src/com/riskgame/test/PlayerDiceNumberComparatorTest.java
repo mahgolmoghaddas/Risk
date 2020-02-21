@@ -8,7 +8,6 @@ import com.riskgame.utility.*;
 import com.riskgame.model.Player;
 import com.riskgame.utility.PlayerDiceNumberComparator;
 
-
 public class PlayerDiceNumberComparatorTest {
 	PlayerDiceNumberComparator pl= new PlayerDiceNumberComparator();
 	Player p1= new Player(1, "ABC");

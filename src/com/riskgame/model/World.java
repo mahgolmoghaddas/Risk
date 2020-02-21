@@ -81,4 +81,47 @@ public class World {
         return continentNames;
     }
 
+
+
+    public List<Continent> getOccupiedContinents(String playerName) {
+        List<Continent> occupiedContinents=new ArrayList<Continent>();
+        for(Continent continent:continents)
+        {
+            boolean owned=true;
+            for(Country country:continent.getContainedCountries()) {
+                if(!country.getOwner().getPlayer_name().equals(playerName))
+                {owned=false;
+                    break;
+                }
+            }
+            if(owned)
+                occupiedContinents.add(continent);
+
+        }
+        return occupiedContinents;
+
+    }
+
+    /**
+     * Return the continents owned by a particular player.
+     *
+     * @param playerName the player name
+     * @return the list of continents owned by the player
+     */
+    public List<Country> getOwnedCountries(String playerName) {
+        List<Country> ocuupiedCountries=new ArrayList<Country>();
+        for(Continent continent:continents)
+        {
+            for(Country country:continent.getContainedCountries()) {
+                if(country.getOwner().getPlayer_name().equals(playerName))
+                {
+                    ocuupiedCountries.add(country);
+                }
+            }
+
+        }
+        return ocuupiedCountries;
+
+    }
+
 }

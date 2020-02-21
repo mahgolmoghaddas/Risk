@@ -19,6 +19,9 @@ public class Player {
 	private int armiesHeld;
 	private int armiesFromCards;
 	private Score playerScore;
+	private ArrayList<Country> countriesOwned;
+
+
 
 	public HashMap<String, Continent> getContinentHeld() {
 		return continentHeld;
@@ -39,6 +42,7 @@ public class Player {
 		this.player_name = player_name;
 		armiesHeld = 0;
 		armiesFromCards = 0;
+		countriesOwned=new ArrayList<>();
 	}
 
 	/**
@@ -112,6 +116,14 @@ public class Player {
 		return startDiceNo;
 	}
 
+
+	public ArrayList<Country> getCountriesOwned() {
+		return countriesOwned;
+	}
+
+	public void setCountriesOwned(ArrayList<Country> countriesOwned) {
+		this.countriesOwned = countriesOwned;
+	}
 	public void setStartDiceNo(Integer startUpDiceNo) {
 		this.startDiceNo = startUpDiceNo;
 	}

@@ -2,6 +2,8 @@ package com.riskgame.utility;
 import com.riskgame.model.Country;
 import com.riskgame.model.Continent;
 import com.riskgame.model.World;
+
+import java.sql.SQLOutput;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.filechooser.*;
@@ -39,6 +41,33 @@ public class MapReader {
     return fileName;
 
     }
+
+    /**
+     * This method pass the parameters to the method validity to check the validity of the map files passed and return the boolean value if the map is in the correct format or no
+     * @param map
+     * @param fileName
+     * @return valid
+     */
+    public boolean mapValidity(World map,String fileName)  {
+
+        boolean valid=false;
+
+                try{
+                valid=pareseMap(map, fileName);}
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+        return valid;
+    }
+
+    /**
+     * checks if the defined continent is empty
+     * @param map
+     * @return boolean
+     */
+
     public boolean checkEmptyContinent(World map){
         if(map.getContinents().isEmpty()){
             return true;
@@ -53,17 +82,21 @@ public class MapReader {
         return false;
     }
 
+    /**
+     * checks if the current continent has any country neighbors to the other continent or not
+     * @param map
+     * @return
+     */
     public boolean checkIfNeigbourExist(World map) {
-        List<String> list =  map.listOfCountryNames();
+        List<String> list =  map.continentNamesList();
         List<String> listOfCountries = new ArrayList<String>();
         for(String name : list) {
             listOfCountries.add(name.toLowerCase());
         }
         for (Continent c : map.getContinents()) {
-            for (Country country : c.getCountriesPresent()) {
-                for (String neighbour : country.getListOfNeighbours()) {
+            for (Country country : c.getContainedCountries()) {
+                for (String neighbour : country.getNeighbors()) {
                     if (!listOfCountries.contains(neighbour.toLowerCase())) {
-                        map.setErrorMessage("Neighbour not part of countries list "+neighbour+" neighbour");
                         return false;
                     }
                 }
@@ -71,18 +104,26 @@ public class MapReader {
         }
         return true;
     }
-    public boolean mapValidity(World map, String mapPath){
+
+    /**
+     * the method which calls and run and checks the validity of the map
+     * @param map
+     * @return valid
+     */
+    public boolean checkValid(World map){
         boolean valid=false;
-        if (mapPath.trim().substring(mapPath.length() - 4).equals(".map")){
+
             if (!checkEmptyContinent(map)) {
-                if (checkIfNeigbourExist(map)) {
+                if (!checkIfNeigbourExist(map)) {
                     valid=true;
+
                     return valid;
                 }
-                else return valid;
+                else{; return valid;}
 
-            }else return valid;
-        }else return valid;
+            }
+            else { return valid;}
+
 
     }
 
@@ -92,10 +133,10 @@ public class MapReader {
      * @throws Exception
      */
 
-    public void pareseMap(World map) throws Exception{
+    public boolean pareseMap(World map, String fileName) throws Exception{
 
             boolean valid=true;
-            FileReader mapFile=new FileReader(map.getMapPath() + "\\" + map.getMapName());
+            FileReader mapFile=new FileReader(fileName);
             String line;
             BufferedReader reader = new BufferedReader(mapFile);
             String text="";
@@ -105,17 +146,20 @@ public class MapReader {
                 }
             }
 
+        if(text.contains("[Continents]")&& text.contains("[Territories]")){
             String continents = text.substring(text.indexOf("[Continents]"), text.indexOf("[Territories]"));
             String countries = text.substring(text.indexOf("[Territories]"));
             String[] countriesSplit = countries.split("\n");
             String[] continentsSplit = continents.split("\n");
             for (String data : continentsSplit) {
-                if (data.equalsIgnoreCase("[Continents]")) {
+                if (!data.equalsIgnoreCase("[Continents]")) {
                     Continent continent = new Continent();
                     continent.setContinentName(data.substring(0, data.indexOf("=")));
                     continent.setControlValue(Integer.parseInt(data.substring(data.indexOf("=") + 1)));
                     map.getContinents().add(continent);
                 }
+
+
             }
             for (String data : countriesSplit) {
                 if ((!data.equalsIgnoreCase("[Territories]"))) {
@@ -132,12 +176,15 @@ public class MapReader {
                         if (countryContinent.getContinentName().toLowerCase().indexOf(countryAttributes[3].trim().toLowerCase()) >= 0) {
                             countryContinent.getContainedCountries().add(country);
                         }
+
                     }
                 }
-                }
+
+                }}
+
+                valid=checkValid(map);
+                return valid;
 
 
-        }
-
-        }
+        }}
 

@@ -10,6 +10,7 @@ public class Game {
 	private int playerMaxNum=6;
 	private World world;
 	private List<Player> playerList;
+	RiskUtility utility = new RiskUtility();
 
 	public Queue<Player> getPlayerQueue() {
 		return playerQueue;
@@ -127,7 +128,6 @@ public class Game {
 		return false;
 
 	}
-	RiskUtility utility = new RiskUtility();
 
 	/**
 	 * This method creates a new card and add it to the card Deck.

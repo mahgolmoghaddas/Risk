@@ -12,8 +12,7 @@ import org.junit.Test;
 
 import com.riskgame.model.Card;
 import com.riskgame.model.Game;
-import com.riskgame.utility.CardType;
-import com.riskgame.utility.RiskUtility;
+import com.riskgame.model.Player;
 
 public class LoadGameTest {
 	Game game;
@@ -28,6 +27,11 @@ public class LoadGameTest {
 			game.addNewCardToDeck("Nepal");
 			game.addNewCardToDeck("Iran");
 			game.addNewCardToDeck("India");
+			
+			game.addPlayer("Maghol");
+			game.addPlayer("Himani");
+			game.addPlayer("Jasmeet");
+			
 			deck = game.getCardDeck();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -51,7 +55,17 @@ public class LoadGameTest {
 				Card card = deck.get(i);
 				org.hamcrest.MatcherAssert.assertThat(cardTypeList, hasItems(card.getCardType().getCardTypeValue()));
 			}
-
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testTotalPlayers() {
+		try {
+			List<Player> playerList = game.getPlayerList();
+			org.hamcrest.MatcherAssert.assertThat(playerList.size(),is(3));
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

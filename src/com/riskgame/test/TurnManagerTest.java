@@ -11,31 +11,25 @@ import org.junit.runner.RunWith;
 import com.riskgame.model.Player;
 import com.riskgame.model.TurnManager;
 
-public class TurnOrganizerTest {
+public class TurnManagerTest {
 
 	@Test
 	public void getNextPlayerTest() {
 
 		try {
 			List<Player> playerList = new ArrayList<>();
-			Player p1 = new Player();
+			Player p1 = new Player(1,"Evelyn");
 			p1.setStartDiceNo(1);
-			p1.setName("Evelyn");
-			Player p2 = new Player();
+			Player p2 = new Player(2,"Fred");
 			p2.setStartDiceNo(2);
-			p2.setName("Fred");
-			Player p3 = new Player();
+			Player p3 = new Player(3,"Anna");
 			p3.setStartDiceNo(3);
-			p3.setName("Anna");
-			Player p4 = new Player();
+			Player p4 =new Player(4,"Bikka");
 			p4.setStartDiceNo(4);
-			p4.setName("Bikka");
-			Player p5 = new Player();
+			Player p5 = new Player(5,"Chris");
 			p5.setStartDiceNo(5);
-			p5.setName("Chris");
-			Player p6 = new Player();
+			Player p6 = new Player(6,"Dilip");
 			p6.setStartDiceNo(6);
-			p6.setName("Dilip");
 
 			playerList.add(p1);
 			playerList.add(p2);
@@ -44,8 +38,8 @@ public class TurnOrganizerTest {
 			playerList.add(p5);
 			playerList.add(p6);
 			TurnManager manager = new TurnManager(playerList);
-			assertEquals(manager.getNextPlayer().getName(), "Dilip");
-			assertEquals(manager.getNextPlayer().getName(), "Evelyn");
+			assertEquals(manager.getNextPlayer().getPlayer_name(), "Dilip");
+			assertEquals(manager.getNextPlayer().getPlayer_name(), "Evelyn");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

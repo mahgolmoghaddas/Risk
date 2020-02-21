@@ -108,4 +108,7 @@ public class Player {
         this.continentHeld = continentHeld;
     }
     
+	public String getPlayer_name() {
+		return player_name;
+	}
 }

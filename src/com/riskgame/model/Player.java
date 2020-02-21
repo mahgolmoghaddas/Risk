@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.Map;
 
 /**
- * This class is used for player module which contains variables for 
+ * This class is used for player model which contains variables for 
  * name of the Player, Armies it has held etc and methods to change the 
  * status of the object.
  * @author Himani

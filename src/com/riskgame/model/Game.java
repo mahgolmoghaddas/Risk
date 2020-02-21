@@ -214,7 +214,7 @@ public class Game {
 		Queue<Player> tempQueue=getPlayerQueue();
 		setPlayer(tempQueue.remove());
 		ArrayList<Country> countries=getPlayer().getCountriesOwned();
-		System.out.println("Placing army for "+getPlayer().getPlayer_name());
+
 		int countryindex=0;
 		while(getPlayer().GetArmies()!=0)
 		{

@@ -1,190 +1,227 @@
 package com.riskgame.utility;
-import com.riskgame.model.Country;
+
+import com.riskgame.model.Territory;
 import com.riskgame.model.Continent;
+import com.riskgame.model.Coordinates;
 import com.riskgame.model.World;
 
 import java.sql.SQLOutput;
 import java.util.*;
+import java.util.Map.Entry;
+
 import javax.swing.*;
 import javax.swing.filechooser.*;
+
+import static org.junit.Assert.assertNotEquals;
+
 import java.io.*;
 
 /**
- *this class read and parse the .map file and set the entities for the game
+ * this class read and parse the .map file and set the entities for the game
  */
 public class MapReader {
 
-    /**
-     * method for choosing the map
-     * @param map
-     * @return  name of the map have been read
-     */
-    public String filePicker(World map){
-        String fileName="";
-        String importedFile;
-        JFileChooser chooser=new JFileChooser();
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        chooser.setAcceptAllFileFilterUsed(false);
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter("*.map", "map"));
-        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            importedFile = chooser.getSelectedFile().getAbsolutePath();
+	private static final String TERRITORY_FORMAT = "[Territories]";
+	private static final String CONTINENT_FORMAT = "[Continents]";
+	private static final String MAP_FORMAT = "[Map]";
 
-            if (importedFile.trim().substring(importedFile.length() - 4).equals(".map")){
-                    File file = new File(importedFile);
-                    map.setMapName(file.getName());
-                    map.setMapPath(importedFile.substring(0, importedFile.lastIndexOf("\\")));
-                    fileName=map.getMapPath();
-                }
-
-        }
-
-    return fileName;
-
-    }
-
-    /**
-     * This method pass the parameters to the method validity to check the validity of the map files passed and return the boolean value if the map is in the correct format or no
-     * @param map
-     * @param fileName
-     * @return valid
-     */
-    public boolean mapValidity(World map,String fileName)  {
-
-        boolean valid=false;
-
-                try{
-                valid=pareseMap(map, fileName);}
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
+	HashMap<String, Double> continentInfo = new HashMap<>();
+	HashMap<String, ArrayList<Territory>> continentTerritoryMap = new HashMap<>();
+	HashMap<String, String> mapInfo = new HashMap<>();
 
 
-        return valid;
-    }
+	public boolean isValidMap(File mapFile) throws Exception {
 
-    /**
-     * checks if the defined continent is empty
-     * @param map
-     * @return boolean
-     */
+		boolean isValidMap = true;
 
-    public boolean checkEmptyContinent(World map){
-        if(map.getContinents().isEmpty()){
-            return true;
-        }
-        else{
-            for(Continent c:map.getContinents()){
-                if(c.getContainedCountries().isEmpty()){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+		if (mapFile != null) {
+			BufferedReader br = new BufferedReader(new FileReader(mapFile));
+			String line;
 
-    /**
-     * checks if the current continent has any country neighbors to the other continent or not
-     * @param map
-     * @return
-     */
-    public boolean checkIfNeigbourExist(World map) {
-        List<String> list =  map.continentNamesList();
-        List<String> listOfCountries = new ArrayList<String>();
-        for(String name : list) {
-            listOfCountries.add(name.toLowerCase());
-        }
-        for (Continent c : map.getContinents()) {
-            for (Country country : c.getContainedCountries()) {
-                for (String neighbour : country.getNeighbors()) {
-                    if (!listOfCountries.contains(neighbour.toLowerCase())) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
+			while ((line = br.readLine()) != null) {
+				if (line.contains(CONTINENT_FORMAT)) {
+					isValidMap = checkAndCreateContinentsInfo(br);
 
-    /**
-     * the method which calls and run and checks the validity of the map
-     * @param map
-     * @return valid
-     */
-    public boolean checkValid(World map){
-        boolean valid=false;
+					if (!isValidMap) {
+						continentInfo.clear();
+						return isValidMap;
+					}
+				} else if (line.contains(TERRITORY_FORMAT)) {
 
-            if (!checkEmptyContinent(map)) {
-                if (!checkIfNeigbourExist(map)) {
-                    valid=true;
+					isValidMap = checkAndCreateTerritoryInfo(br);
+					if (!isValidMap) {
+						continentTerritoryMap.clear();
+						return isValidMap;
+					}
+				} else if (line.contains(MAP_FORMAT)) {
+					createMapInfo(br);
+				}
+			}
 
-                    return valid;
-                }
-                else{; return valid;}
+		}
 
-            }
-            else { return valid;}
+		return isValidMap;
+	}
 
+	public boolean checkAndCreateContinentsInfo(BufferedReader br) throws IOException {
+		boolean isValidContinent = true;
+		String line;
+		int continentCounter = 0;
+		while ((line = br.readLine()) != null) {
 
-    }
+			String[] continentArr = line.split("=");
 
-    /**
-     * method for parsing and initializing the game entities
-     * @param map
-     * @throws Exception
-     */
+			if (continentCounter > 6 || continentArr == null || continentArr.length != 2
+					|| !isNumeric(continentArr[1])) {
+				isValidContinent = false;
+				return isValidContinent;
+			}
 
-    public boolean pareseMap(World map, String fileName) throws Exception{
+			continentInfo.put(continentArr[0], Double.valueOf(continentArr[1]));
 
-            boolean valid=true;
-            FileReader mapFile=new FileReader(fileName);
-            String line;
-            BufferedReader reader = new BufferedReader(mapFile);
-            String text="";
-            while ((line = reader.readLine()) != null) {
-                if (line != "\n") {
-                    text += line + "\n";
-                }
-            }
+			continentCounter++;
+		}
+		return isValidContinent;
+	}
 
-        if(text.contains("[Continents]")&& text.contains("[Territories]")){
-            String continents = text.substring(text.indexOf("[Continents]"), text.indexOf("[Territories]"));
-            String countries = text.substring(text.indexOf("[Territories]"));
-            String[] countriesSplit = countries.split("\n");
-            String[] continentsSplit = continents.split("\n");
-            for (String data : continentsSplit) {
-                if (!data.equalsIgnoreCase("[Continents]")) {
-                    Continent continent = new Continent();
-                    continent.setContinentName(data.substring(0, data.indexOf("=")));
-                    continent.setControlValue(Integer.parseInt(data.substring(data.indexOf("=") + 1)));
-                    map.getContinents().add(continent);
-                }
+	public boolean checkAndCreateTerritoryInfo(BufferedReader br) throws Exception {
+		boolean isValidTerritory = true;
+		String line;
 
+		while ((line = br.readLine()) != null) {
 
-            }
-            for (String data : countriesSplit) {
-                if ((!data.equalsIgnoreCase("[Territories]"))) {
+			String[] territoriesArr = line.split("=");
 
-                    Country country = new Country();
-                    String[] countryAttributes = data.split(",");
-                    country.setCountryName(countryAttributes[0]);
-                    country.setCoordinateX(Double.parseDouble(countryAttributes[1]));
-                    country.setCoordinateY(Double.parseDouble(countryAttributes[2]));
-                    for (int i = 4; i < countryAttributes.length; i++) {
-                        country.getNeighbors().add(countryAttributes[i]);
-                    }
-                    for (Continent countryContinent : map.getContinents()) {
-                        if (countryContinent.getContinentName().toLowerCase().indexOf(countryAttributes[3].trim().toLowerCase()) >= 0) {
-                            countryContinent.getContainedCountries().add(country);
-                        }
+			if (territoriesArr == null || territoriesArr.length < 5 || !isNumeric(territoriesArr[1])
+					|| !isNumeric(territoriesArr[2]) || !checkIfContinent(territoriesArr[3])) {
+				isValidTerritory = false;
+				return isValidTerritory;
+			}
+			createTerritory(territoriesArr);
+		}
+		return isValidTerritory;
+	}
 
-                    }
-                }
+	public void createMapInfo(BufferedReader br) throws Exception {
+		String line;
 
-                }}
+		while ((line = br.readLine()) != null) {
 
-                valid=checkValid(map);
-                return valid;
+			String[] mapArr = line.split("=");
 
+			if (mapArr != null && mapArr.length == 2) {
+				String keyName = mapArr[0];
+				String valueName = mapArr[1];
 
-        }}
+				mapInfo.put(keyName, valueName);
+			}
+		}
+	}
 
+	public boolean isNumeric(String value) {
+
+		if (value == null) {
+			return false;
+		}
+
+		try {
+			Double.valueOf(value);
+		} catch (NumberFormatException e) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public boolean checkIfContinent(String continent) {
+
+		if (continentInfo != null && !continentInfo.isEmpty() && continentInfo.containsKey(continent)) {
+			return true;
+		}
+		return false;
+	}
+
+	public void createTerritory(String[] territoryArray) throws Exception {
+
+		if (territoryArray != null && territoryArray.length >= 5) {
+
+			String countryName = territoryArray[0];
+			double xPosition = Double.valueOf(territoryArray[1]);
+			double yPosition = Double.valueOf(territoryArray[2]);
+			String continentName = territoryArray[3];
+			Coordinates territoryPosition = new Coordinates(xPosition, yPosition);
+
+			ArrayList<String> neighbourTerritories = new ArrayList<>();
+
+			for (int i = 4; i < territoryArray.length; i++) {
+				neighbourTerritories.add(territoryArray[i]);
+			}
+			Territory territory = new Territory(countryName, territoryPosition, neighbourTerritories);
+
+			ArrayList<Territory> territoryList = new ArrayList<>();
+			if (!continentTerritoryMap.isEmpty() && continentTerritoryMap.containsKey(continentName)) {
+
+				territoryList = continentTerritoryMap.get(continentName);
+
+				if (territoryList == null) {
+					territoryList = new ArrayList<>();
+				}
+				territoryList.add(territory);
+
+			} else {
+				territoryList.add(territory);
+				continentTerritoryMap.put(continentName, territoryList);
+			}
+
+		}
+	}
+
+	public World createWorldMap() {
+		World world = null;
+		ArrayList<Continent> continentList = new ArrayList<Continent>();
+		if (continentInfo != null && !continentInfo.isEmpty()) {
+			for (Entry<String, Double> continentEntry : continentInfo.entrySet()) {
+
+				String continentName = continentEntry.getKey();
+				Double bonusPoint = continentEntry.getValue();
+				ArrayList<Territory> territoryList = continentTerritoryMap.get(continentName);
+
+				Continent continent = new Continent(continentName, territoryList, bonusPoint);
+				continentList.add(continent);
+			}
+
+			world = new World(continentList);
+
+			if (mapInfo != null && !mapInfo.isEmpty()) {
+
+				for (Entry<String, String> mapEntry : mapInfo.entrySet()) {
+
+					String key = mapEntry.getKey();
+					String value = mapEntry.getValue();
+
+					switch (key) {
+					case "author":
+						world.setAuthor(value);
+						break;
+					case "image":
+						world.setImage(value);
+						break;
+					case "wrap":
+						world.setWrap(value);
+						break;
+					case "scroll":
+						world.setScroll(value);
+						break;
+					case "warn":
+						world.setWarn(value);
+						break;
+					default:
+						break;
+					}
+				}
+			}
+		}
+		System.out.println("Successfully parsed Map");
+		return world;
+	}
+}

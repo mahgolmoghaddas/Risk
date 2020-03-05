@@ -6,16 +6,15 @@ import java.util.*;
  */
 public class World {
 
-    private String mapName, mapPath;
     private ArrayList<Continent> continents;
+    private String author;
+    private String image;
+    private String wrap;
+    private String scroll;
+    private String warn;
 
-
-
-    public World() {
-        continents = new ArrayList<Continent>();
-        mapPath = "";
-        mapName = "";
-
+    public World(ArrayList<Continent> continents) {
+        this.continents = continents;
     }
     /**
      * The class help to build the world and defines the properties to define the world map.
@@ -23,36 +22,39 @@ public class World {
     public List<Continent> getContinents() {
         return continents;
     }
-    /**
-     * The class help to build the world and defines the properties to define the world map.
-     */
-    public void setContinents(ArrayList<Continent> continents) {
-        this.continents = continents;
-    }
 
-    public String getMapPath() {
-        return mapPath;
-    }
-    /**
-     * The class help to build the world and defines the properties to define the world map.
-     */
-    public void setMapPath(String mapPath) {
-        this.mapPath = mapPath;
-    }
-    /**
-     * The class help to build the world and defines the properties to define the world map.
-     */
-    public String getMapName() {
-        return mapName;
-    }
-    /**
-     * The class help to build the world and defines the properties to define the world map.
-     */
-    public void setMapName(String mapName) {
-        this.mapName = mapName;
-    }
-
-    /**
+    
+    public String getAuthor() {
+		return author;
+	}
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+	public String getImage() {
+		return image;
+	}
+	public void setImage(String image) {
+		this.image = image;
+	}
+	public String getWrap() {
+		return wrap;
+	}
+	public void setWrap(String wrap) {
+		this.wrap = wrap;
+	}
+	public String getScroll() {
+		return scroll;
+	}
+	public void setScroll(String scroll) {
+		this.scroll = scroll;
+	}
+	public String getWarn() {
+		return warn;
+	}
+	public void setWarn(String warn) {
+		this.warn = warn;
+	}
+	/**
      * List of country names.
      *
      * @return the list
@@ -60,9 +62,9 @@ public class World {
     public List<String> countryNamesList() {
         List<String> countryNames = new ArrayList<String>();
         for (Continent continent : getContinents()) {
-            for (Country country : continent.getContainedCountries()) {
-                countryNames.add(country.getCountryName());
-            }
+//            for (Territory country : continent.getContainedCountries()) {
+//                countryNames.add(country.getCountryName());
+//            }
         }
         return countryNames;
     }
@@ -88,12 +90,12 @@ public class World {
         for(Continent continent:continents)
         {
             boolean owned=true;
-            for(Country country:continent.getContainedCountries()) {
-                if(!country.getOwner().getPlayer_name().equals(playerName))
-                {owned=false;
-                    break;
-                }
-            }
+//            for(Territory country:continent.getContainedCountries()) {
+//                if(!country.getOwner().getPlayer_name().equals(playerName))
+//                {owned=false;
+//                    break;
+//                }
+//            }
             if(owned)
                 occupiedContinents.add(continent);
 
@@ -108,16 +110,16 @@ public class World {
      * @param playerName the player name
      * @return the list of continents owned by the player
      */
-    public List<Country> getOwnedCountries(String playerName) {
-        List<Country> ocuupiedCountries=new ArrayList<Country>();
+    public List<Territory> getOwnedCountries(String playerName) {
+        List<Territory> ocuupiedCountries=new ArrayList<Territory>();
         for(Continent continent:continents)
         {
-            for(Country country:continent.getContainedCountries()) {
-                if(country.getOwner().getPlayer_name().equals(playerName))
-                {
-                    ocuupiedCountries.add(country);
-                }
-            }
+//            for(Territory country:continent.getContainedCountries()) {
+//                if(country.getOwner().getPlayer_name().equals(playerName))
+//                {
+//                    ocuupiedCountries.add(country);
+//                }
+//            }
 
         }
         return ocuupiedCountries;

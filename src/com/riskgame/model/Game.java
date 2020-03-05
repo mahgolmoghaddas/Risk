@@ -192,18 +192,18 @@ public class Game {
 			for(Player player:getPlayerList()) {
 				int armyToReinforce=((player.getCountriesOwned().size())/3);
 				for(Continent continent:getWorld().getOccupiedContinents(player.getPlayer_name())) {
-					armyToReinforce=armyToReinforce+continent.getControlValue();
+//					armyToReinforce=armyToReinforce+continent.getControlValue();
 				}
 				armyToReinforce=(armyToReinforce<3)?(3):armyToReinforce;
 				player.SetArmiesToplayer(armyToReinforce+player.GetArmies());
 			}
 		}
 
-		public void assignArmy(Country country, int count){
+		public void assignArmy(Territory country, int count){
 			for(Continent continent:getWorld().getContinents()) {
 				if(country==null)
 					continue;
-				country.setQuantityOfArmies(country.getQuantityOfArmies()+count);
+//				country.setQuantityOfArmies(country.getQuantityOfArmies()+count);
 
 			}
 		}
@@ -213,7 +213,7 @@ public class Game {
 	public void placeAllArmies() {
 		Queue<Player> tempQueue=getPlayerQueue();
 		setPlayer(tempQueue.remove());
-		ArrayList<Country> countries=getPlayer().getCountriesOwned();
+		ArrayList<Territory> countries=getPlayer().getCountriesOwned();
 
 		int countryindex=0;
 		while(getPlayer().GetArmies()!=0)

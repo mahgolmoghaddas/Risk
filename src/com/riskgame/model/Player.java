@@ -19,7 +19,7 @@ public class Player {
 	private int armiesHeld;
 	private int armiesFromCards;
 	private Score playerScore;
-	private ArrayList<Country> countriesOwned;
+	private ArrayList<Territory> countriesOwned;
 
 
 
@@ -117,11 +117,11 @@ public class Player {
 	}
 
 
-	public ArrayList<Country> getCountriesOwned() {
+	public ArrayList<Territory> getCountriesOwned() {
 		return countriesOwned;
 	}
 
-	public void setCountriesOwned(ArrayList<Country> countriesOwned) {
+	public void setCountriesOwned(ArrayList<Territory> countriesOwned) {
 		this.countriesOwned = countriesOwned;
 	}
 	public void setStartDiceNo(Integer startUpDiceNo) {

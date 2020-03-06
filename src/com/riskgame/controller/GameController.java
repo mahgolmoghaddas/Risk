@@ -14,6 +14,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import com.riskgame.model.Continent;
+import com.riskgame.model.Territory;
+import com.riskgame.model.World;
 import com.riskgame.utility.MapReader;
 import com.riskgame.utility.ViewUtility;
 import com.riskgame.view.MainWindowView;
@@ -25,6 +29,7 @@ public class GameController implements ActionListener {
 	JPanel gamePanel;
 	JComboBox comboBoxlist;
 	MainWindowView mainWindowView;
+	World currentWorldMap;
 
 	public GameController() {
 
@@ -141,7 +146,9 @@ public class GameController implements ActionListener {
 						
 						if(mapReader.isValidMap(mapFile)) {
 							
-							mapReader.createWorldMap();
+							currentWorldMap = mapReader.createWorldMap();
+							printWorldMap();
+							
 							JOptionPane.showMessageDialog(newGameFrame.getContentPane(), "Map Loaded successfully", "MESSAGE",
 									JOptionPane.INFORMATION_MESSAGE);
 						}else {
@@ -159,4 +166,26 @@ public class GameController implements ActionListener {
 
 	}
 
+	public void printWorldMap() {
+		System.out.println("World MAP:: "+currentWorldMap);
+		System.out.println("WorldMap ::" + currentWorldMap.getAuthor());
+		
+		for(int i=0;i<currentWorldMap.getContinents().size();i++) {
+			Continent continent = currentWorldMap.getContinents().get(i);
+			
+			System.out.println(continent.getContinentName()+" ::BONUS"+continent.getBonusPoint());
+			System.out.println("*********");
+			
+			for(int j =0;j<continent.getTerritoryList().size();j++) {
+				
+				Territory territory = continent.getTerritoryList().get(j);
+				System.out.println(territory.getCountryName() +" "+territory.getTerritoryPosition().getX() + "  "+territory.getTerritoryPosition().getY());
+				System.out.println(territory.getNeighborsTerritory().toString());
+				
+			}
+			System.out.println(" #########################");
+		}
+		
+		
+	}
 }

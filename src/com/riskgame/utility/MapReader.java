@@ -29,7 +29,6 @@ public class MapReader {
 	HashMap<String, ArrayList<Territory>> continentTerritoryMap = new HashMap<>();
 	HashMap<String, String> mapInfo = new HashMap<>();
 
-
 	public boolean isValidMap(File mapFile) throws Exception {
 
 		boolean isValidMap = true;
@@ -46,6 +45,7 @@ public class MapReader {
 						continentInfo.clear();
 						return isValidMap;
 					}
+
 				} else if (line.contains(TERRITORY_FORMAT)) {
 
 					isValidMap = checkAndCreateTerritoryInfo(br);
@@ -67,7 +67,7 @@ public class MapReader {
 		boolean isValidContinent = true;
 		String line;
 		int continentCounter = 0;
-		while ((line = br.readLine()) != null) {
+		while ((line = br.readLine()) != null && !"".equals(line)) {
 
 			String[] continentArr = line.split("=");
 
@@ -90,14 +90,17 @@ public class MapReader {
 
 		while ((line = br.readLine()) != null) {
 
-			String[] territoriesArr = line.split("=");
+			if (!"".equals(line)) {
+				String[] territoriesArr = line.split(",");
 
-			if (territoriesArr == null || territoriesArr.length < 5 || !isNumeric(territoriesArr[1])
-					|| !isNumeric(territoriesArr[2]) || !checkIfContinent(territoriesArr[3])) {
-				isValidTerritory = false;
-				return isValidTerritory;
+				if (territoriesArr.length < 5 || !isNumeric(territoriesArr[1]) || !isNumeric(territoriesArr[2])
+						|| !checkIfContinent(territoriesArr[3])) {
+					isValidTerritory = false;
+					return isValidTerritory;
+				}
+				createTerritory(territoriesArr);
 			}
-			createTerritory(territoriesArr);
+			
 		}
 		return isValidTerritory;
 	}
@@ -105,7 +108,7 @@ public class MapReader {
 	public void createMapInfo(BufferedReader br) throws Exception {
 		String line;
 
-		while ((line = br.readLine()) != null) {
+		while ((line = br.readLine()) != null && !"".equals(line)) {
 
 			String[] mapArr = line.split("=");
 
@@ -116,6 +119,7 @@ public class MapReader {
 				mapInfo.put(keyName, valueName);
 			}
 		}
+		System.out.println(line);
 	}
 
 	public boolean isNumeric(String value) {

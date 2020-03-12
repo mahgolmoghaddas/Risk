@@ -58,7 +58,7 @@ public class MainWindowView extends JFrame {
 	}
 
 	public JMenu createGameMenu() throws Exception {
-		JMenu openMenu = viewUtility.createMenu("Open");
+		JMenu openMenu = viewUtility.createMenu("Game");
 		Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
 
 		JMenuItem gameMenuItem = new JMenuItem("New Game");

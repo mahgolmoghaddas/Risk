@@ -4,6 +4,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Iterator;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -118,7 +119,7 @@ public class GameController implements ActionListener {
 		return panelComboBox;
 	}
 
-	public void createLoadMapPanel() throws Exception{
+	public void createLoadMapPanel() throws Exception {
 		JLabel loadMapLaber = new JLabel("Load map:");
 		gamePanel.add(loadMapLaber);
 		gamePanel.add(createLoadMapButton());
@@ -143,19 +144,19 @@ public class GameController implements ActionListener {
 						File mapFile = chooser.getSelectedFile();
 
 						MapReader mapReader = new MapReader();
-						
-						if(mapReader.isValidMap(mapFile)) {
-							
+
+						if (mapReader.isValidMap(mapFile)) {
+
 							currentWorldMap = mapReader.createWorldMap();
 							printWorldMap();
-							
-							JOptionPane.showMessageDialog(newGameFrame.getContentPane(), "Map Loaded successfully", "MESSAGE",
-									JOptionPane.INFORMATION_MESSAGE);
-						}else {
-							JOptionPane.showMessageDialog(newGameFrame.getContentPane(), "Unsupported Map File", "MESSAGE",
-									JOptionPane.ERROR_MESSAGE);
+
+							JOptionPane.showMessageDialog(newGameFrame.getContentPane(), "Map Loaded successfully",
+									"MESSAGE", JOptionPane.INFORMATION_MESSAGE);
+						} else {
+							JOptionPane.showMessageDialog(newGameFrame.getContentPane(), "Unsupported Map File",
+									"MESSAGE", JOptionPane.ERROR_MESSAGE);
 						}
-						
+
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -167,25 +168,28 @@ public class GameController implements ActionListener {
 	}
 
 	public void printWorldMap() {
-		System.out.println("World MAP:: "+currentWorldMap);
+		System.out.println("World MAP:: " + currentWorldMap);
 		System.out.println("WorldMap ::" + currentWorldMap.getAuthor());
-		
-		for(int i=0;i<currentWorldMap.getContinents().size();i++) {
-			Continent continent = currentWorldMap.getContinents().get(i);
-			
-			System.out.println(continent.getContinentName()+" ::BONUS"+continent.getBonusPoint());
+		Iterator<Continent> continentIterator = currentWorldMap.getContinents().iterator();
+
+//		for(int i=0;i<currentWorldMap.getContinents().size();i++) {
+		while (continentIterator.hasNext()) {
+			Continent continent = continentIterator.next();
+
+			System.out.println(continent.getContinentName() + " ::BONUS" + continent.getBonusPoint());
 			System.out.println("*********");
-			
-			for(int j =0;j<continent.getTerritoryList().size();j++) {
-				
-				Territory territory = continent.getTerritoryList().get(j);
-				System.out.println(territory.getCountryName() +" "+territory.getTerritoryPosition().getX() + "  "+territory.getTerritoryPosition().getY());
+
+			Iterator<Territory> territoryIterator = continent.getTerritoryList().iterator();
+//			for(int j =0;j<continent.getTerritoryList().size();j++) {
+			while (territoryIterator.hasNext()) {
+				Territory territory = territoryIterator.next();
+				System.out.println(territory.getCountryName() + " " + territory.getTerritoryPosition().getX() + "  "
+						+ territory.getTerritoryPosition().getY());
 				System.out.println(territory.getNeighborsTerritory().toString());
-				
+
 			}
 			System.out.println(" #########################");
 		}
-		
-		
+
 	}
 }

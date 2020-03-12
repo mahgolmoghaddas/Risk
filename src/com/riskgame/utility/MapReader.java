@@ -26,7 +26,7 @@ public class MapReader {
 	private static final String MAP_FORMAT = "[Map]";
 
 	HashMap<String, Double> continentInfo = new HashMap<>();
-	HashMap<String, ArrayList<Territory>> continentTerritoryMap = new HashMap<>();
+	HashMap<String, HashSet<Territory>> continentTerritoryMap = new HashMap<>();
 	HashMap<String, String> mapInfo = new HashMap<>();
 
 	public boolean isValidMap(File mapFile) throws Exception {
@@ -155,20 +155,20 @@ public class MapReader {
 			String continentName = territoryArray[3];
 			Coordinates territoryPosition = new Coordinates(xPosition, yPosition);
 
-			ArrayList<String> neighbourTerritories = new ArrayList<>();
+			HashSet<String> neighbourTerritories = new HashSet<>();
 
 			for (int i = 4; i < territoryArray.length; i++) {
 				neighbourTerritories.add(territoryArray[i]);
 			}
 			Territory territory = new Territory(countryName, territoryPosition, neighbourTerritories);
 
-			ArrayList<Territory> territoryList = new ArrayList<>();
+			HashSet<Territory> territoryList = new HashSet<>();
 			if (!continentTerritoryMap.isEmpty() && continentTerritoryMap.containsKey(continentName)) {
 
 				territoryList = continentTerritoryMap.get(continentName);
 
 				if (territoryList == null) {
-					territoryList = new ArrayList<>();
+					territoryList = new HashSet<>();
 				}
 				territoryList.add(territory);
 
@@ -182,13 +182,13 @@ public class MapReader {
 
 	public World createWorldMap() {
 		World world = null;
-		ArrayList<Continent> continentList = new ArrayList<Continent>();
+		HashSet<Continent> continentList = new HashSet<Continent>();
 		if (continentInfo != null && !continentInfo.isEmpty()) {
 			for (Entry<String, Double> continentEntry : continentInfo.entrySet()) {
 
 				String continentName = continentEntry.getKey();
 				Double bonusPoint = continentEntry.getValue();
-				ArrayList<Territory> territoryList = continentTerritoryMap.get(continentName);
+				HashSet<Territory> territoryList = continentTerritoryMap.get(continentName);
 
 				Continent continent = new Continent(continentName, territoryList, bonusPoint);
 				continentList.add(continent);

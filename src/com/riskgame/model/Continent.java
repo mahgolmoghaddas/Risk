@@ -7,10 +7,10 @@ import java.util.*;
  */
 public class Continent {
 	private String continentName;
-	private List<Territory> territoryList;
+	private HashSet<Territory> territoryList;
 	private double bonusPoint;
 
-	public Continent(String continentName, List<Territory> territoryList, double bonusPoint) {
+	public Continent(String continentName, HashSet<Territory> territoryList, double bonusPoint) {
 		this.continentName = continentName;
 		this.territoryList = territoryList;
 		this.bonusPoint = bonusPoint;
@@ -37,7 +37,7 @@ public class Continent {
 	 * Continent.
 	 * @return containedCountries
 	 */
-	public List<Territory> getTerritoryList() {
+	public HashSet<Territory> getTerritoryList() {
 		return territoryList;
 	}
 

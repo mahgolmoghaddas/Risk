@@ -6,20 +6,20 @@ import java.util.*;
  */
 public class World {
 
-    private ArrayList<Continent> continents;
+    private HashSet<Continent> continents;
     private String author;
     private String image;
     private String wrap;
     private String scroll;
     private String warn;
 
-    public World(ArrayList<Continent> continents) {
+    public World(HashSet<Continent> continents) {
         this.continents = continents;
     }
     /**
      * The class help to build the world and defines the properties to define the world map.
      */
-    public List<Continent> getContinents() {
+    public HashSet<Continent> getContinents() {
         return continents;
     }
 

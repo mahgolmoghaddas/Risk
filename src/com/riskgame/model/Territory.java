@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Territory {
 	private String countryName;
-	private ArrayList<String> neighborsTerritory;
+	private HashSet<String> neighborsTerritory;
 	private Coordinates territoryPosition;
 	private Player owner;
 	private int armyCount;
@@ -21,7 +21,7 @@ public class Territory {
 	 * @param territoryPosition
 	 * @param neighborsTerritory
 	 */
-	public Territory(String countryName, Coordinates territoryPosition, ArrayList<String> neighborsTerritory) {
+	public Territory(String countryName, Coordinates territoryPosition, HashSet<String> neighborsTerritory) {
 		this.countryName = countryName;
 		this.territoryPosition = territoryPosition;
 		this.neighborsTerritory = neighborsTerritory;
@@ -63,7 +63,7 @@ public class Territory {
 	 * Getter for determining neighbors.
 	 * @return neighbors.
 	 */
-	public ArrayList<String> getNeighborsTerritory() {
+	public HashSet<String> getNeighborsTerritory() {
 		return neighborsTerritory;
 	}
 

@@ -6,13 +6,19 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
+import java.util.Iterator;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 import com.riskgame.enums.GameScreen;
+import com.riskgame.model.Continent;
+import com.riskgame.model.Territory;
+import com.riskgame.model.World;
 
 public class ViewUtility {
 
@@ -51,4 +57,47 @@ public class ViewUtility {
 		menu.setCursor(cursor);
 		return menu;
 	}
+
+	public JTable createWorldMapTable(World world) throws Exception {
+
+		final String[] columnNames = { "Continent", "Bonus", "Territory" };
+		JTable worldMapTable = new JTable();
+
+		try {
+			DefaultTableModel dataModel = new DefaultTableModel(0, 0);
+			dataModel.setColumnIdentifiers(columnNames);
+			if (world != null && world.getContinents() != null && !world.getContinents().isEmpty()) {
+
+				Iterator<Continent> continentIterator = world.getContinents().iterator();
+
+				while (continentIterator.hasNext()) {
+
+					Continent continent = continentIterator.next();
+
+					double bonus = continent.getBonusPoint();
+
+					Iterator<Territory> territoryIterator = continent.getTerritoryList().iterator();
+					String territories = "";
+					
+					while(territoryIterator.hasNext()) {
+						territories = territories+","+territoryIterator.next().getCountryName();
+					}
+					
+					territories = territories.replace(",", "");
+
+					dataModel.addRow(new Object[] { continent.getContinentName(), bonus + "", territories });
+				}
+				worldMapTable.setModel(dataModel);
+				worldMapTable.setLocation(250, 300);
+				worldMapTable.setVisible(true);
+			} else {
+				throw new Exception("Invalid map file");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return worldMapTable;
+	}
+
 }

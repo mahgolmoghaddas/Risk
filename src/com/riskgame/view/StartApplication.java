@@ -4,7 +4,7 @@ public class StartApplication {
 
 	public static void main(String[] args) {
 		try {
-			MainWindowView mainWindowView = MainWindowView.getInstatnce();
+			MainWindowView mainWindowView = MainWindowView.getInstance();
 
 			mainWindowView.launchMainWindow();
 

@@ -38,8 +38,8 @@ public class TurnManagerTest {
 			playerList.add(p5);
 			playerList.add(p6);
 			TurnManager manager = new TurnManager(playerList);
-			assertEquals(manager.getNextPlayer().getPlayer_name(), "Dilip");
-			assertEquals(manager.getNextPlayer().getPlayer_name(), "Evelyn");
+			assertEquals(manager.getNextPlayer().getPlayerName(), "Dilip");
+			assertEquals(manager.getNextPlayer().getPlayerName(), "Evelyn");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

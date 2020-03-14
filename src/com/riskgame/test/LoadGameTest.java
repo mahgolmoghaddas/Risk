@@ -11,26 +11,26 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.riskgame.model.Card;
-import com.riskgame.model.Game;
+import com.riskgame.model.Board;
 import com.riskgame.model.Player;
 
 public class LoadGameTest {
-	Game game;
+	Board game;
 	List<String> cardTypeList = Arrays.asList("Infantry", "Cavalry", "Artillery");
 	List<Card> deck;
 
 	@Before
 	public void setup() {
 		try {
-			game = new Game();
-			game.addNewCardToDeck("Altanta");
-			game.addNewCardToDeck("Nepal");
-			game.addNewCardToDeck("Iran");
-			game.addNewCardToDeck("India");
-			
-			game.addPlayer("Maghol");
-			game.addPlayer("Himani");
-			game.addPlayer("Jasmeet");
+//			game = Game.getInstance();
+//			game.addNewCardToDeck("Altanta");
+//			game.addNewCardToDeck("Nepal");
+//			game.addNewCardToDeck("Iran");
+//			game.addNewCardToDeck("India");
+//			
+//			game.addPlayer("Maghol");
+//			game.addPlayer("Himani");
+//			game.addPlayer("Jasmeet");
 			
 			deck = game.getCardDeck();
 		} catch (Exception e) {

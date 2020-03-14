@@ -1,6 +1,6 @@
 package com.riskgame.test;
 
-import com.riskgame.model.Game;
+import com.riskgame.model.Board;
 import com.riskgame.model.Player;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

@@ -1,26 +1,11 @@
 package com.riskgame.controller;
 
-import com.riskgame.view.BoardView;
+import com.riskgame.model.World;
 
-/**
- * This class collaborating to the GameFrame class to invoke the BoardView class
- */
-
-public class BoardController{
-
-    private BoardView boardView;
-    public BoardController(BoardView board){
-            this.boardView=board;
-            boardView.initaliseUI();
-    }
-
-
-
-    }
-
-
-
-
-
-
-
+public class BoardController {
+	
+	public  BoardController(World world,int playersCount) {
+		
+	}
+	
+}

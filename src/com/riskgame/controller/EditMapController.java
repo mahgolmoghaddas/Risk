@@ -25,7 +25,7 @@ public class EditMapController implements ActionListener {
 	ViewUtility viewUtility = new ViewUtility();
 
 	public EditMapController() {
-		mainWindowView = MainWindowView.getInstatnce();
+		mainWindowView = MainWindowView.getInstance();
 	}
 
 	@Override

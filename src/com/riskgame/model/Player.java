@@ -1,9 +1,6 @@
 package com.riskgame.model;
 
-import java.util.List;
 import java.util.*;
-import java.util.Map;
-
 /**
  * This class is used for player module which contains variables for name of the
  * Player, Armies it has held etc and methods to change the status of the
@@ -12,37 +9,34 @@ import java.util.Map;
  * @author Himani
  * @version 1.0.0.0
  */
-public class Player {
 
-	private int player_id;
-	private String player_name;
+import com.riskgame.utility.PlayersColor;
+public class Player extends Observable {
+
+	private int playerId;
+	private String playerName;
+	private PlayersColor color;
 	private int armiesHeld;
-	private int armiesFromCards;
 	private Score playerScore;
-	private ArrayList<Territory> countriesOwned;
-
-
-
-	public HashMap<String, Continent> getContinentHeld() {
-		return continentHeld;
-	}
-
+	private HashSet<Territory> countriesOwned;
+	private HashSet<Continent> continentsOwned;
 	private List<Card> cardsHeld;
-	private HashMap<String, Continent> continentHeld;
 	private Integer startDiceNo;
 
 	/**
 	 * The parameterized constructor takes player id and name as parameters
 	 * 
-	 * @param player_id   of type integer which is the Id of the player
-	 * @param player_name of type string which is the name of the player
+	 * @param playerId   of type integer which is the Id of the player
+	 * @param playerName of type string which is the name of the player
 	 */
-	public Player(int player_id, String player_name) {
-		this.player_id = player_id;
-		this.player_name = player_name;
+	public Player(int playerId, String playerName) {
+		this.playerId = playerId;
+		this.playerName = playerName;
 		armiesHeld = 0;
-		armiesFromCards = 0;
-		countriesOwned=new ArrayList<>();
+		countriesOwned = new HashSet<>();
+		continentsOwned = new HashSet<>();
+		cardsHeld = new ArrayList<Card>();
+		playerScore = new Score();
 	}
 
 	/**
@@ -50,8 +44,8 @@ public class Player {
 	 * 
 	 * @return of type integer, is the id of the player
 	 */
-	public int GetId() {
-		return this.player_id;
+	public int getId() {
+		return this.playerId;
 	}
 
 	/**
@@ -59,8 +53,8 @@ public class Player {
 	 * 
 	 * @return of type string, is the name of the player
 	 */
-	public String GetName() {
-		return this.player_name;
+	public String getName() {
+		return this.playerName;
 	}
 
 	/**
@@ -68,17 +62,17 @@ public class Player {
 	 * 
 	 * @param armiesHeld of type integer, will set the armies to the player
 	 */
-	public void SetArmiesToplayer(int armiesHeld) {
+	public void setArmiesToplayer(int armiesHeld) {
 		this.armiesHeld = armiesHeld;
 	}
 
 	/**
 	 * this method gets the number of armies that the player has
 	 * 
-	 * @param player_id is the id of the player
+	 * @param playerId is the id of the player
 	 * @return the number of armies of the player
 	 */
-	public int GetArmies() {
+	public int getArmiesHeld() {
 		return this.armiesHeld;
 	}
 
@@ -87,7 +81,7 @@ public class Player {
 	 * 
 	 * @param armiesHeld is the number of new armies
 	 */
-	public void SetArmies(int armiesHeld) {
+	public void setArmiesHeld(int armiesHeld) {
 		this.armiesHeld = armiesHeld;
 	}
 
@@ -95,50 +89,28 @@ public class Player {
 	 * this method adds the armies exchanged with cards
 	 * 
 	 * @param armiesFromCards, which is the number of armies that will be added to
-	 *        the player
+	 *                         the player
 	 */
-	public void AddArmiesFromCards(int armiesFromCards) {
-		this.armiesFromCards += armiesFromCards;
+	public void addArmiesFromCards(int armiesFromCards) {
 		this.armiesHeld += armiesFromCards;
-	}
-
-	/**
-	 * this method returns the number of armiesFromCards that the player has
-	 * 
-	 * @param player_id, id of the player
-	 * @return the number of armies of the player
-	 */
-	public int GetArmiesFromCards() {
-		return this.armiesFromCards;
+		playerDataChanged();		
 	}
 
 	public Integer getStartDiceNo() {
 		return startDiceNo;
 	}
 
-
-	public ArrayList<Territory> getCountriesOwned() {
-		return countriesOwned;
-	}
-
-	public void setCountriesOwned(ArrayList<Territory> countriesOwned) {
-		this.countriesOwned = countriesOwned;
-	}
 	public void setStartDiceNo(Integer startUpDiceNo) {
 		this.startDiceNo = startUpDiceNo;
 	}
 
-	/**
-	 * Set number of continents held by the player.
-	 * 
-	 * @param continentHeld
-	 */
-	public void setContinentHeld(HashMap<String, Continent> continentHeld) {
-		this.continentHeld = continentHeld;
+	public HashSet<Territory> getCountriesOwned() {
+		return countriesOwned;
 	}
 
-	public String getPlayer_name() {
-		return player_name;
+	public void setCountriesOwned(HashSet<Territory> countriesOwned) {
+		this.countriesOwned = countriesOwned;
+		playerDataChanged();
 	}
 
 	public Score getPlayerScore() {
@@ -147,6 +119,7 @@ public class Player {
 
 	public void setPlayerScore(Score playerScore) {
 		this.playerScore = playerScore;
+		playerDataChanged();
 	}
 
 	public List<Card> getCardsHeld() {
@@ -155,6 +128,35 @@ public class Player {
 
 	public void setCardsHeld(List<Card> cardsHeld) {
 		this.cardsHeld = cardsHeld;
+		playerDataChanged();
 	}
+
+	public String getPlayerName() {
+		return playerName;
+	}
+
+	public HashSet<Continent> getContinentsOwned() {
+		return continentsOwned;
+	}
+
+	public void setContinentsOwned(HashSet<Continent> continentsOwned) {
+		this.continentsOwned = continentsOwned;
+		playerDataChanged();
+	}
+	
+	public PlayersColor getColor() {
+		return color;
+	}
+
+	public void setColor(PlayersColor color) {
+		this.color = color;
+	}
+	
+	public void playerDataChanged() {
+		setChanged();
+		notifyObservers();
+	}
+	
+	
 
 }

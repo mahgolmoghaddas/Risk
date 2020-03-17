@@ -25,7 +25,7 @@ public class GameController implements ActionListener {
 	private int numberOfPlayers;
 	private BoardView boardView;
 	private Board game ;
-	
+	private NewGameView newGameView;
 	private GameUtility gameUtility = new GameUtility();
 	
 	public GameController(boolean isGamePlay) {
@@ -39,7 +39,7 @@ public class GameController implements ActionListener {
 			if (isGamePlay) {
 				initiateBoardAndPlayGame();
 			} else {
-				NewGameView newGameView = new NewGameView(this);
+				newGameView = new NewGameView(this);
 				newGameView.launchNewGameFrame();
 			}
 

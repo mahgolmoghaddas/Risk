@@ -22,11 +22,10 @@ import com.riskgame.model.World;
 import com.riskgame.utility.MapReader;
 import com.riskgame.utility.ViewUtility;
 
-public class NewGameView {
+public class NewGameView extends JFrame{
 
 	private JFrame newGameFrame;
 	private JPanel gamePanel;
-	private MainWindowView mainWindowView;
 	private JButton cancelButton;
 	private JButton startGameButton;
 
@@ -35,15 +34,15 @@ public class NewGameView {
 
 	private World currentWorldMap;
 	private int playersCount;
-	
-	private GameController gameController;
-	
 
+	private GameController gameController;
+
+	
+	
 	public NewGameView(GameController gameController) {
-		mainWindowView =MainWindowView.getInstance();
 		this.gameController = gameController;
 	}
-	
+
 	public void launchNewGameFrame() {
 		try {
 			newGameFrame = viewUtility.createMainFrame("Start Game", false);
@@ -114,7 +113,7 @@ public class NewGameView {
 				FileNameExtensionFilter mapFileFilter = new FileNameExtensionFilter("Map files", "map");
 				chooser.setFileFilter(mapFileFilter);
 
-				int selection = chooser.showOpenDialog(mainWindowView.getContentPane());
+				int selection = chooser.showOpenDialog(newGameFrame.getContentPane());
 
 				if (selection != JFileChooser.CANCEL_OPTION) {
 					File mapFile = chooser.getSelectedFile();

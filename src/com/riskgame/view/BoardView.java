@@ -13,7 +13,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.riskgame.model.Board;
+import com.riskgame.model.Player;
+import com.riskgame.model.Territory;
 import com.riskgame.utility.ViewUtility;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 public class BoardView implements Observer {
 
@@ -48,6 +51,7 @@ public class BoardView implements Observer {
 			container.add(worldMapPanel, "Center");
 			
 			mainBoardFrame.setVisible(true);
+			printPlayerDetails(board);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -60,6 +64,20 @@ public class BoardView implements Observer {
 		File file = new File(fileName);
 		BufferedImage image =  ImageIO.read(file);
 		worldMapPanel.setImage(image);
+	}
+	
+	public void printPlayerDetails(Board board) {
+		System.out.println("playerlist size:::"+ board.getPlayerList().size());
+		for(Player player:board.getPlayerList()) {
+			System.out.println(player.getName() + " ::"+player.getArmiesHeld());
+			System.out.println(player.getCountriesOwned().size());
+			for(Territory territory : player.getCountriesOwned()) {
+				
+				System.out.println(territory.getArmyCount());
+				System.out.println(territory.getCountryName());
+				System.err.println(territory.getOwner().getName());
+			}
+		}
 	}
 
 	

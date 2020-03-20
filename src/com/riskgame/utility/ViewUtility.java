@@ -8,6 +8,7 @@ import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.util.Iterator;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,6 +22,8 @@ import com.riskgame.model.Territory;
 import com.riskgame.model.World;
 
 public class ViewUtility {
+
+	
 
 	public JFrame createMainFrame(String name, boolean showBackGround) {
 		JFrame frame = new JFrame(name);
@@ -48,6 +51,33 @@ public class ViewUtility {
 		}
 		return frame;
 	}
+	
+	
+	/**
+	 * create and return the frame for mapeditor
+	 * @param name
+	 * @return JFrame
+	 * @throws Exception
+	 */
+	public JFrame editFrame(String name) throws Exception {
+		JFrame frame = new JFrame(name);
+		
+			Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+
+			double width = GameScreen.WIDTH.getValue();
+			double height = GameScreen.HEIGHT.getValue();
+			dim.width = (int) (dim.width * width);
+			dim.height = (int) (dim.height * height);
+
+			System.out.println(dim.getHeight() + " " + dim.getWidth());
+			frame.setSize(dim);
+	        BoxLayout boxLayout = new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS); // top to bottom
+	        frame.setLayout(boxLayout);
+			
+			return frame;
+	}
+	
+	
 
 	public JMenu createMenu(String name) throws Exception {
 		JMenu menu = new JMenu(name);
@@ -91,7 +121,15 @@ public class ViewUtility {
 				worldMapTable.setLocation(250, 300);
 				worldMapTable.setVisible(true);
 			} else {
-				throw new Exception("Invalid map file");
+				if(world==null) {
+					System.out.print("world is null");
+				}
+				else if(world.getContinents() == null) {
+					System.out.print("Continent is null");
+				}
+				else if(world.getContinents().isEmpty()) {
+					System.out.print("Continent is empty");
+				}
 			}
 
 		} catch (Exception e) {

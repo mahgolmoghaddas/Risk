@@ -15,10 +15,14 @@ public class Continent {
 		this.territoryList = territoryList;
 		this.bonusPoint = bonusPoint;
 	}
+	public Continent() {
+		bonusPoint=0;
+		territoryList=new HashSet<Territory>();
+	}
 
 	/**
 	 * getter method for the Bonus value of the Continent.
-	 * 
+	 *
 	 * @return controlValue
 	 */
 	public double getBonusPoint() {
@@ -41,14 +45,28 @@ public class Continent {
 		return territoryList;
 	}
 
+
 	/**
-	 * getter method for the determining the list of the territories contained in the
-	 * Continent.
-	 * 
+	 * setter method for the determining the list of the territories contained in the
+	 * @param territoryList
+	 */
+	public void setTerritoryList(HashSet territoryList) {
+		this.territoryList=territoryList;
+	}
+	/**
+	 * getter method for the name of the continent
+	 *
 	 * @return continentName
 	 */
 	public String getContinentName() {
 		return continentName;
+	}
+	/**
+	 * setter method for determining continent name
+	 * @param ContinentName
+	 */
+	public void setContinentName(String continentName) {
+		this.continentName=continentName;
 	}
 
 }

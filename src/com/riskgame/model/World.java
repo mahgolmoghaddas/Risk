@@ -22,7 +22,11 @@ public class World {
 		this.continents = continents;
 		setTerritorySet();
 	}
+	public World() {
+		continents=new HashSet<Continent>();
+		author="";
 
+	}
 	/**
 	 * The class help to build the world and defines the properties to define the
 	 * world map.
@@ -96,5 +100,10 @@ public class World {
 			}
 		}
 	}
+    public void addContinent(Continent continent){
+    	
+    	getContinents().add(continent);
+    	
+    }
 
 }

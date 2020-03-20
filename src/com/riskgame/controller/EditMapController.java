@@ -1,10 +1,14 @@
 package com.riskgame.controller;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.HashSet;
 
+import javax.swing.*;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -13,72 +17,109 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.riskgame.model.World;
+import com.riskgame.model.Continent;
+import com.riskgame.model.Territory;
 import com.riskgame.utility.MapReader;
 import com.riskgame.utility.ViewUtility;
-import com.riskgame.view.MainWindowView;
-
+import com.riskgame.view.*;
 public class EditMapController implements ActionListener {
 
+	private HashSet<Continent> continents;
+	EditMapView editMapView;
 	MainWindowView mainWindowView;
 	JFrame editMapFrame;
 	JPanel editMapPanel;
+	JPanel toolBar ;
+	JPanel countryPanel ;
+	JLabel continentLabel;
 	ViewUtility viewUtility = new ViewUtility();
+	JButton showMapButton;
+	JButton addContinentButton;
+	JButton addCountryButton;
+	JButton save;
+	World world;
 
-	public EditMapController() {
-		mainWindowView = MainWindowView.getInstance();
+
+
+
+
+
+
+	public EditMapController(EditMapView editMapView) {
+		// TODO Auto-generated constructor stub
+		this.editMapView=editMapView;
+		this.world=editMapView.world;
 	}
+
+
+
+
 
 	@Override
 	public void actionPerformed(ActionEvent actionEvent) {
+		String st=actionEvent.getActionCommand();
 
-		JFileChooser chooser = new JFileChooser();
-		try {
-			chooser.setMultiSelectionEnabled(false);
-			chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-
-			FileNameExtensionFilter mapFileFilter = new FileNameExtensionFilter("Map files", "map");
-			chooser.setFileFilter(mapFileFilter);
-
-			int selection = chooser.showOpenDialog(mainWindowView.getContentPane());
-
-			if (selection != JFileChooser.CANCEL_OPTION) {
-				File mapFile = chooser.getSelectedFile();
-
-				// Show panel to edit the map
-				MapReader mapReader = new MapReader();
-//
-				if (mapReader.isValidMap(mapFile)) {
-					
-					World world = mapReader.createWorldMap();
-					createEditMapPanel(world);
-
-//
-//					JOptionPane.showMessageDialog(editMapFrame.getContentPane(),
-//							"Please click save button to update the map", "MESSAGE", JOptionPane.INFORMATION_MESSAGE);
-				} else {
-					JOptionPane.showMessageDialog(editMapFrame.getContentPane(), "Unsupported Map File", "MESSAGE",
-							JOptionPane.ERROR_MESSAGE);
-				}
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(st=="Add Continent") {
+			addContinent();
+		}
+		else if(st==" Add Country") {
+			addCountry();
+		}
+		else if(st=="Save The Changes") {
+			//saveChanges();
 		}
 	}
 
-	private void createEditMapPanel(World world) throws Exception{
-		editMapFrame = viewUtility.createMainFrame("Edit Map", false);
 
-		editMapPanel = new JPanel();
-		editMapPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-		editMapPanel.setBorder(new EmptyBorder(20, 10, 10, 10));
-		
-		editMapPanel.add(viewUtility.createWorldMapTable(world));
-		
-		editMapFrame.add(editMapPanel);
-		editMapFrame.setVisible(true);
-		editMapFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+
+	/**
+	 * method for adding the continent to the map file
+	 */
+	public void addContinent() {
+		boolean loop=true;
+		while(loop==true) {
+			String continentName = JOptionPane.showInputDialog(null, "Enter the Continent name: ", "Add Continent", JOptionPane.OK_CANCEL_OPTION | JOptionPane.QUESTION_MESSAGE);
+			double controlValue=Integer.parseInt(JOptionPane.showInputDialog(null, "Enter the Continent Control Value: ", "Add Continent Control Value", JOptionPane.OK_CANCEL_OPTION | JOptionPane.QUESTION_MESSAGE));
+			if(continentName.isEmpty()) {
+				JOptionPane.showMessageDialog(null, "Please specify the name!");
+			}
+			loop=false;
+			createContinet(continentName, controlValue);
+		}
+
+
 
 	}
+	public void createContinet(String continentName, double controlValue) {
+		Continent continent=new Continent();
+		continent.setContinentName(continentName);
+		continent.setBonusPoint(controlValue);
+		world.addContinent(continent);
+	}
+
+
+	/**
+	 * method for adding the country to the designated continent
+	 */
+	public void addCountry() {
+		JTextField inputCountry = new JTextField();
+		String lastContinent = "";
+		int flag = 0;
+		if (world.getContinents().size() == 0) {
+			JOptionPane.showMessageDialog(null, "Please add the continent First");
+		} else {
+			String continents[] = new String[world.getContinents().size()];
+			int count = 0;
+			for (Continent name : world.getContinents()) {
+				continents[count++] = name.getContinentName();
+			}
+			JComboBox<Object> continentBox = new JComboBox<Object>(continents);
+			Object[] message = {"Select continent name : ", continentBox, "Enter the Country name : ", inputCountry};
+			continentBox.setSelectedIndex(0);
+		}}
+
+
+
 
 }

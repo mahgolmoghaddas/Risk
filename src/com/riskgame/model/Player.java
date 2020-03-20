@@ -1,5 +1,6 @@
 package com.riskgame.model;
 
+import java.awt.Color;
 import java.util.*;
 /**
  * This class is used for player module which contains variables for name of the
@@ -15,7 +16,7 @@ public class Player extends Observable {
 
 	private int playerId;
 	private String playerName;
-	private PlayersColor color;
+	private Color color;
 	private int armiesHeld;
 	private Score playerScore;
 	private HashSet<Territory> countriesOwned;
@@ -144,11 +145,11 @@ public class Player extends Observable {
 		playerDataChanged();
 	}
 	
-	public PlayersColor getColor() {
-		return color;
+	public Color getColor() {
+		return this.color;
 	}
 
-	public void setColor(PlayersColor color) {
+	public void setColor(Color color) {
 		this.color = color;
 	}
 	

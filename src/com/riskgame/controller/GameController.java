@@ -90,15 +90,12 @@ public class GameController implements ActionListener {
 	public void assignArmiesToPlayer(ArrayList<Player> playerList) throws Exception {
 		if (playerList != null && !playerList.isEmpty()) {
 			int numberOfArmies = gameUtility.getNumberOfArmiesForEachPlayer(playerList.size());
-			System.out.println("numberOfArmines "+numberOfArmies );
 
 			for (Player player : playerList) {
 				player.setArmiesToplayer(numberOfArmies);
 			}
 		}
 		
-		System.out.println("PLAYER 1 ARMIES"+playerList.get(0).getArmiesHeld());
-		System.out.println("PLAYER 2 ARMIES "+playerList.get(1).getArmiesHeld());
 	}
 
 	/**

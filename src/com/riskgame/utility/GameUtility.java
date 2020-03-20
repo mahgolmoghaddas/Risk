@@ -1,5 +1,5 @@
 package com.riskgame.utility;
-
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -29,22 +29,22 @@ public class GameUtility {
 			Player player = new Player(i, "Player" + i);
 			switch (i) {
 			case 1:
-				player.setColor(PlayersColor.BLUE);
+				player.setColor(Color.BLUE);
 				break;
 			case 2:
-				player.setColor(PlayersColor.GREEN);
+				player.setColor(Color.GREEN);
 				break;
 			case 3:
-				player.setColor(PlayersColor.ORANGE);
+				player.setColor(Color.ORANGE);
 				break;
 			case 4:
-				player.setColor(PlayersColor.PINK);
+				player.setColor(Color.PINK);
 				break;
 			case 5:
-				player.setColor(PlayersColor.YELLOW);
+				player.setColor(Color.YELLOW);
 				break;
 			case 6:
-				player.setColor(PlayersColor.RED);
+				player.setColor(Color.RED);
 				break;
 			default:
 				break;

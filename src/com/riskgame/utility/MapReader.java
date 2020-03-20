@@ -4,6 +4,8 @@ import com.riskgame.model.Territory;
 import com.riskgame.model.Continent;
 import com.riskgame.model.Coordinates;
 import com.riskgame.model.World;
+import com.riskgame.view.*;
+import com.riskgame.controller.*;
 
 import java.sql.SQLOutput;
 import java.util.*;
@@ -21,6 +23,9 @@ import java.io.*;
  */
 public class MapReader {
 
+	MainWindowView mainWindowView;
+	JFrame editMapFrame;
+
 	private static final String TERRITORY_FORMAT = "[Territories]";
 	private static final String CONTINENT_FORMAT = "[Continents]";
 	private static final String MAP_FORMAT = "[Map]";
@@ -28,6 +33,55 @@ public class MapReader {
 	HashMap<String, Double> continentInfo = new HashMap<>();
 	HashMap<String, HashSet<Territory>> continentTerritoryMap = new HashMap<>();
 	HashMap<String, String> mapInfo = new HashMap<>();
+
+
+
+
+	public MapReader() {
+		this.mainWindowView=MainWindowView.getInstance();
+	}
+
+
+
+
+
+
+	public World fileChooser()throws Exception {
+		World w=null;
+		JFileChooser chooser = new JFileChooser();
+
+		chooser.setMultiSelectionEnabled(false);
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+		FileNameExtensionFilter mapFileFilter = new FileNameExtensionFilter("Map files", "map");
+		chooser.setFileFilter(mapFileFilter);
+
+		int selection = chooser.showOpenDialog(mainWindowView.getContentPane());
+
+		if (selection != JFileChooser.CANCEL_OPTION) {
+			File mapFile = chooser.getSelectedFile();
+			if (isValidMap(mapFile)) {
+				w = createWorldMap();
+//				EditMapController edit=new EditMapController();
+//				edit.createEditMapPanel(w);
+			}else {
+				JOptionPane.showMessageDialog(editMapFrame.getContentPane(), "Unsupported Map File", "MESSAGE",
+						JOptionPane.ERROR_MESSAGE);
+
+			}
+
+		}
+		return w;
+
+
+	}
+
+
+
+
+
+
+
 
 	public boolean isValidMap(File mapFile) throws Exception {
 
@@ -100,7 +154,7 @@ public class MapReader {
 				}
 				createTerritory(territoriesArr);
 			}
-			
+
 		}
 		return isValidTerritory;
 	}
@@ -204,23 +258,23 @@ public class MapReader {
 					String value = mapEntry.getValue();
 
 					switch (key) {
-					case "author":
-						world.setAuthor(value);
-						break;
-					case "image":
-						world.setImage(value);
-						break;
-					case "wrap":
-						world.setWrap(value);
-						break;
-					case "scroll":
-						world.setScroll(value);
-						break;
-					case "warn":
-						world.setWarn(value);
-						break;
-					default:
-						break;
+						case "author":
+							world.setAuthor(value);
+							break;
+						case "image":
+							world.setImage(value);
+							break;
+						case "wrap":
+							world.setWrap(value);
+							break;
+						case "scroll":
+							world.setScroll(value);
+							break;
+						case "warn":
+							world.setWarn(value);
+							break;
+						default:
+							break;
 					}
 				}
 			}

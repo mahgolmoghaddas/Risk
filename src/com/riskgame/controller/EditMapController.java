@@ -67,10 +67,20 @@ public class EditMapController implements ActionListener {
 			deleteContinent();
 		}
 		else if(st=="Delete Country") {
-			//deleteCountry();
+			try {
+				deleteCountry();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}
+
+
+
+
+
 
 
 
@@ -230,27 +240,126 @@ public class EditMapController implements ActionListener {
 	
     public void deleteContinent() {
         
-            String continents[] = new String[world.getContinents().size()];
-            int count = 0;
-            for (Continent continent : world.getContinents()) {
-                continents[count++] = continent.getContinentName();
-            }
-            JComboBox<Object> continentBox = new JComboBox<Object>(continents);
-            continentBox.setSelectedIndex(0);
-            JOptionPane.showConfirmDialog(null, continentBox, "Select Continent ", JOptionPane.OK_CANCEL_OPTION);
-            if (continentBox.getSelectedIndex() > 0) {
-                	removeContinentService((String) continentBox.getItemAt(continentBox.getSelectedIndex()),true);
-                   
-                	viewUtility.createWorldMapTable(getWorld());
+    	String continents[] = new String[world.getContinents().size()];
+        int count = 0;
+        for (Continent name : world.getContinents()) {
+            continents[count++] = name.getContinentName();
+        }
+        JComboBox<Object> continentBox = new JComboBox<Object>(continents);
+        continentBox.setSelectedIndex(-1);
+        JOptionPane.showConfirmDialog(null, continentBox, "Select continent name : ", JOptionPane.OK_CANCEL_OPTION);
+        if (continentBox.getSelectedIndex() > -1) {
+            int result = JOptionPane.showConfirmDialog(null, "Deleting Continent will delete all the countries! \n Do you want to Continue ?");
+            if (result == JOptionPane.YES_OPTION) {
+            	String continentName=(String) continentBox.getItemAt(continentBox.getSelectedIndex());
+            	HashSet<String>  removedCountries=new HashSet<String>();
+                Continent tempContinent = null;
+                for (Continent continent : world.getContinents()) {
+                    if (continent.getContinentName().equals(continentName)) {
+                        tempContinent = continent;
+                        for (Territory c : tempContinent.getTerritoryList()) {
+                        	removedCountries.add(c.getCountryName());
+                        }
+                    }
                 }
+                world.removeContinent(tempContinent);
+                for (Continent continent : world.getContinents()) {
+                    for (Territory territory : continent.getTerritoryList()) {
+                        for (String neighbours : removedCountries) {
+                            if (territory.getNeighborsTerritory().contains(neighbours)) {
+                                territory.getNeighborsTerritory().remove(neighbours);
+                            }
+                        }
+                    }
+                }
+              
+            	try {
+					viewUtility.createWorldMapTable(world);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            }
+        }
             }
         
-    
+
+
+
+	private void deleteCountry() throws Exception {
+		// TODO Auto-generated method stub
+		HashSet<String> continentsList=new HashSet<String>();
+		int count = 0;
+        for (Continent continentName : world.getContinents()) {
+            if (continentName.getTerritoryList().size() > 0) {
+                continentsList.add(continentName.getContinentName());
+                
+            }
+        }
+        String[] continents = new String[continentsList.size()];
+        for (String value : continentsList) {
+            continents[count++] = value;
+        }
+		
+        
+        JComboBox<Object> continentBox = new JComboBox<Object>(continents);
+        continentBox.setSelectedIndex(-1);
+        int result = JOptionPane.showConfirmDialog(null, continentBox, "Continent Name ", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            if (continentBox.getSelectedItem() == null) {
+                JOptionPane.showMessageDialog(null, "Select The Continent!");
+            } else {
+                String continentNameString = (String) continentBox.getSelectedItem();
+                Continent continentName = null;
+                for (Continent name : world.getContinents()) {
+                    if (name.getContinentName().equals(continentNameString)) {
+                        continentName = name;
+                    }
+                }
+                if (continentName.getTerritoryList().size() == 0) {
+                    JOptionPane.showMessageDialog(null,
+                            continentName.getContinentName() + " has no country to remove");
+                } else {
+                    String countries[] = new String[continentName.getTerritoryList().size()];
+                    int val = 0;
+                    for (Territory countryName : continentName.getTerritoryList()) {
+                        countries[val++] = countryName.getCountryName();
+                    }
+                    JComboBox<Object> countryBox = new JComboBox<Object>(countries);
+                    countryBox.setSelectedIndex(-1);
+                    int CountryResult = JOptionPane.showConfirmDialog(null, countryBox, "Select Country name : ", JOptionPane.OK_CANCEL_OPTION);
+                    if (CountryResult == JOptionPane.OK_OPTION) {
+                        if (countryBox.getSelectedItem() == null) {
+                            JOptionPane.showMessageDialog(null, "Please select country");
+                        } else {
+                        	String countryName=(String) countryBox.getItemAt(countryBox.getSelectedIndex());
+                        	Territory tempCountry = continentName.findTerritory(countryName);	
+                            String removedCountry = tempCountry.getCountryName();
+                            continentName.deleteTerritory(tempCountry);
+                            for (Continent continent : world.getContinents()) {
+                                for (Territory territory : continent.getTerritoryList()) {
+                                    if (territory.getNeighborsTerritory().contains(removedCountry)) {
+                                  	  territory.getNeighborsTerritory().remove(removedCountry);
+                                    }
+                                }
+                            }
+                            }
+                           
+                        viewUtility.createWorldMapTable(world);
+                        }}}}
+                    
+		
+	}
 	
 	
 	
-	
-    /**
+
+
+
+
+
+
+	/**
      * Setter method to setup World
      * @param world World
      */

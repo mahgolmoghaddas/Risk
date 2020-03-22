@@ -26,7 +26,11 @@ public class Territory {
 		this.territoryPosition = territoryPosition;
 		this.neighborsTerritory = neighborsTerritory;
 	}
+	public Territory() {
+		
+	}
 
+	
 	/**
 	 * Getter for owner of the Country.
 	 * @return owner
@@ -72,15 +76,26 @@ public class Territory {
 	 * @return neighbors.
 	 */
 	public Coordinates getTerritoryPosition() {
+		
 		return territoryPosition;
 	}
 
+	
+	
+	
 	/**
 	 * Getter for naming the Country.
 	 * @return countryName
 	 */
 	public String getCountryName() {
 		return countryName;
+	}
+	public void setCountryName(String countryName) {
+		this.countryName=countryName;
+	}
+	public void setTerritoryPosition(Coordinates territoryPosition) {
+		// TODO Auto-generated method stub
+		this.territoryPosition=territoryPosition;
 	}
 
 }

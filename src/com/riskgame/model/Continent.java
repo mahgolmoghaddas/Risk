@@ -82,5 +82,17 @@ public class Continent {
 	public void addTerritory(Territory territory) {
 		getTerritoryList().add(territory);
 	}
+	public void deleteTerritory(Territory territory) {
+		getTerritoryList().remove(territory);
+	}
+	
+	public Territory findTerritory(String territory) {
+		for(Territory t: getTerritoryList()) {
+			if(t.getCountryName().equals(territory)) {
+				return t;
+			}
+		}
+		return null;
+	}
 
 }

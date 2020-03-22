@@ -10,9 +10,12 @@ import javax.swing.border.EmptyBorder;
 import com.riskgame.controller.EditMapController;
 import com.riskgame.model.*;
 import com.riskgame.utility.ViewUtility;
-import com.riskgame.view.*;
 
 public class EditMapView extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	JFrame editMapFrame;
 	JPanel editMapPanel;
 	JPanel toolBar ;
@@ -22,14 +25,15 @@ public class EditMapView extends JFrame {
 	JButton showMapButton;
 	JButton addContinentButton;
 	JButton addCountryButton;
+	JButton deleteContinentButton;
+	JButton deleteCountryButton;
 	JButton save;
 	
 	ViewUtility viewUtility = new ViewUtility();
 	
 	public World world;
 	private EditMapController editMapControllerr;
-	private EditMapController edit;
-			public EditMapView(World world) {
+	public EditMapView(World world) {
 				
 				this.world=world;
 				editMapControllerr = new EditMapController(this);
@@ -55,10 +59,16 @@ public class EditMapView extends JFrame {
 				addContinentButton.addActionListener(editMapControllerr);
 				addCountryButton=new JButton("Add Country");
 				addCountryButton.addActionListener(editMapControllerr);
+				deleteContinentButton=new JButton("Delete Continent");
+				deleteContinentButton.addActionListener(editMapControllerr);
+				deleteCountryButton=new JButton("Delete Country");
+				deleteCountryButton.addActionListener(editMapControllerr);
 				save=new JButton("Save The Changes");
 				save.addActionListener(editMapControllerr);
 				toolBar.add(addContinentButton);
 				toolBar.add(addCountryButton);
+				toolBar.add(deleteContinentButton);
+				toolBar.add(deleteCountryButton);
 				toolBar.add(save);
 				editMapPanel = new JPanel();
 				editMapPanel.setLayout(new FlowLayout(FlowLayout.CENTER));

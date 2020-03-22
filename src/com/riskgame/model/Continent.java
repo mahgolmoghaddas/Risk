@@ -9,12 +9,15 @@ public class Continent {
 	private String continentName;
 	private HashSet<Territory> territoryList;
 	private double bonusPoint;
-
+	private Territory territory;
 	public Continent(String continentName, HashSet<Territory> territoryList, double bonusPoint) {
 		this.continentName = continentName;
 		this.territoryList = territoryList;
 		this.bonusPoint = bonusPoint;
 	}
+
+
+
 	public Continent() {
 		bonusPoint=0;
 		territoryList=new HashSet<Territory>();
@@ -67,6 +70,17 @@ public class Continent {
 	 */
 	public void setContinentName(String continentName) {
 		this.continentName=continentName;
+	}
+	public void setTerritory(Territory territory) {
+		this.territory=territory;
+	}
+	
+	public Territory getTerritory() {
+		return territory;
+	}
+	
+	public void addTerritory(Territory territory) {
+		getTerritoryList().add(territory);
 	}
 
 }

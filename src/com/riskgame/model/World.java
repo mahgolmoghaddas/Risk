@@ -126,5 +126,10 @@ public class World {
     }
     
     
+    public void removeContinent(Continent continent) {
+        getContinents().remove(continent);
+    }
+	
+    
 
 }

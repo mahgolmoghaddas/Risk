@@ -43,6 +43,7 @@ public class GameController implements ActionListener {
 		try {
 			if (isGamePlay) {
 				initiateBoardAndPlayGame();
+				
 			} else {
 				newGameView = new NewGameView(this);
 				newGameView.launchNewGameFrame();

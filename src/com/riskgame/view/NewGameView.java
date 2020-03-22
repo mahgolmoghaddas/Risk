@@ -47,6 +47,9 @@ public class NewGameView extends JFrame{
 		try {
 			newGameFrame = viewUtility.createMainFrame("Start Game", false);
 
+			newGameFrame.setSize(MainWindowView.getInstance().getSize());
+			newGameFrame.setLocationRelativeTo(null);
+
 			gamePanel = createGamePanel();
 			newGameFrame.add(gamePanel);
 

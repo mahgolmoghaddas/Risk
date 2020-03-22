@@ -3,20 +3,21 @@ package com.riskgame.view;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Event;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
-import java.awt.Graphics2D;import java.awt.Rectangle;
-import java.awt.TextField;
+import java.awt.Graphics2D;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+
 import javax.imageio.ImageIO;
-import javax.swing.InputVerifier;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -24,6 +25,7 @@ import javax.swing.JTextField;
 import com.riskgame.model.Board;
 import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
+import com.riskgame.utility.DiceType;
 import com.riskgame.utility.ViewUtility;
 
 public class BoardView implements Observer {
@@ -55,6 +57,9 @@ public class BoardView implements Observer {
 
 			WorldMapPanel worldMapPanel = drawMap(board);
 			mainBoardFrame.getContentPane().add(worldMapPanel, "Center");
+
+			mainBoardFrame.getContentPane().add(createDiceRollPanel(), "Center");
+			mainBoardFrame.getContentPane().add(createPlayerPanel(board));
 			mainBoardFrame.setVisible(true);
 
 		} catch (Exception e) {
@@ -68,8 +73,40 @@ public class BoardView implements Observer {
 		File file = new File(fileName);
 		BufferedImage image = ImageIO.read(file);
 		WorldMapPanel worldMapPanel = new WorldMapPanel(board, image);
+		worldMapPanel.setLayout(new FlowLayout());
 		worldMapPanel.setVisible(true);
 		return worldMapPanel;
+	}
+
+	public JPanel createPlayerPanel(Board board) {
+
+		JPanel playerPanel = new JPanel();
+		playerPanel.setPreferredSize(getPreferredSizeForBoardPanel());
+
+		try {
+			List<Player> playerList = board.getPlayerList();
+			if (playerList != null && !playerList.isEmpty()) {
+				for (int i = 0; i < playerList.size(); i++) {
+					JLabel playerLabel = viewUtility.createPlayerLabel(playerList.get(i).getName());
+					JTextField textField = viewUtility.createPlayerArmiesTextField(playerList.get(i));
+					playerPanel.add(playerLabel);
+					playerPanel.add(textField);
+				}
+			}
+			playerPanel.setVisible(true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return playerPanel;
+	}
+
+	public JPanel createDiceRollPanel() {
+		DicePanel diceRollPanel = new DicePanel(DiceType.Defend);
+		diceRollPanel.setPreferredSize(getPreferredSizeForBoardPanel());
+		diceRollPanel.setBackground(Color.decode("#03c2fc"));
+		return diceRollPanel;
 	}
 
 	public void printPlayerDetails(Board board) {
@@ -84,6 +121,13 @@ public class BoardView implements Observer {
 				System.err.println(territory.getOwner().getName());
 			}
 		}
+	}
+
+	public Dimension getPreferredSizeForBoardPanel() {
+
+		Dimension dimension = new Dimension();
+		dimension.setSize(mainBoardFrame.getWidth() - 350, 60);
+		return dimension;
 	}
 
 }
@@ -107,7 +151,7 @@ class WorldMapPanel extends JPanel {
 			Graphics2D g2D = (Graphics2D) graphics;
 			g2D.drawImage(this.mapImage, 0, 0, this);
 			setComponentSize();
-			drawTerritoriesInMap();
+//			drawTerritoriesInMap();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -121,7 +165,7 @@ class WorldMapPanel extends JPanel {
 				Iterator<Territory> territoryIterator = territorySet.iterator();
 				while (territoryIterator.hasNext()) {
 					Territory territory = territoryIterator.next();
-					
+
 					JTextField text = new JTextField();
 					int x = (int) territory.getTerritoryPosition().getX();
 					int y = (int) territory.getTerritoryPosition().getY();
@@ -136,15 +180,19 @@ class WorldMapPanel extends JPanel {
 						@Override
 						public void mouseReleased(java.awt.event.MouseEvent e) {
 						}
+
 						@Override
 						public void mousePressed(java.awt.event.MouseEvent e) {
 						}
+
 						@Override
 						public void mouseExited(java.awt.event.MouseEvent e) {
 						}
+
 						@Override
 						public void mouseEntered(java.awt.event.MouseEvent e) {
 						}
+
 						@Override
 						public void mouseClicked(java.awt.event.MouseEvent e) {
 							JOptionPane.showMessageDialog(BoardView.mainBoardFrame.getContentPane(), "Mouse clicked.",

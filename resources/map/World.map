@@ -17,7 +17,7 @@ Australia=2
 Alaska,41,55,North America,Northwest Territory,Alberta,Kamchatka
 Northwest Territory,97,51,North America,Alaska,Alberta,Ontario,Greenland
 Alberta,83,93,North America,Alaska,Northwest Territory,Ontario,Western United States
-Greenland,195,48,North America,Northwest Territory,Ontario,Quebec,Iceland
+Greenland,200,18,North America,Northwest Territory,Ontario,Quebec,Iceland
 Ontario,135,100,North America,Northwest Territory,Alberta,Greenland,Quebec,Western United States,Eastern United States
 Quebec,200,106,North America,Greenland,Ontario,Eastern United States
 Western United States,102,144,North America,Alberta,Ontario,Eastern United States,Central America
@@ -51,7 +51,7 @@ India,493,207,Asia,China,Siam,Afghanistan,Middle East
 Siberia,533,51,Asia,Yatusk,Irkutsk,Mongolia,China,Ural
 China,544,158,Asia,Ural,Siberia,Mongolia,Siam,India,Afghanistan
 Siam,547,213,Asia,China,India,Indonesia
-Mongolia,518,123,Asia,Siberia,Irkutsk,Japan,China,Kamchatka
+Mongolia,580,123,Asia,Siberia,Irkutsk,Japan,China,Kamchatka
 Irkutsk,582,77,Asia,Siberia,Yatusk,Kamchatka,Mongolia
 Yatusk,580,26,Asia,Siberia,Irkutsk,Kamchatka
 Kamchatka,624,57,Asia,Yatusk,Irkutsk,Japan,Alaska,Mongolia

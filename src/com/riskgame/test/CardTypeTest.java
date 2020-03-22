@@ -14,6 +14,7 @@ import com.riskgame.model.Player;
 import org.junit.Test;
 
 import com.riskgame.utility.CardType;
+import com.riskgame.utility.DiceUtility;
 import com.riskgame.utility.RiskUtility;
 
 public class CardTypeTest {
@@ -35,7 +36,7 @@ public class CardTypeTest {
 	@Test
 	public void rollDiceTest () throws Exception
 	{
-		RiskUtility util= new RiskUtility();
+		DiceUtility util= new DiceUtility();
 		int dice= util.rollDice();
 		boolean condition= false;
 		

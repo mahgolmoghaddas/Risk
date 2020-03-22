@@ -16,6 +16,7 @@ public class World {
 	private String wrap;
 	private String scroll;
 	private String warn;
+	private String mapName;
 	private HashSet<Territory> territorySet;
 
 	public World(HashSet<Continent> continents) {
@@ -78,7 +79,7 @@ public class World {
 	/**
 	 * This method returns the set of territories in the world
 	 * 
-	 * @return the Hashset
+	 * @return the HahSet
 	 */
 	public HashSet<Territory> getTerritories() {
 		return this.territorySet;
@@ -105,5 +106,25 @@ public class World {
     	getContinents().add(continent);
     	
     }
+    
+    
+
+    /**
+     * Getter for name
+     * @return name
+     */
+    public String getMapName() {
+        return mapName;
+    }
+
+    /**
+     * Setter for Name
+     * @param name Name
+     */
+    public void setMapName(String mapName) {
+        this.mapName = mapName;
+    }
+    
+    
 
 }

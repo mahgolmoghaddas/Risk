@@ -49,5 +49,16 @@ public class ViewUtilityTest {
 		assertTrue(val);
 	}
 	
-	
+
+	@Test
+	public void nullStartDiceNo() throws Exception {
+		List<Player> playerList = new ArrayList<>();
+		Player p1 = new Player(1,"Jasmeet");
+		p1.setStartDiceNo(null);
+		playerList.add(p1);
+		boolean val = false;
+		if (p1.getStartDiceNo() == null) 
+			val = true;
+		assertTrue(val);
+	}
 }

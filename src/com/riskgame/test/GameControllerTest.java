@@ -3,20 +3,21 @@ import static org.hamcrest.CoreMatchers.hasItems;
 import com.riskgame.controller.GameController;
 import com.riskgame.model.*;
 import com.riskgame.utility.GameUtility;
+import org.junit.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 
-import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Test;
 
-class GameControllerTest {
+public class GameControllerTest {
 
+		
 	@Test
-	void testAssignArmiesToPlayer() throws Exception {
+	public void testAssignArmiesToPlayer() throws Exception {
 		ArrayList<Player> playerList = new ArrayList<>();
 		Player p1 = new Player(1, "Evelyn");
-		p1.setStartDiceNo(1);
 		Player p2 = new Player(2, "Fred");
 		p2.setStartDiceNo(2);
 		Player p3 = new Player(3, "Anna");

@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.riskgame.utility.PlayerDiceNumberComparator;
-import com.riskgame.utility.TurnPhase;
+import com.riskgame.utility.GamePhase;
 
 /**
  * This class manages the turn among the players.When the manager is
@@ -19,12 +19,13 @@ import com.riskgame.utility.TurnPhase;
 public class TurnManager {
 
 	private Player currentPlayer;
-	private TurnPhase currentPhase;
-	public TurnPhase getCurrentPhase() {
+	private GamePhase currentPhase;
+
+	public GamePhase getCurrentPhase() {
 		return currentPhase;
 	}
 
-	public void setCurrentPhase(TurnPhase currentPhase) {
+	public void setCurrentPhase(GamePhase currentPhase) {
 		this.currentPhase = currentPhase;
 	}
 
@@ -33,22 +34,28 @@ public class TurnManager {
 	private List<Player> tempturnList;
 
 	public TurnManager(List<Player> playerList) {
-		this.currentPhase = TurnPhase.SETUP;
+		this.currentPhase = GamePhase.SETUP;
 		this.playerList = playerList;
 	}
 
-	public TurnPhase GetNextPhase() {
+	/**
+	 * This method returns the next phase of the game based on the current phase of the game
+	 * @return GamePhase
+	 */
+	public GamePhase getNextPhase() {
 		switch (this.currentPhase) {
 		case START:
-			return TurnPhase.REINFORCE;
+			return GamePhase.SETUP;
+		case SETUP:
+			return GamePhase.REINFORCE;
 		case REINFORCE:
-			return TurnPhase.ATTACK;
+			return GamePhase.ATTACK;
 		case ATTACK:
-			return TurnPhase.FORTIFY;
+			return GamePhase.FORTIFY;
 		case FORTIFY:
-			return TurnPhase.PICKCARD;
+			return GamePhase.PICKCARD;
 		default:
-			return TurnPhase.START;
+			return GamePhase.START;
 		}
 	}
 
@@ -56,8 +63,13 @@ public class TurnManager {
 		tempturnList = new ArrayList<Player>(this.designedTurnList);
 	}
 
+	/**
+	 * Returns the nextplayer using round-robin algorithm
+	 * @return Player
+	 * @throws Exception
+	 */
 	public Player getNextPlayer() throws Exception {
-		if (TurnPhase.SETUP.equals(this.currentPhase)) {
+		if (GamePhase.SETUP.equals(this.currentPhase)) {
 			designedTurnList = new ArrayList<Player>();
 
 			int indexOfFirstPlayer = playerList.indexOf(getPlayerWithMaxDiceNumber());
@@ -65,7 +77,7 @@ public class TurnManager {
 			for (int i = indexOfFirstPlayer; i < playerList.size(); i++) {
 				designedTurnList.add(playerList.get(i));
 			}
-			for (int i = 0; i < indexOfFirstPlayer ; i++) {
+			for (int i = 0; i < indexOfFirstPlayer; i++) {
 				designedTurnList.add(playerList.get(i));
 			}
 			return pickNextPlayer();
@@ -74,7 +86,7 @@ public class TurnManager {
 		return pickNextPlayer();
 	}
 
-	public Player pickNextPlayer() {
+	private Player pickNextPlayer() {
 		Player nextPlayer;
 		if (tempturnList == null || tempturnList.size() < 1) {
 			initTurnList();
@@ -92,7 +104,7 @@ public class TurnManager {
 		this.currentPlayer = currentPlayer;
 	}
 
-	public Player getPlayerWithMaxDiceNumber() throws Exception {
+	private Player getPlayerWithMaxDiceNumber() throws Exception {
 		List<Player> sortedPlayerList = new ArrayList<>(playerList);
 
 		Collections.sort(sortedPlayerList, new PlayerDiceNumberComparator());

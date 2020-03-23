@@ -6,10 +6,8 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -17,15 +15,18 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-
 import com.riskgame.controller.CreateMapController;
 import com.riskgame.controller.GameController;
 import com.riskgame.controller.SaveMapController;
-import com.riskgame.enums.GameScreen;
 import com.riskgame.model.World;
 import com.riskgame.utility.MapReader;
 import com.riskgame.utility.ViewUtility;
 
+/**
+ * This is the main window Frame for the game application. It has several menu options to proceed with the game.
+ * @author pushpa
+ *
+ */
 public class MainWindowView extends JFrame{
 
 	private static final long serialVersionUID = 1L;
@@ -47,6 +48,9 @@ public class MainWindowView extends JFrame{
 		return mainWindowView;
 	}
 
+	/**
+	 * This mathod launches the main window for the game
+	 */
 	public void launchMainWindow() {
 		try {
 			createMainWindowFrame();
@@ -73,11 +77,6 @@ public class MainWindowView extends JFrame{
 		ImageIcon imgIcon = new ImageIcon("resources/images/RiskGame.jpg") ;
 		mainWindowView.getContentPane().setLayout(new FlowLayout());
 		
-//		double width = GameScreen.WIDTH.getValue();
-//		double height = GameScreen.HEIGHT.getValue();
-//		dim.width = (int) (dim.width * width);
-//		dim.height = (int) (dim.height * height);
-		
 		dim.width = imgIcon.getIconWidth();
 		dim.height = imgIcon.getIconHeight();
 		mainWindowView.setSize(dim);
@@ -92,13 +91,18 @@ public class MainWindowView extends JFrame{
 
 	}
 
+	/**
+	 * This method provides the menu to launch the New game 
+	 * @return JMenu
+	 * @throws Exception
+	 */
 	public JMenu createGameMenu() throws Exception {
 		JMenu openMenu = viewUtility.createMenu("Game");
 		Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
 
 		JMenuItem gameMenuItem = new JMenuItem("New Game");
 		gameMenuItem.setCursor(cursor);
-		gameMenuItem.addActionListener(new GameController(false));
+		gameMenuItem.addActionListener(GameController.getInstance());
 
 		JMenuItem exitMenuItem = new JMenuItem("Exit");
 		exitMenuItem.setCursor(cursor);
@@ -109,6 +113,13 @@ public class MainWindowView extends JFrame{
 		return openMenu;
 	}
 
+	/**
+	 * This method provides the menu to create and save new map. Create menu asks for the several details like continents
+	 * territories, bonus point and coordinates for the territories to be created. 
+	 * Save menu saves the created map to a specified .map file
+	 * @return JMenu
+	 * @throws Exception
+	 */
 	public JMenu createMapMenu() throws Exception {
 		JMenu mapMenu = viewUtility.createMenu("Map");
 		Cursor cursor = new Cursor(Cursor.HAND_CURSOR);

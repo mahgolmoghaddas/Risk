@@ -26,13 +26,17 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.plaf.basic.BasicButtonUI;
 
-import com.riskgame.controller.BoardController;
 import com.riskgame.model.Board;
 import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
 import com.riskgame.utility.DiceType;
 import com.riskgame.utility.ViewUtility;
 
+/**
+ * This is the board view for the risk game which displays the world map in the gui with the selected number of players.
+ * @author pushpa
+ *
+ */
 public class BoardView implements Observer {
 
 	private Board board;
@@ -56,8 +60,6 @@ public class BoardView implements Observer {
 		if (o instanceof Board) {
 			board = (Board) o;
 		}
-//		Update board data
-		
 	}
 	
 	/**
@@ -126,7 +128,7 @@ public class BoardView implements Observer {
 		JPanel finishMovePanel = new JPanel();
 		finishMovePanel.setPreferredSize(getPreferredSizeForBoardPanel());
 		JButton finishMove = new JButton("Finish Setup");
-		finishMove.addActionListener(new BoardController());
+//		finishMove.addActionListener(new BoardController());
 		finishMove.setBackground(Color.decode("#f5b942"));
 		finishMove.setUI(new BasicButtonUI());
 		finishMovePanel.add(finishMove, "Center");

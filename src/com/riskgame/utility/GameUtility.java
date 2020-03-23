@@ -10,6 +10,12 @@ import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
 import com.riskgame.model.World;
 
+/**
+ * 
+ * This class provides the reusable method used in the Risk Game.
+ * @author pushpa
+ *
+ */
 public class GameUtility {
 
 	RiskUtility utility = new RiskUtility();

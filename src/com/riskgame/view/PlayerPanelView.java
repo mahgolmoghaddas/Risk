@@ -14,6 +14,11 @@ import com.riskgame.model.Board;
 import com.riskgame.model.Player;
 import com.riskgame.utility.ViewUtility;
 
+/**
+ * This is the panel which displays the player details, the armies each player holds and number of start dice number the player gets. 
+ * @author pushpa
+ *
+ */
 public class PlayerPanelView extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 1L;
@@ -39,7 +44,7 @@ public class PlayerPanelView extends JPanel implements Observer {
 	}
 
 	/**
-	 * This method creates the player panel as per the user selected number of
+	 * This method creates the player panel dynamically as per the user selected number of
 	 * players
 	 * 
 	 * @param board

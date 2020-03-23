@@ -16,6 +16,11 @@ import com.riskgame.model.Player;
 import com.riskgame.utility.DiceType;
 import com.riskgame.utility.DiceUtility;
 
+/**
+ * This is the panel which provides a user GUI to roll a dice
+ * @author gauta
+ *
+ */
 public class DicePanel extends JPanel {
 
 	DiceUtility diceUtility = new DiceUtility();
@@ -92,7 +97,12 @@ public class DicePanel extends JPanel {
 		}
 		
 	}
-
+	
+	/**
+	 * This returns the dice image as per the phase whether Attack/Defend with the randomly generated dice number from 1 to 6.
+	 * @return ImageIcon
+	 * @throws Exception
+	 */
 	public ImageIcon getDiceIcon() throws Exception {
 
 		ImageIcon imageIcon = null;
@@ -155,10 +165,18 @@ public class DicePanel extends JPanel {
 		return imageIcon;
 	}
 
+	/**
+	 * Returns the diceCount on a particular role
+	 * @return
+	 */
 	public int getDiceCount() {
 		return this.diceCount;
 	}
 
+	/**
+	 * This method returns the unique Dice number in a particular rolling phase to ensure no players have the same dice number
+	 * @return int
+	 */
 	public int getUniqueDice() {
 		
 		int diceNum = 0;

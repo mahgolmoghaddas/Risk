@@ -1,5 +1,10 @@
 package com.riskgame.utility;
 
+/**
+ * This enum specifies the types of the card used in the Risk Game
+ * @author pushpa
+ *
+ */
 public enum CardType {
 	INFANTRY("Infantry"), CAVALRY("Cavalry"), ARTILLERY("Artillery");
 	

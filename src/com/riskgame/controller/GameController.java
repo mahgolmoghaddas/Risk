@@ -14,39 +14,76 @@ import com.riskgame.model.Territory;
 import com.riskgame.model.World;
 import com.riskgame.utility.CardType;
 import com.riskgame.utility.GameUtility;
+import com.riskgame.utility.GamePhase;
 import com.riskgame.view.BoardView;
 import com.riskgame.view.NewGameView;
 
 /**
- * This class provides the
+ * This class provides the single instance of GameController throught the game.
  * 
- * @author gauta
+ * @author pushpa
  *
  */
 public class GameController implements ActionListener {
 
-	private boolean isGamePlay;
 	private World world;
 	private int numberOfPlayers;
 	private BoardView boardView;
 	private Board game;
-	private NewGameView newGameView;
 	private GameUtility gameUtility = new GameUtility();
-
-	public GameController(boolean isGamePlay) {
-		this.isGamePlay = isGamePlay;
+	private GamePhase turnphase;
+	private static GameController gameController;
+	
+	/**
+	 * This constructor creates a GameController Object to set the turnPhase as Start
+	 * @param turnPhase
+	 */
+	private GameController() {
+		this.turnphase = GamePhase.START; 
 	}
 
+	/**
+	 * Returns the single instance of the GameController
+	 * @return
+	 */
+	public static GameController getInstance() {
+		if(gameController==null) {
+			gameController = new GameController();
+		}
+		return gameController;
+	}
+	
+	/**
+	 * This method sets the world data, number of players and the phase of the turn
+	 * @param world
+	 * @param numberOfPlayers
+	 * @param turnPhase
+	 */
+	public void setGameParameters(World world,int numberOfPlayers,GamePhase turnPhase) {
+		this.world =world;
+		this.numberOfPlayers = numberOfPlayers;
+		this.turnphase = turnPhase;
+	}
+	/**
+	 * Performs various actions based on the game phase
+	 */
 	@Override
 	public void actionPerformed(ActionEvent actionEvent) {
 
 		try {
-			if (isGamePlay) {
-				initiateBoardAndPlayGame();
-				
-			} else {
-				newGameView = new NewGameView(this);
+
+			if(GamePhase.START.equals(this.turnphase)) {
+				System.out.println("************START PHASE************");
+				NewGameView newGameView = new NewGameView();
 				newGameView.launchNewGameFrame();
+			}else if (GamePhase.SETUP.equals(this.turnphase)) {
+				System.out.println("************SETUP PHASE**************");
+				initiateBoardAndPlayGame();
+			}else if(GamePhase.REINFORCE.equals(this.turnphase)) {
+				System.out.println("************REINFORCE PHASE**************");
+				
+			}else if(GamePhase.ATTACK.equals(this.turnphase)) {
+				System.out.println("************ATTACK PHASE**************");
 			}
 
 		} catch (Exception e) {
@@ -55,12 +92,9 @@ public class GameController implements ActionListener {
 
 	}
 
-	public void setGameParameters(World world, int numberOfPlayers, boolean isGamePlay) {
-		this.isGamePlay = isGamePlay;
-		this.world = world;
-		this.numberOfPlayers = numberOfPlayers;
-	}
-
+	/**
+	 * Initiates the board with the specified player details and build card as per the specified territories
+	 */
 	public void initiateBoardAndPlayGame() {
 		try {
 			game = Board.getInstance();
@@ -73,7 +107,7 @@ public class GameController implements ActionListener {
 
 			// assign 42 territories for each player evenly and place 1 army for each player
 			distributeTerritories(playerList, world);
-			
+
 			game.initializeGame(world, playerList, cardDeck);
 
 			boardView = new BoardView(game);
@@ -96,12 +130,13 @@ public class GameController implements ActionListener {
 				player.setArmiesToplayer(numberOfArmies);
 			}
 		}
-		
+
 	}
 
 	/**
-	 * This method distributes all territories evenly to the players in the game. This method also place 1 army of each player
-	 * to the respective territory assigned to the player
+	 * This method distributes all territories evenly to the players in the game.
+	 * This method also place 1 army of each player to the respective territory
+	 * assigned to the player
 	 */
 	public void distributeTerritories(ArrayList<Player> playerList, World world) throws Exception {
 
@@ -115,20 +150,20 @@ public class GameController implements ActionListener {
 
 				while (territoryIterator.hasNext()) {
 					Territory territory = territoryIterator.next();
-					
-					if(playersCount == playerList.size() ) {
+
+					if (playersCount == playerList.size()) {
 						playersCount = 0;
 					}
 					playerList.get(playersCount).getCountriesOwned().add(territory);
 					territory.setOwner(playerList.get(playersCount));
 					territory.setArmyCount(1);
 					int oldArmiesCount = playerList.get(playersCount).getArmiesHeld();
-					
-					playerList.get(playersCount).setArmiesHeld(oldArmiesCount-1);
+
+					playerList.get(playersCount).setArmiesHeld(oldArmiesCount - 1);
 					playersCount++;
 				}
 			}
 		}
 	}
-	
+
 }

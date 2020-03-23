@@ -29,19 +29,19 @@ public class GameUtility {
 			Player player = new Player(i, "Player" + i);
 			switch (i) {
 			case 1:
-				player.setColor(Color.BLUE);
+				player.setColor(Color.decode("#03befc"));
 				break;
 			case 2:
-				player.setColor(Color.GREEN);
+				player.setColor(Color.decode("#54b354"));
 				break;
 			case 3:
-				player.setColor(Color.ORANGE);
+				player.setColor(Color.decode("#a45eeb"));
 				break;
 			case 4:
-				player.setColor(Color.PINK);
+				player.setColor(Color.decode("#a81b8e"));
 				break;
 			case 5:
-				player.setColor(Color.YELLOW);
+				player.setColor(Color.decode("#fc9003"));
 				break;
 			case 6:
 				player.setColor(Color.RED);

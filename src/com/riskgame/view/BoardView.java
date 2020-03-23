@@ -149,7 +149,7 @@ public class BoardView implements Observer {
 	public Dimension getPreferredSizeForBoardPanel() {
 
 		Dimension dimension = new Dimension();
-		dimension.setSize(mainBoardFrame.getWidth() - 350, 60);
+		dimension.setSize(mainBoardFrame.getWidth() - 350, 70);
 		return dimension;
 	}
 

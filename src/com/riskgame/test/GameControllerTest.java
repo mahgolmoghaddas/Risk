@@ -34,6 +34,7 @@ class GameControllerTest {
 		playerList.add(p4);
 		playerList.add(p5);
 		playerList.add(p6);
+		
 		int noOfArmies;
 		boolean condition = false;
 		GameController gameController = new GameController(false);

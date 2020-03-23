@@ -9,18 +9,22 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.imageio.ImageIO;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.plaf.basic.BasicButtonUI;
 
 import com.riskgame.model.Board;
 import com.riskgame.model.Player;
@@ -33,6 +37,11 @@ public class BoardView implements Observer {
 	private Board board;
 	private ViewUtility viewUtility = new ViewUtility();
 	static JFrame mainBoardFrame;
+	WorldMapPanel worldMapPanel;
+	JPanel diceRollPanel; 
+	
+	Map<Integer,JTextField> armiesField = new HashMap<>();
+	Map<Integer,JLabel> diceList = new HashMap<>();
 
 	public BoardView(Board board) {
 		this.board = board;
@@ -42,31 +51,46 @@ public class BoardView implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		System.out.println("Updated..");
+		System.out.println("Updated..BOARD DATA");
 		if (o instanceof Board) {
-
+			board = (Board) o;
 		}
-		board = (Board) o;
-		showGameBoard(board);
+//		Update board data
+		
 	}
-
+	
+	/**
+	 * This method displays the board view as per the Board data which includes player,no of territories acquired by the player
+	 * and number of armies hold by player
+	 * */
 	public void showGameBoard(Board board) {
 		try {
 			mainBoardFrame = viewUtility.createMainFrame("Play Game", false);
 			mainBoardFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-			WorldMapPanel worldMapPanel = drawMap(board);
+			worldMapPanel = drawMap(board);
 			mainBoardFrame.getContentPane().add(worldMapPanel, "Center");
+			PlayerPanelView playerPanel = new PlayerPanelView(board);
+			playerPanel.setPreferredSize(getPreferredSizeForBoardPanel());
 
-			mainBoardFrame.getContentPane().add(createDiceRollPanel(), "Center");
-			mainBoardFrame.getContentPane().add(createPlayerPanel(board));
+			mainBoardFrame.getContentPane().add(createDiceRollPanel(board), "Center");
+			mainBoardFrame.getContentPane().add(playerPanel);
+			mainBoardFrame.getContentPane().add(createFinishMovePanel(),"Center");
 			mainBoardFrame.setVisible(true);
+			JOptionPane.showMessageDialog(mainBoardFrame, "Roll dice to decide the player turn");
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * This method draws map with the provided World data with the respective 
+	 * continents and the countries details
+	 * @param board
+	 * @return
+	 * @throws Exception
+	 */
 	public WorldMapPanel drawMap(Board board) throws Exception {
 		String mapName = board.getWorld().getImage();
 		String fileName = "resources/images/" + mapName;
@@ -77,36 +101,36 @@ public class BoardView implements Observer {
 		worldMapPanel.setVisible(true);
 		return worldMapPanel;
 	}
+	
 
-	public JPanel createPlayerPanel(Board board) {
-
-		JPanel playerPanel = new JPanel();
-		playerPanel.setPreferredSize(getPreferredSizeForBoardPanel());
-
-		try {
-			List<Player> playerList = board.getPlayerList();
-			if (playerList != null && !playerList.isEmpty()) {
-				for (int i = 0; i < playerList.size(); i++) {
-					JLabel playerLabel = viewUtility.createPlayerLabel(playerList.get(i).getName());
-					JTextField textField = viewUtility.createPlayerArmiesTextField(playerList.get(i));
-					playerPanel.add(playerLabel);
-					playerPanel.add(textField);
-				}
-			}
-			playerPanel.setVisible(true);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return playerPanel;
-	}
-
-	public JPanel createDiceRollPanel() {
-		DicePanel diceRollPanel = new DicePanel(DiceType.Defend);
+	/**
+	 * This mehod creates the panel to roll the dice
+	 * @return
+	 */
+	public JPanel createDiceRollPanel(Board board) {
+		diceRollPanel = new DicePanel(DiceType.Defend,board,true);
 		diceRollPanel.setPreferredSize(getPreferredSizeForBoardPanel());
 		diceRollPanel.setBackground(Color.decode("#03c2fc"));
 		return diceRollPanel;
+	}
+
+	
+	/**
+	 * This method creates a finish button to specify 
+	 * that a current user is done with a particular move.
+	 * 
+	 * @return
+	 */
+	public JPanel createFinishMovePanel() {
+		JPanel finishMovePanel = new JPanel();
+		finishMovePanel.setPreferredSize(getPreferredSizeForBoardPanel());
+		JButton finishMove = new JButton("Finish Move");
+		finishMove.setBackground(Color.decode("#f5b942"));
+		finishMove.setUI(new BasicButtonUI());
+		finishMovePanel.add(finishMove, "Center");
+		finishMove.setVisible(true);
+		finishMovePanel.setVisible(true);
+		return finishMovePanel;
 	}
 
 	public void printPlayerDetails(Board board) {
@@ -115,7 +139,6 @@ public class BoardView implements Observer {
 			System.out.println(player.getName() + " ::" + player.getArmiesHeld());
 			System.out.println(player.getCountriesOwned().size());
 			for (Territory territory : player.getCountriesOwned()) {
-
 				System.out.println(territory.getArmyCount());
 				System.out.println(territory.getCountryName());
 				System.err.println(territory.getOwner().getName());
@@ -128,100 +151,6 @@ public class BoardView implements Observer {
 		Dimension dimension = new Dimension();
 		dimension.setSize(mainBoardFrame.getWidth() - 350, 60);
 		return dimension;
-	}
-
-}
-
-class WorldMapPanel extends JPanel {
-
-	private static final long serialVersionUID = 1L;
-	private Board board;
-	private BufferedImage mapImage;
-	Dimension size = new Dimension();
-
-	public WorldMapPanel(Board board, BufferedImage mapImage) {
-		this.board = board;
-		this.mapImage = mapImage;
-		setComponentSize();
-	}
-
-	@Override
-	public void paint(Graphics graphics) {
-		try {
-			Graphics2D g2D = (Graphics2D) graphics;
-			g2D.drawImage(this.mapImage, 0, 0, this);
-			setComponentSize();
-//			drawTerritoriesInMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void drawTerritoriesInMap() {
-
-		if (this.board != null && this.board.getWorld() != null) {
-			HashSet<Territory> territorySet = this.board.getWorld().getTerritories();
-			if (territorySet != null && !territorySet.isEmpty()) {
-				Iterator<Territory> territoryIterator = territorySet.iterator();
-				while (territoryIterator.hasNext()) {
-					Territory territory = territoryIterator.next();
-
-					JTextField text = new JTextField();
-					int x = (int) territory.getTerritoryPosition().getX();
-					int y = (int) territory.getTerritoryPosition().getY();
-					text.setEditable(false);
-					text.setCursor(new Cursor(Cursor.HAND_CURSOR));
-					text.setVisible(true);
-					text.setName(territory.getCountryName());
-					text.setText(territory.getArmyCount() + "");
-					text.setBackground(territory.getOwner().getColor());
-					text.setBounds(x, y, 15, 15);
-					text.addMouseListener(new MouseListener() {
-						@Override
-						public void mouseReleased(java.awt.event.MouseEvent e) {
-						}
-
-						@Override
-						public void mousePressed(java.awt.event.MouseEvent e) {
-						}
-
-						@Override
-						public void mouseExited(java.awt.event.MouseEvent e) {
-						}
-
-						@Override
-						public void mouseEntered(java.awt.event.MouseEvent e) {
-						}
-
-						@Override
-						public void mouseClicked(java.awt.event.MouseEvent e) {
-							JOptionPane.showMessageDialog(BoardView.mainBoardFrame.getContentPane(), "Mouse clicked.",
-									"MESSAGE", JOptionPane.INFORMATION_MESSAGE);
-							JTextField eventCOmp = (JTextField) e.getComponent();
-							System.out.println("Target " + eventCOmp.getName());
-						}
-					});
-					this.setLayout(null);
-					this.add(text);
-				}
-			}
-		}
-	}
-
-	public Dimension getPreferredSize() {
-		return size;
-	}
-
-	private void setComponentSize() {
-		if (mapImage != null) {
-			size.width = mapImage.getWidth();
-			size.height = mapImage.getHeight();
-			this.setSize(size);
-		}
-	}
-
-	private void mouseClicked(JTextField textField) {
-
 	}
 
 }

@@ -138,21 +138,33 @@ public class ViewUtility {
 	public JTextField createPlayerArmiesTextField(Player player) {
 		JTextField textField = new JTextField();
 		textField.setBackground(player.getColor());
-		textField.setText(player.getArmiesHeld()+"");
+		textField.setText(player.getArmiesHeld() + "");
 		textField.setEditable(false);
 		Dimension size = new Dimension();
 		size.setSize(40, 30);
+		textField.setName(player.getId() + "");
 		textField.setPreferredSize(size);
 		textField.setHorizontalAlignment(JTextField.CENTER);
-		textField.setForeground(Color.DARK_GRAY);
+		textField.setForeground(Color.BLACK);
 		textField.setBorder(new LineBorder(Color.GRAY));
-		
+
 		return textField;
 	}
-	
-	public JLabel createPlayerLabel(String name) {
+
+	public JLabel createPlayerLabel(Player player) {
 		JLabel playerLabel = new JLabel();
-		playerLabel.setText(name);
+		playerLabel.setText(player.getName());
 		return playerLabel;
+	}
+
+	public JLabel createPlayerDice(Player player) {
+		JLabel diceLabel = new JLabel();
+		diceLabel.setName(player.getId() + "");
+		if (player.getStartDiceNo() != null) {
+			diceLabel.setText("Dice count::" + player.getStartDiceNo());
+		}
+		diceLabel.setVisible(true);
+		return diceLabel;
+
 	}
 }

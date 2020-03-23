@@ -103,6 +103,7 @@ public class Player extends Observable {
 
 	public void setStartDiceNo(Integer startUpDiceNo) {
 		this.startDiceNo = startUpDiceNo;
+		playerDataChanged();
 	}
 
 	public HashSet<Territory> getCountriesOwned() {
@@ -154,6 +155,7 @@ public class Player extends Observable {
 	}
 	
 	public void playerDataChanged() {
+		System.out.println("Notifying the observers "+this.countObservers());
 		setChanged();
 		notifyObservers();
 	}

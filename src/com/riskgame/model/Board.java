@@ -62,7 +62,7 @@ public class Board extends Observable implements Observer {
 		this.playerList = playerList;
 		this.cardDeck = cardDeck;
 
-		if (this.playerList != null && this.playerList.isEmpty()) {
+		if (this.playerList != null && !this.playerList.isEmpty()) {
 			for (int i = 0; i < playerList.size(); i++) {
 				Player player = playerList.get(i);
 				player.addObserver(this);
@@ -73,10 +73,11 @@ public class Board extends Observable implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 
+		System.out.println("PLayer data has been changed ");
 		if (o instanceof Player) {
 
 			Player updatedPlayer = (Player) o;
-			if (this.playerList != null && this.playerList.isEmpty()) {
+			if (this.playerList != null && !this.playerList.isEmpty()) {
 
 				for (int i = 0; i < playerList.size(); i++) {
 
@@ -96,6 +97,7 @@ public class Board extends Observable implements Observer {
 	 * This method notify the Observers of Board whenever any data changes
 	 */
 	public void boardDataChanged() {
+		System.out.println("Board Data has been changed");
 		setChanged();
 		notifyObservers();
 	}

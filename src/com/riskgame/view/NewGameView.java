@@ -126,7 +126,7 @@ public class NewGameView extends JFrame{
 								JOptionPane.INFORMATION_MESSAGE);
 
 						currentWorldMap = mapReader.createWorldMap();
-						printWorldMap();
+//						printWorldMap();
 						gameController.setGameParameters(currentWorldMap, playersCount, true);
 						startGameButton.setVisible(true);
 						cancelButton.setVisible(true);

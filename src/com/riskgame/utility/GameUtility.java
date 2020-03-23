@@ -121,4 +121,24 @@ public class GameUtility {
 		}
 		return numberOfArmies;
 	}
+	/**
+	 * This method returns the next phase of the game based on the current phase of the game
+	 * @return GamePhase
+	 */
+	public GamePhase getNextPhase(GamePhase currentPhase) {
+		switch (currentPhase) {
+		case START:
+			return GamePhase.SETUP;
+		case SETUP:
+			return GamePhase.REINFORCE;
+		case REINFORCE:
+			return GamePhase.ATTACK;
+		case ATTACK:
+			return GamePhase.FORTIFY;
+		case FORTIFY:
+			return GamePhase.PICKCARD;
+		default:
+			return GamePhase.START;
+		}
+	}
 }

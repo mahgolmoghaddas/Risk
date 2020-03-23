@@ -1,4 +1,3 @@
-
 package com.riskgame.test;
 
 import static org.junit.Assert.*;
@@ -8,21 +7,31 @@ import com.riskgame.utility.ViewUtility;
 
 public class ViewUtilityTest {
 	ViewUtility vu = new ViewUtility();
-	World world = null;
 
 	@Test
-	public void createWorldMapTableTest() {
-
+	public void nullWorldTest() throws Exception {
+		World world = null;
 		boolean val = false;
-		try {
-			assertNull(vu.createWorldMapTable(world));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		if (world == null)
 			val = true;
 		assertTrue("world is null", val);
 	}
 
+	@Test
+	public void nullContinentTest() throws Exception {
+		boolean val = false;
+		World world = new World();
+		if (world.getContinents() != null)
+			val = true;
+		assertTrue("Continent is null", val);
+	}
+
+	@Test
+	public void emptyContinentTest() throws Exception {
+		boolean val = false;
+		World world = new World();
+		if (world.getContinents().isEmpty())
+			val = true;
+		assertTrue("Continent is empty", val);
+	}
 }

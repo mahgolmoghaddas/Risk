@@ -26,6 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.plaf.basic.BasicButtonUI;
 
+import com.riskgame.controller.BoardController;
 import com.riskgame.model.Board;
 import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
@@ -124,7 +125,8 @@ public class BoardView implements Observer {
 	public JPanel createFinishMovePanel() {
 		JPanel finishMovePanel = new JPanel();
 		finishMovePanel.setPreferredSize(getPreferredSizeForBoardPanel());
-		JButton finishMove = new JButton("Finish Move");
+		JButton finishMove = new JButton("Finish Setup");
+		finishMove.addActionListener(new BoardController());
 		finishMove.setBackground(Color.decode("#f5b942"));
 		finishMove.setUI(new BasicButtonUI());
 		finishMovePanel.add(finishMove, "Center");

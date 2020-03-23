@@ -150,6 +150,7 @@ public class ViewUtility {
 
 		return textField;
 	}
+	
 
 	public JLabel createPlayerLabel(Player player) {
 		JLabel playerLabel = new JLabel();

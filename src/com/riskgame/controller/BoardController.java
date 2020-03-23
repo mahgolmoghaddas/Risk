@@ -1,11 +1,20 @@
 package com.riskgame.controller;
 
-import com.riskgame.model.World;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class BoardController {
+import com.riskgame.model.Board;
+
+public class BoardController implements ActionListener{
 	
-	public  BoardController(World world,int playersCount) {
-		
+	private Board board ;
+	public  BoardController() {
+		this.board = Board.getInstance();
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		System.out.println("GAME IN BOARD CONTROLLER");
 	}
 	
 }

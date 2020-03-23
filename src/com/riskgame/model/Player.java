@@ -109,6 +109,7 @@ public class Player extends Observable {
 	public HashSet<Territory> getCountriesOwned() {
 		return countriesOwned;
 	}
+	
 
 	public void setCountriesOwned(HashSet<Territory> countriesOwned) {
 		this.countriesOwned = countriesOwned;

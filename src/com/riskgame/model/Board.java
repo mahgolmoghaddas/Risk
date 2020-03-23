@@ -68,6 +68,7 @@ public class Board extends Observable implements Observer {
 				player.addObserver(this);
 			}
 		}
+		
 	}
 
 	@Override

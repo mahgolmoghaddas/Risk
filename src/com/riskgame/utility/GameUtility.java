@@ -49,6 +49,7 @@ public class GameUtility {
 			default:
 				break;
 			}
+			
 			playerList.add(player);
 		}
 		return playerList;

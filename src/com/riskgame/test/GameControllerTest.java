@@ -39,7 +39,9 @@ class GameControllerTest {
 		GameController gameController = new GameController(false);
 		gameController.assignArmiesToPlayer(playerList);
 		noOfArmies = p1.getArmiesHeld(); 
-		if(noOfArmies>0) {condition = true;}
+		if(noOfArmies>0) {
+			condition = true;
+			}
 		assertTrue(condition);
 		  
 		 

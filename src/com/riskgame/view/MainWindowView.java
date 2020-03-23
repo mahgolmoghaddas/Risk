@@ -1,34 +1,30 @@
 package com.riskgame.view;
 
-import com.riskgame.model.*;
-
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
 
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.border.TitledBorder;
 
 import com.riskgame.controller.CreateMapController;
-import com.riskgame.controller.EditMapController;
 import com.riskgame.controller.GameController;
 import com.riskgame.controller.SaveMapController;
 import com.riskgame.enums.GameScreen;
-import com.riskgame.utility.*;
-import com.riskgame.view.*;
+import com.riskgame.model.World;
+import com.riskgame.utility.MapReader;
+import com.riskgame.utility.ViewUtility;
 
 public class MainWindowView extends JFrame{
 
@@ -74,20 +70,25 @@ public class MainWindowView extends JFrame{
 		mainWindowView = MainWindowView.getInstance();
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
-		double width = GameScreen.WIDTH.getValue();
-		double height = GameScreen.HEIGHT.getValue();
-		dim.width = (int) (dim.width * width);
-		dim.height = (int) (dim.height * height);
-
-		System.out.println(dim.getHeight() + " " + dim.getWidth());
-		mainWindowView.setSize(dim);
-
+		ImageIcon imgIcon = new ImageIcon("resources/images/RiskGame.jpg") ;
 		mainWindowView.getContentPane().setLayout(new FlowLayout());
+		
+//		double width = GameScreen.WIDTH.getValue();
+//		double height = GameScreen.HEIGHT.getValue();
+//		dim.width = (int) (dim.width * width);
+//		dim.height = (int) (dim.height * height);
+		
+		dim.width = imgIcon.getIconWidth();
+		dim.height = imgIcon.getIconHeight();
+		mainWindowView.setSize(dim);
+		
 		final JLabel backGround = new JLabel(new ImageIcon(((new ImageIcon("resources/images/RiskGame.jpg").getImage()
-				.getScaledInstance(mainWindowView.getSize().width, (int) ((int) mainWindowView.getSize().height - 30),
+				.getScaledInstance(mainWindowView.getSize().width, (int) ((int) mainWindowView.getSize().height+30),
 						java.awt.Image.SCALE_SMOOTH)))));
 
-		mainWindowView.add(backGround);
+		mainWindowView.add(backGround,"Center");
+		mainWindowView.pack();
+		mainWindowView.setLocationRelativeTo(null);
 
 	}
 

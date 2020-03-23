@@ -25,6 +25,8 @@ public class MapReader {
 
 	MainWindowView mainWindowView;
 	JFrame editMapFrame;
+	Coordinates coordinate;
+	
 
 	private static final String TERRITORY_FORMAT = "[Territories]";
 	private static final String CONTINENT_FORMAT = "[Continents]";
@@ -282,4 +284,55 @@ public class MapReader {
 		System.out.println("Successfully parsed Map");
 		return world;
 	}
-}
+
+
+
+
+
+
+	public boolean saveAndUpdateFile(World world, String mapName) {
+		String newMap = "[Map]\nauthor=Sean O'Connor\nimage=world.bmp\nwrap=yes\nscroll=horizontal\nwarn=yes\n\n[Continents]\n";
+		for (Continent continent : world.getContinents()) {
+			newMap = newMap + continent.getContinentName();
+			if(continent.getBonusPoint()==0){
+				continent.setBonusPoint(continent.getTerritoryList().size());	
+			}
+			newMap = newMap + "=" + continent.getBonusPoint();
+			newMap += "\n";
+		}
+		newMap += "\n";
+		int counter=0;
+		newMap += "[Territories]\n";
+		for (Continent continent : world.getContinents()) {
+			if(counter++>0)
+				newMap += "\n";
+			for (Territory country : continent.getTerritoryList()) {
+//				System.out.println(country.getCountryName());
+//				System.out.println(country.getTerritoryPosition().getX());
+//				System.out.println(continent.getContinentName());
+				
+				newMap += country.getCountryName()+ "," +country.getTerritoryPosition().getX()+ ","+country.getTerritoryPosition().getY()+ ","  + continent.getContinentName() + ",";
+				if(country.getNeighborsTerritory()!=null) {
+					newMap += String.join(",", country.getNeighborsTerritory()) + "\n";
+					//System.out.println(country.getNeighborsTerritory());
+				}
+				
+				
+			}
+		}
+		PrintWriter writeData = null;
+		try {
+			writeData = new PrintWriter(mapName+".map");
+			writeData.println(newMap);
+			return true;
+		} 
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+			return false;
+		}
+		finally{
+			writeData.close();
+		}
+}}
+		
+	

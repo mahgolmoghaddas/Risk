@@ -1,10 +1,10 @@
 package com.riskgame.utility;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.util.Iterator;
 
@@ -14,16 +14,17 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.riskgame.enums.GameScreen;
 import com.riskgame.model.Continent;
+import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
 import com.riskgame.model.World;
 
 public class ViewUtility {
-
-	
 
 	public JFrame createMainFrame(String name, boolean showBackGround) {
 		JFrame frame = new JFrame(name);
@@ -51,33 +52,31 @@ public class ViewUtility {
 		}
 		return frame;
 	}
-	
-	
+
 	/**
 	 * create and return the frame for mapeditor
+	 * 
 	 * @param name
 	 * @return JFrame
 	 * @throws Exception
 	 */
 	public JFrame editFrame(String name) throws Exception {
 		JFrame frame = new JFrame(name);
-		
-			Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
-			double width = GameScreen.WIDTH.getValue();
-			double height = GameScreen.HEIGHT.getValue();
-			dim.width = (int) (dim.width * width);
-			dim.height = (int) (dim.height * height);
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
-			System.out.println(dim.getHeight() + " " + dim.getWidth());
-			frame.setSize(dim);
-	        BoxLayout boxLayout = new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS); // top to bottom
-	        frame.setLayout(boxLayout);
-			
-			return frame;
+		double width = GameScreen.WIDTH.getValue();
+		double height = GameScreen.HEIGHT.getValue();
+		dim.width = (int) (dim.width * width);
+		dim.height = (int) (dim.height * height);
+
+		System.out.println(dim.getHeight() + " " + dim.getWidth());
+		frame.setSize(dim);
+		BoxLayout boxLayout = new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS); // top to bottom
+		frame.setLayout(boxLayout);
+
+		return frame;
 	}
-	
-	
 
 	public JMenu createMenu(String name) throws Exception {
 		JMenu menu = new JMenu(name);
@@ -108,11 +107,11 @@ public class ViewUtility {
 
 					Iterator<Territory> territoryIterator = continent.getTerritoryList().iterator();
 					String territories = "";
-					
-					while(territoryIterator.hasNext()) {
-						territories = territories+","+territoryIterator.next().getCountryName();
+
+					while (territoryIterator.hasNext()) {
+						territories = territories + "," + territoryIterator.next().getCountryName();
 					}
-					
+
 					territories = territories.replace(",", "");
 
 					dataModel.addRow(new Object[] { continent.getContinentName(), bonus + "", territories });
@@ -121,13 +120,11 @@ public class ViewUtility {
 				worldMapTable.setLocation(250, 300);
 				worldMapTable.setVisible(true);
 			} else {
-				if(world==null) {
+				if (world == null) {
 					System.out.print("world is null");
-				}
-				else if(world.getContinents() == null) {
+				} else if (world.getContinents() == null) {
 					System.out.print("Continent is null");
-				}
-				else if(world.getContinents().isEmpty()) {
+				} else if (world.getContinents().isEmpty()) {
 					System.out.print("Continent is empty");
 				}
 			}
@@ -138,4 +135,24 @@ public class ViewUtility {
 		return worldMapTable;
 	}
 
+	public JTextField createPlayerArmiesTextField(Player player) {
+		JTextField textField = new JTextField();
+		textField.setBackground(player.getColor());
+		textField.setText(player.getArmiesHeld()+"");
+		textField.setEditable(false);
+		Dimension size = new Dimension();
+		size.setSize(40, 30);
+		textField.setPreferredSize(size);
+		textField.setHorizontalAlignment(JTextField.CENTER);
+		textField.setForeground(Color.DARK_GRAY);
+		textField.setBorder(new LineBorder(Color.GRAY));
+		
+		return textField;
+	}
+	
+	public JLabel createPlayerLabel(String name) {
+		JLabel playerLabel = new JLabel();
+		playerLabel.setText(name);
+		return playerLabel;
+	}
 }

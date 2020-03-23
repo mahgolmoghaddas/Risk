@@ -1,9 +1,11 @@
 package com.riskgame.test;
 
 import static org.junit.Assert.*;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
-import com.riskgame.model.World;
-import com.riskgame.utility.ViewUtility;
+import com.riskgame.model.*;
+import com.riskgame.utility.*;
 
 public class ViewUtilityTest {
 	ViewUtility vu = new ViewUtility();
@@ -34,4 +36,18 @@ public class ViewUtilityTest {
 			val = true;
 		assertTrue("Continent is empty", val);
 	}
+	
+	@Test
+	public void notNullStartDiceNo() throws Exception {
+		List<Player> playerList = new ArrayList<>();
+		Player p1 = new Player(1,"Jasmeet");
+		p1.setStartDiceNo(1);
+		playerList.add(p1);
+		boolean val = false;
+		if (p1.getStartDiceNo() != null) 
+			val = true;
+		assertTrue(val);
+	}
+	
+	
 }

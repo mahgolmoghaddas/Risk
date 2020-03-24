@@ -57,7 +57,7 @@ public class Territory {
 
 	/**
 	 * Setter for assigning the quantity of the armies in the Country.
-	 * @param armyQuantity quantity of armies
+	 * @param armyCount quantity of armies
 	 */
 	public void setArmyCount(int armyCount) {
 		this.armyCount = armyCount;

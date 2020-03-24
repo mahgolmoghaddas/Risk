@@ -67,7 +67,7 @@ public class Unit {
 
     /**
      * To set y-coordinate of the territory.
-     * @param y_Position
+     * @param Position_y
      */
     public void setY_Position(int Position_y) {
         this.Position_y = Position_y;

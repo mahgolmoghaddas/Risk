@@ -66,7 +66,7 @@ public class Continent {
 	}
 	/**
 	 * setter method for determining continent name
-	 * @param ContinentName
+	 * @param continentName
 	 */
 	public void setContinentName(String continentName) {
 		this.continentName=continentName;

@@ -19,7 +19,7 @@ import com.riskgame.model.Territory;
 
 
 /**
- * This inner class create a WorldMap Panel and draws map with the provided World object.
+ * This class creates a WorldMap Panel and draws map with the provided World object.
  * It also allows option to place armies in the territories
  * @author gauta
  *

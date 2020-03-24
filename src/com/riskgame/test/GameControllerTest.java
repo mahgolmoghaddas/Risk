@@ -38,7 +38,7 @@ public class GameControllerTest {
 		
 		int noOfArmies;
 		boolean condition = false;
-		GameController gameController = new GameController(false);
+		GameController gameController = GameController.getInstance();
 		gameController.assignArmiesToPlayer(playerList);
 		noOfArmies = p1.getArmiesHeld(); 
 		if(noOfArmies>0) {

@@ -23,7 +23,11 @@ import com.riskgame.model.Continent;
 import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
 import com.riskgame.model.World;
-
+/**
+ * This class provides the reusable methods for the Risk Game view
+ * @author gauta
+ *
+ */
 public class ViewUtility {
 
 	public JFrame createMainFrame(String name, boolean showBackGround) {

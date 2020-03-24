@@ -20,8 +20,15 @@ import com.riskgame.model.Continent;
 import com.riskgame.model.Territory;
 import com.riskgame.model.World;
 import com.riskgame.utility.MapReader;
+import com.riskgame.utility.GamePhase;
 import com.riskgame.utility.ViewUtility;
 
+/**
+ * This is the game window for the New Game. It provides the fields to select the number of the players in the game
+ * and the map used to play the risk game.
+ * @author pushpa
+ *
+ */
 public class NewGameView extends JFrame{
 
 	private JFrame newGameFrame;
@@ -37,12 +44,14 @@ public class NewGameView extends JFrame{
 
 	private GameController gameController;
 
-	
-	
-	public NewGameView(GameController gameController) {
-		this.gameController = gameController;
+	public NewGameView() {
+		this.gameController = GameController.getInstance();
 	}
-
+	
+	/**
+	 * This launches a new window for new game. 
+	 * It displays the field to select the number of players and map file to be used in the game
+	 */
 	public void launchNewGameFrame() {
 		try {
 			newGameFrame = viewUtility.createMainFrame("Start Game", false);
@@ -72,6 +81,10 @@ public class NewGameView extends JFrame{
 		return gamePanel;
 	}
 
+	/**
+	 * This method creates a Panel with the combo box to select number of players in the game
+	 * @return JPanel
+	 */
 	public JPanel createPlayerComboPanel() {
 
 		JPanel panelComboBox = new JPanel();
@@ -79,7 +92,7 @@ public class NewGameView extends JFrame{
 		JLabel selectplayerlabel = new JLabel("Select Number of  Players:");
 		int maxnumberofplayers = 5;
 		JComboBox comboBoxlist = new JComboBox();
-		for (int i = 0; i <= maxnumberofplayers; i++) {
+		for (int i = 1; i <= maxnumberofplayers; i++) {
 			comboBoxlist.addItem(i);
 		}
 
@@ -103,7 +116,14 @@ public class NewGameView extends JFrame{
 		loadMapPanel.add(createLoadMapButton());
 		return loadMapPanel;
 	}
-
+	
+	
+	/**
+	 * Creates a button to load an existing world map file in the window.
+	 * It validates the map file and creates a world object and show the button to start the game if the map file is valid one.
+	 * @return JButton
+	 * @throws Exception
+	 */
 	public JButton createLoadMapButton() {
 		JButton loadMapButton = new JButton("Choose Map");
 		loadMapButton.addActionListener(actionEvent -> {
@@ -127,7 +147,7 @@ public class NewGameView extends JFrame{
 
 						currentWorldMap = mapReader.createWorldMap();
 //						printWorldMap();
-						gameController.setGameParameters(currentWorldMap, playersCount, true);
+						gameController.setGameParameters(currentWorldMap, playersCount);
 						startGameButton.setVisible(true);
 						cancelButton.setVisible(true);
 
@@ -144,6 +164,10 @@ public class NewGameView extends JFrame{
 		return loadMapButton;
 	}
 
+	/**
+	 * This creates a panel with the button start and cancel, that allows user to start the game or cancel it.
+	 * @return
+	 */
 	public JPanel createPlayGamePanel() {
 		JPanel playGamePanel = new JPanel();
 		playGamePanel.setLayout(new FlowLayout());
@@ -162,9 +186,13 @@ public class NewGameView extends JFrame{
 	}
 
 	public JButton createStartGameButton() {
-		startGameButton = new JButton("Start Game");
-		startGameButton.addActionListener(gameController);
-		startGameButton.setVisible(false);
+		try {
+			startGameButton = new JButton("Start Game");
+			startGameButton.addActionListener(gameController);
+			startGameButton.setVisible(false);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return startGameButton;
 	}
 

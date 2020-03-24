@@ -10,8 +10,6 @@ import java.util.*;
  * @author Himani
  * @version 1.0.0.0
  */
-
-import com.riskgame.utility.PlayersColor;
 public class Player extends Observable {
 
 	private int playerId;

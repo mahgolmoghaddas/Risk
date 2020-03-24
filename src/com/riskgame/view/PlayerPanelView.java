@@ -1,8 +1,12 @@
 package com.riskgame.view;
 
+import java.awt.Color;
+import java.awt.GridLayout;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -10,12 +14,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.riskgame.controller.GameController;
 import com.riskgame.model.Board;
 import com.riskgame.model.Player;
+import com.riskgame.utility.GamePhase;
 import com.riskgame.utility.ViewUtility;
 
 /**
- * This is the panel which displays the player details, the armies each player holds and number of start dice number the player gets. 
+ * This is the panel which displays the player details, the armies each player
+ * holds and number of start dice number the player gets.
+ * 
  * @author pushpa
  *
  */
@@ -25,10 +33,12 @@ public class PlayerPanelView extends JPanel implements Observer {
 
 	private Board board;
 
-	private Map<Integer, JTextField> armiesField = new HashMap<>();
-	private Map<Integer, JLabel> diceMap = new HashMap<>();
+	private Map<Integer, JTextField> armiesFieldMap = new HashMap<>();
+	private Map<Integer, JLabel> diceLabelMap = new HashMap<>();
 
 	private ViewUtility viewUtility = new ViewUtility();
+
+	boolean isCurrentPlayerDisplayed = false;
 
 	public PlayerPanelView(Board board) {
 		this.board = board;
@@ -44,11 +54,11 @@ public class PlayerPanelView extends JPanel implements Observer {
 	}
 
 	/**
-	 * This method creates the player panel dynamically as per the user selected number of
-	 * players
+	 * This method creates the player panel dynamically as per the user selected
+	 * number of players
 	 * 
 	 * @param board
-	 * 
+	 * @return
 	 */
 	public void createPlayerPanel(Board board) {
 
@@ -60,8 +70,8 @@ public class PlayerPanelView extends JPanel implements Observer {
 					JTextField textField = viewUtility.createPlayerArmiesTextField(playerList.get(i));
 					JLabel playerDice = viewUtility.createPlayerDice(playerList.get(i));
 
-					armiesField.put(playerList.get(i).getId(), textField);
-					diceMap.put(playerList.get(i).getId(), playerDice);
+					armiesFieldMap.put(playerList.get(i).getId(), textField);
+					diceLabelMap.put(playerList.get(i).getId(), playerDice);
 					add(playerLabel);
 					add(textField);
 					add(playerDice);
@@ -76,20 +86,60 @@ public class PlayerPanelView extends JPanel implements Observer {
 	private void updatePlayerPanel(Board board) {
 
 		try {
-			for (int i = 0; i < board.getPlayerList().size(); i++) {
-				Player player = board.getPlayerList().get(i);
-				armiesField.get(player.getId()).setText(player.getArmiesHeld() + "");
-				if (player.getStartDiceNo() != null) {
-					JLabel diceLabel =diceMap.get(player.getId());
-					diceLabel.setText("Dice value:" + player.getStartDiceNo());
-					diceLabel.setForeground(player.getColor());
+			GamePhase gamePhase = GameController.getInstance().getGamePhase();
+
+			if (board != null && board.getPlayerList() != null && !board.getPlayerList().isEmpty()) {
+
+				if (GamePhase.SETUP.equals(gamePhase)) {
+					for (int i = 0; i < board.getPlayerList().size(); i++) {
+						Player player = board.getPlayerList().get(i);
+						updateSetUpPhase(player);
+					}
+				} else if (GamePhase.REINFORCE.equals(gamePhase)) {
+					updateReinforcementPhase(board.getActivePlayer());
+					revalidate();
 				}
 			}
-
-			this.repaint();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	private void updateSetUpPhase(Player player) {
+		armiesFieldMap.get(player.getId()).setText(player.getArmiesHeld() + "");
+		if (player.getStartDiceNo() != null) {
+			JLabel diceLabel = diceLabelMap.get(player.getId());
+			diceLabel.setText("Dice value:" + player.getStartDiceNo());
+			diceLabel.setForeground(player.getColor());
+		}
+		this.repaint();
+	}
+
+	private void updateReinforcementPhase(Player player) {
+		if (diceLabelMap != null && !diceLabelMap.isEmpty()) {
+			for (Entry<Integer, JLabel> entry : diceLabelMap.entrySet()) {
+				JLabel label = entry.getValue();
+				this.remove(label);
+			}
+		}
+		if (!isCurrentPlayerDisplayed) {
+			isCurrentPlayerDisplayed =true;
+			updateActivePlayerLabel(player);
+		}
+		updateArmiesHeld(player);
+	}
+
+	private void updateActivePlayerLabel(Player player) {
+		JLabel activePlayerLabel = new JLabel();
+		activePlayerLabel.setText("Current Player ::" + player.getName());
+		activePlayerLabel.setForeground(Color.decode("#4842f5"));
+		activePlayerLabel.setVisible(true);
+		add(activePlayerLabel);
+	}
+	
+	private void updateArmiesHeld(Player player) {
+		
+		JTextField armyHeldField = armiesFieldMap.get(player.getId());
+		armyHeldField.setText(player.getArmiesHeld()+"");
+	}
 }

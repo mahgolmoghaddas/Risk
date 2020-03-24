@@ -30,19 +30,16 @@ public class GameController implements ActionListener {
 	private BoardView boardView;
 	private Board board;
 	private GameUtility gameUtility = new GameUtility();
-	private GamePhase turnPhase;
 	private GamePhase gamePhase;
 	private static GameController gameController;
-
 	private TurnManager turnManager;
+	
 
 	/**
 	 * This constructor creates a GameController Object to set the turnPhase as <b>Start</b>
 	 */
 	private GameController() {
-		this.turnPhase = GamePhase.START; 
-
-		this.gamePhase = GamePhase.START;
+		this.gamePhase = GamePhase.PREGAME;
 		board = Board.getInstance();
 	}
 
@@ -68,8 +65,6 @@ public class GameController implements ActionListener {
 	public void setGameParameters(World world, int numberOfPlayers) {
 		this.world = world;
 		this.numberOfPlayers = numberOfPlayers;
-		this.turnPhase = turnPhase;
-
 	}
 
 	/**
@@ -79,23 +74,28 @@ public class GameController implements ActionListener {
 	public void actionPerformed(ActionEvent actionEvent) {
 
 		try {
-				if(GamePhase.START.equals(this.turnPhase)) {
-					System.out.println("************START PHASE************");
-					NewGameView newGameView = new NewGameView();
-					newGameView.launchNewGameFrame();
-				}else if (GamePhase.SETUP.equals(this.turnPhase)) {
-					System.out.println("************SETUP PHASE**************");
-					initiateBoardAndPlayGame();
-				}else if(GamePhase.REINFORCE.equals(this.turnPhase)) {
-					System.out.println("************REINFORCE PHASE**************");
-				}else if(GamePhase.ATTACK.equals(this.turnPhase)) {
-					System.out.println("************ATTACK PHASE**************");
-				}
-
-		    } catch (Exception e) {
-		    	e.printStackTrace();
-		    	}
+			this.gamePhase = gameUtility.getNextPhase(this.gamePhase);
+			if (GamePhase.START.equals(this.gamePhase)) {
+				System.out.println("************START PHASE************");
+				NewGameView newGameView = new NewGameView();
+				newGameView.launchNewGameFrame();
+			} else if (GamePhase.SETUP.equals(this.gamePhase)) {
+				System.out.println("************SETUP PHASE**************");
+				initiateBoardAndPlayGame();
+			} else if (GamePhase.REINFORCE.equals(this.gamePhase)) {
+				
+				System.out.println(board.getActivePlayer());
+				System.out.println("************REINFORCE PHASE**************");
+				
+			} else if (GamePhase.ATTACK.equals(this.gamePhase)) {
+				System.out.println("************ATTACK PHASE**************");
 			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 
 	/**
 	 * Initiates the board with the specified player details and build card as per
@@ -118,6 +118,7 @@ public class GameController implements ActionListener {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	/**
@@ -167,6 +168,10 @@ public class GameController implements ActionListener {
 				}
 			}
 		}
+	}
+	
+	public GamePhase getGamePhase() {
+		return this.gamePhase;
 	}
 
 }

@@ -21,7 +21,6 @@ public class Player extends Observable {
 	private HashSet<Continent> continentsOwned;
 	private List<Card> cardsHeld;
 	private Integer startDiceNo;
-
 	/**
 	 * The parameterized constructor takes player id and name as parameters
 	 * 
@@ -68,7 +67,7 @@ public class Player extends Observable {
 	/**
 	 * this method gets the number of armies that the player has
 	 * 
-	 * 
+	 * @param playerId is the id of the player
 	 * @return the number of armies of the player
 	 */
 	public int getArmiesHeld() {
@@ -82,6 +81,7 @@ public class Player extends Observable {
 	 */
 	public void setArmiesHeld(int armiesHeld) {
 		this.armiesHeld = armiesHeld;
+		playerDataChanged();
 	}
 
 	/**

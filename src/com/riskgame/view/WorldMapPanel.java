@@ -6,15 +6,18 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
+
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.riskgame.model.Board;
+import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
 
 
@@ -30,7 +33,8 @@ public class WorldMapPanel extends JPanel implements Observer{
 	private Board board;
 	private BufferedImage mapImage;
 	Dimension size = new Dimension();
-
+	
+	HashMap<String,Territory> territoryMap = new HashMap<String,Territory>();
 	public WorldMapPanel(Board board, BufferedImage mapImage) {
 		this.board = board;
 		this.mapImage = mapImage;
@@ -59,7 +63,7 @@ public class WorldMapPanel extends JPanel implements Observer{
 				Iterator<Territory> territoryIterator = territorySet.iterator();
 				while (territoryIterator.hasNext()) {
 					Territory territory = territoryIterator.next();
-
+					territoryMap.put(territory.getCountryName(), territory);
 					JTextField text = new JTextField();
 					int x = (int) territory.getTerritoryPosition().getX();
 					int y = (int) territory.getTerritoryPosition().getY();
@@ -89,10 +93,24 @@ public class WorldMapPanel extends JPanel implements Observer{
 
 						@Override
 						public void mouseClicked(java.awt.event.MouseEvent e) {
-							JOptionPane.showMessageDialog(BoardView.mainBoardFrame.getContentPane(), "Mouse clicked.",
-									"MESSAGE", JOptionPane.INFORMATION_MESSAGE);
-							JTextField eventCOmp = (JTextField) e.getComponent();
-							System.out.println("Target " + eventCOmp.getName());
+							
+							Player activePlayer = board.getActivePlayer();
+							
+							JTextField targetTerritoryField = (JTextField) e.getComponent();
+							Territory targetTerritory = territoryMap.get(targetTerritoryField.getName());
+							
+							if(targetTerritory.getOwner().equals(activePlayer) && activePlayer.getArmiesHeld()>0) {
+								
+								activePlayer.getCountriesOwned().add(targetTerritory);
+								int oldTerritoryArmyCount = targetTerritory.getArmyCount();
+								targetTerritory.setArmyCount(oldTerritoryArmyCount+1);
+								int oldArmiesCount = activePlayer.getArmiesHeld();
+								activePlayer.setArmiesHeld(oldArmiesCount - 1);
+								
+								targetTerritoryField.setText(targetTerritory.getArmyCount()+"");
+							}
+									
+							System.out.println("Target " + targetTerritory.getCountryName());
 						}
 					});
 					this.setLayout(null);

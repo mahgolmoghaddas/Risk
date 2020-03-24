@@ -31,10 +31,13 @@ import com.riskgame.model.Board;
 import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
 import com.riskgame.utility.DiceType;
+import com.riskgame.utility.GamePhase;
 import com.riskgame.utility.ViewUtility;
 
 /**
- * This is the board view for the risk game which displays the world map in the gui with the selected number of players.
+ * This is the board view for the risk game which displays the world map in the
+ * gui with the selected number of players.
+ * 
  * @author pushpa
  *
  */
@@ -44,10 +47,13 @@ public class BoardView implements Observer {
 	private ViewUtility viewUtility = new ViewUtility();
 	static JFrame mainBoardFrame;
 	WorldMapPanel worldMapPanel;
-	JPanel diceRollPanel; 
-	
-	Map<Integer,JTextField> armiesField = new HashMap<>();
-	Map<Integer,JLabel> diceList = new HashMap<>();
+	JPanel diceRollPanel;
+	JPanel finishSetupPanel;
+	JPanel attackDicePanel;
+	JPanel defendDicePanel;
+
+	Map<Integer, JTextField> armiesField = new HashMap<>();
+	Map<Integer, JLabel> diceList = new HashMap<>();
 
 	public BoardView(Board board) {
 		this.board = board;
@@ -60,13 +66,17 @@ public class BoardView implements Observer {
 		System.out.println("Updated..BOARD DATA");
 		if (o instanceof Board) {
 			board = (Board) o;
+			if (GamePhase.REINFORCE.equals(GameController.getInstance().getGamePhase())) {
+				showReinforceBoard(board);
+			}
 		}
 	}
-	
+
 	/**
-	 * This method displays the board view as per the Board data which includes player,no of territories acquired by the player
-	 * and number of armies hold by player
-	 * */
+	 * This method displays the board view as per the Board data which includes
+	 * player,no of territories acquired by the player and number of armies hold by
+	 * player
+	 */
 	public void showGameBoard(Board board) {
 		try {
 			mainBoardFrame = viewUtility.createMainFrame("Play Game", false);
@@ -79,7 +89,8 @@ public class BoardView implements Observer {
 
 			mainBoardFrame.getContentPane().add(createDiceRollPanel(board), "Center");
 			mainBoardFrame.getContentPane().add(playerPanel);
-			mainBoardFrame.getContentPane().add(createFinishMovePanel(),"Center");
+			finishSetupPanel = createFinishSetupPanel();
+			mainBoardFrame.getContentPane().add(finishSetupPanel, "Center");
 			mainBoardFrame.setVisible(true);
 			JOptionPane.showMessageDialog(mainBoardFrame, "Roll dice to decide the player turn");
 
@@ -88,9 +99,20 @@ public class BoardView implements Observer {
 		}
 	}
 
+	public void showReinforceBoard(Board board) {
+		try {
+			mainBoardFrame.remove(diceRollPanel);
+			mainBoardFrame.remove(finishSetupPanel);
+			mainBoardFrame.repaint();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
-	 * This method draws map with the provided World data with the respective 
+	 * This method draws map with the provided World data with the respective
 	 * continents and the countries details
+	 * 
 	 * @param board
 	 * @return
 	 * @throws Exception
@@ -105,38 +127,58 @@ public class BoardView implements Observer {
 		worldMapPanel.setVisible(true);
 		return worldMapPanel;
 	}
-	
 
 	/**
 	 * This mehod creates the panel to roll the dice
+	 * 
 	 * @return
 	 */
 	public JPanel createDiceRollPanel(Board board) {
-		diceRollPanel = new DicePanel(DiceType.Defend,board,true);
+		diceRollPanel = new DicePanel(DiceType.Defend, board, true);
 		diceRollPanel.setPreferredSize(getPreferredSizeForBoardPanel());
 		diceRollPanel.setBackground(Color.decode("#03c2fc"));
 		return diceRollPanel;
 	}
 
 	
+	public JPanel createAttackDicePanel(Board board) {
+		attackDicePanel = new DicePanel(DiceType.Attack,board,false);
+		Dimension dim = getPreferredSizeForBoardPanel();
+		dim.width = dim.width/2;
+		attackDicePanel.setPreferredSize(dim);
+		attackDicePanel.setVisible(true);
+		return attackDicePanel;
+	}
+	
+	public JPanel createDefendDicePanel(Board board) {
+		defendDicePanel = new DicePanel(DiceType.Defend,board,false);
+		Dimension dim = getPreferredSizeForBoardPanel();
+		dim.width = dim.width/2;
+		defendDicePanel.setPreferredSize(dim);
+		defendDicePanel.setVisible(true);
+		return defendDicePanel;
+	}
+	
+	
 	/**
-	 * This method creates a finish button to specify 
-	 * that a current user is done with a particular move.
+	 * This method creates a finish button to specify that a current user is done
+	 * with a particular move.
 	 * 
 	 * @return
 	 */
-	public JPanel createFinishMovePanel() {
-		JPanel finishMovePanel = new JPanel();
-		finishMovePanel.setPreferredSize(getPreferredSizeForBoardPanel());
+	public JPanel createFinishSetupPanel() {
+		finishSetupPanel = new JPanel();
+		finishSetupPanel.setPreferredSize(getPreferredSizeForBoardPanel());
 		JButton finishMove = new JButton("Finish Setup");
 		GameController gameController = GameController.getInstance();
 		finishMove.addActionListener(gameController);
 		finishMove.setBackground(Color.decode("#f5b942"));
 		finishMove.setUI(new BasicButtonUI());
-		finishMovePanel.add(finishMove, "Center");
+		
+		finishSetupPanel.add(finishMove, "Center");
 		finishMove.setVisible(true);
-		finishMovePanel.setVisible(true);
-		return finishMovePanel;
+		finishSetupPanel.setVisible(true);
+		return finishSetupPanel;
 	}
 
 	public void printPlayerDetails(Board board) {

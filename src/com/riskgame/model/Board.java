@@ -15,6 +15,10 @@ public class Board extends Observable implements Observer {
 	private List<Player> playerList;
 	private List<Card> cardDeck;
 	private static Board board;
+	private Player nextPlayer;
+	
+	private TurnManager turnManager;
+	
 
 	/**
 	 * Single instance for the board is maintained throughout the game phases.
@@ -45,7 +49,7 @@ public class Board extends Observable implements Observer {
 
 	public void setCardDeck(List<Card> cardDeck) {
 		this.cardDeck = cardDeck;
-		notifyObservers();
+		boardDataChanged();
 	}
 
 	/**
@@ -56,6 +60,30 @@ public class Board extends Observable implements Observer {
 	public World getWorld() {
 		return world;
 	}
+	
+	
+
+	public Player getActivePlayer() {
+		if(this.nextPlayer==null) {
+			this.nextPlayer = getNextPlayer();
+		}
+		return this.nextPlayer;
+	}
+
+	public Player getNextPlayer() {
+		try {
+			if (turnManager == null) {
+				turnManager = new TurnManager(board.getPlayerList());
+			}
+			this.nextPlayer = turnManager.getNextPlayer();
+			boardDataChanged();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return this.nextPlayer;
+	}
+
+
 
 	public void initializeGame(World world, ArrayList<Player> playerList, ArrayList<Card> cardDeck) {
 		this.world = world;
@@ -94,6 +122,8 @@ public class Board extends Observable implements Observer {
 
 	}
 
+	
+	
 	/**
 	 * This method notify the Observers of Board whenever any data changes
 	 */

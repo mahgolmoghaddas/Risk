@@ -19,7 +19,7 @@ import com.riskgame.utility.GamePhase;
 public class TurnManager {
 
 	private Player currentPlayer;
-	private GamePhase currentPhase;
+	private static GamePhase currentPhase;
 
 	public GamePhase getCurrentPhase() {
 		return currentPhase;
@@ -38,26 +38,6 @@ public class TurnManager {
 		this.playerList = playerList;
 	}
 
-	/**
-	 * This method returns the next phase of the game based on the current phase of the game
-	 * @return GamePhase
-	 */
-	public GamePhase getNextPhase() {
-		switch (this.currentPhase) {
-		case START:
-			return GamePhase.SETUP;
-		case SETUP:
-			return GamePhase.REINFORCE;
-		case REINFORCE:
-			return GamePhase.ATTACK;
-		case ATTACK:
-			return GamePhase.FORTIFY;
-		case FORTIFY:
-			return GamePhase.PICKCARD;
-		default:
-			return GamePhase.START;
-		}
-	}
 
 	public void initTurnList() {
 		tempturnList = new ArrayList<Player>(this.designedTurnList);

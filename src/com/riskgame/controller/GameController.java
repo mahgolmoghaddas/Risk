@@ -6,15 +6,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import com.riskgame.model.Card;
-import com.riskgame.model.Continent;
 import com.riskgame.model.Board;
+import com.riskgame.model.Card;
 import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
+import com.riskgame.model.TurnManager;
 import com.riskgame.model.World;
-import com.riskgame.utility.CardType;
-import com.riskgame.utility.GameUtility;
 import com.riskgame.utility.GamePhase;
+import com.riskgame.utility.GameUtility;
 import com.riskgame.view.BoardView;
 import com.riskgame.view.NewGameView;
 
@@ -29,41 +28,50 @@ public class GameController implements ActionListener {
 	private World world;
 	private int numberOfPlayers;
 	private BoardView boardView;
-	private Board game;
+	private Board board;
 	private GameUtility gameUtility = new GameUtility();
 	private GamePhase turnPhase;
+	private GamePhase gamePhase;
 	private static GameController gameController;
-	
+
+	private TurnManager turnManager;
+
 	/**
-	 * This constructor creates a GameController Object to set the turnPhase as Start
-	 * @param turnPhase
+	 * This constructor creates a GameController Object to set the turnPhase as <b>Start</b>
 	 */
 	private GameController() {
 		this.turnPhase = GamePhase.START; 
+
+		this.gamePhase = GamePhase.START;
+		board = Board.getInstance();
 	}
 
 	/**
 	 * Returns the single instance of the GameController
+	 * 
 	 * @return
 	 */
 	public static GameController getInstance() {
-		if(gameController==null) {
+		if (gameController == null) {
 			gameController = new GameController();
 		}
 		return gameController;
 	}
-	
+
 	/**
 	 * This method sets the world data, number of players and the phase of the turn
+	 * 
 	 * @param world
 	 * @param numberOfPlayers
 	 * @param turnPhase
 	 */
-	public void setGameParameters(World world,int numberOfPlayers,GamePhase turnPhase) {
-		this.world =world;
+	public void setGameParameters(World world, int numberOfPlayers) {
+		this.world = world;
 		this.numberOfPlayers = numberOfPlayers;
 		this.turnPhase = turnPhase;
+
 	}
+
 	/**
 	 * Performs various actions based on the game phase
 	 */
@@ -71,7 +79,6 @@ public class GameController implements ActionListener {
 	public void actionPerformed(ActionEvent actionEvent) {
 
 		try {
-
 				if(GamePhase.START.equals(this.turnPhase)) {
 					System.out.println("************START PHASE************");
 					NewGameView newGameView = new NewGameView();
@@ -88,16 +95,14 @@ public class GameController implements ActionListener {
 		    } catch (Exception e) {
 		    	e.printStackTrace();
 		    	}
-
-	}
+			}
 
 	/**
-	 * Initiates the board with the specified player details and build card as per the specified territories
+	 * Initiates the board with the specified player details and build card as per
+	 * the specified territories
 	 */
 	public void initiateBoardAndPlayGame() {
 		try {
-			game = Board.getInstance();
-
 			ArrayList<Player> playerList = gameUtility.createPlayers(numberOfPlayers);
 			ArrayList<Card> cardDeck = gameUtility.buildCardDeck(world);
 
@@ -107,13 +112,12 @@ public class GameController implements ActionListener {
 			// assign 42 territories for each player evenly and place 1 army for each player
 			distributeTerritories(playerList, world);
 
-			game.initializeGame(world, playerList, cardDeck);
+			board.initializeGame(world, playerList, cardDeck);
 
-			boardView = new BoardView(game);
-			} catch (Exception e) {
+			boardView = new BoardView(board);
+		} catch (Exception e) {
 			e.printStackTrace();
-			}
-
+		}
 	}
 
 	/**

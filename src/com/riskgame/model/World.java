@@ -119,7 +119,7 @@ public class World {
 
     /**
      * Setter for Name
-     * @param name Name
+     * @param mapName
      */
     public void setMapName(String mapName) {
         this.mapName = mapName;

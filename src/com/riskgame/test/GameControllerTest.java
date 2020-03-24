@@ -17,16 +17,17 @@ public class GameControllerTest {
 	@Test
 	public void testAssignArmiesToPlayer() throws Exception {
 		ArrayList<Player> playerList = new ArrayList<>();
-		Player p1 = new Player(1, "Evelyn");
-		Player p2 = new Player(2, "Fred");
+		Player p1 = new Player(1, "Ram");
+		p1.setStartDiceNo(1);
+		Player p2 = new Player(2, "Abraham");
 		p2.setStartDiceNo(2);
-		Player p3 = new Player(3, "Anna");
+		Player p3 = new Player(3, "Abdul");
 		p3.setStartDiceNo(3);
-		Player p4 = new Player(4, "Bikka");
+		Player p4 = new Player(4, "Karan");
 		p4.setStartDiceNo(4);
-		Player p5 = new Player(5, "Chris");
+		Player p5 = new Player(5, "Daniel");
 		p5.setStartDiceNo(5);
-		Player p6 = new Player(6, "Dilip");
+		Player p6 = new Player(6, "Philip");
 		p6.setStartDiceNo(6);
 
 		playerList.add(p1);

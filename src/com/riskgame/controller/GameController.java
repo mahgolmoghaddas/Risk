@@ -31,7 +31,7 @@ public class GameController implements ActionListener {
 	private BoardView boardView;
 	private Board game;
 	private GameUtility gameUtility = new GameUtility();
-	private GamePhase turnphase;
+	private GamePhase turnPhase;
 	private static GameController gameController;
 	
 	/**
@@ -39,7 +39,7 @@ public class GameController implements ActionListener {
 	 * @param turnPhase
 	 */
 	private GameController() {
-		this.turnphase = GamePhase.START; 
+		this.turnPhase = GamePhase.START; 
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class GameController implements ActionListener {
 	public void setGameParameters(World world,int numberOfPlayers,GamePhase turnPhase) {
 		this.world =world;
 		this.numberOfPlayers = numberOfPlayers;
-		this.turnphase = turnPhase;
+		this.turnPhase = turnPhase;
 	}
 	/**
 	 * Performs various actions based on the game phase
@@ -72,23 +72,22 @@ public class GameController implements ActionListener {
 
 		try {
 
-			if(GamePhase.START.equals(this.turnphase)) {
-				System.out.println("************START PHASE************");
-				NewGameView newGameView = new NewGameView();
-				newGameView.launchNewGameFrame();
-			}else if (GamePhase.SETUP.equals(this.turnphase)) {
-				System.out.println("************SETUP PHASE**************");
-				initiateBoardAndPlayGame();
-			}else if(GamePhase.REINFORCE.equals(this.turnphase)) {
-				System.out.println("************REINFORCE PHASE**************");
-				
-			}else if(GamePhase.ATTACK.equals(this.turnphase)) {
-				System.out.println("************ATTACK PHASE**************");
-			}
+				if(GamePhase.START.equals(this.turnPhase)) {
+					System.out.println("************START PHASE************");
+					NewGameView newGameView = new NewGameView();
+					newGameView.launchNewGameFrame();
+				}else if (GamePhase.SETUP.equals(this.turnPhase)) {
+					System.out.println("************SETUP PHASE**************");
+					initiateBoardAndPlayGame();
+				}else if(GamePhase.REINFORCE.equals(this.turnPhase)) {
+					System.out.println("************REINFORCE PHASE**************");
+				}else if(GamePhase.ATTACK.equals(this.turnPhase)) {
+					System.out.println("************ATTACK PHASE**************");
+				}
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		    } catch (Exception e) {
+		    	e.printStackTrace();
+		    	}
 
 	}
 
@@ -111,9 +110,9 @@ public class GameController implements ActionListener {
 			game.initializeGame(world, playerList, cardDeck);
 
 			boardView = new BoardView(game);
-		} catch (Exception e) {
+			} catch (Exception e) {
 			e.printStackTrace();
-		}
+			}
 
 	}
 

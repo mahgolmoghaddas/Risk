@@ -12,7 +12,7 @@ import com.riskgame.utility.CardType; import
  public class ContinentTest {
   
   @Test 
-  public void ContinentTest() {
+  public void ContinentNameTest() {
 	  boolean condition=false;
 	  List<String> continentList = Arrays.asList("Europe","North America","Asia","Africa","South America"
 			  ,"Antarctica","Australia");

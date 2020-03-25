@@ -6,5 +6,14 @@ package com.riskgame.utility;
  *
  */
 public enum DiceType {
-	Attack,Defend
+	Attack(3),Defend(2);
+	
+	private int maxRollAllowed ;
+	
+	DiceType(int maxRollAllowed){
+		this.maxRollAllowed =maxRollAllowed;
+	}
+	public int getMaxAllowedRoll() {
+		return this.maxRollAllowed;
+	}
 }

@@ -46,12 +46,11 @@ public class BoardView implements Observer {
 	private Board board;
 	private ViewUtility viewUtility = new ViewUtility();
 	static JFrame mainBoardFrame;
-	WorldMapPanel worldMapPanel;
 	JPanel diceRollPanel;
 	JPanel finishSetupPanel;
 	JPanel attackDicePanel;
 	JPanel defendDicePanel;
-	JPanel messagePanel = new JPanel();
+	JPanel messagePanel;
 	int currentPlayerId = 0;
 
 	Map<Integer, JTextField> armiesField = new HashMap<>();
@@ -71,6 +70,7 @@ public class BoardView implements Observer {
 			if (GamePhase.REINFORCE.equals(GameController.getInstance().getGamePhase())) {
 				showReinforceBoard(board);
 			} else if (GamePhase.ATTACK.equals(GameController.getInstance().getGamePhase())) {
+				showAttackBoard(board);
 				System.out.println("ATTACK ARMY");
 			}
 		}
@@ -86,15 +86,17 @@ public class BoardView implements Observer {
 			mainBoardFrame = viewUtility.createMainFrame("Play Game", false);
 			mainBoardFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-			worldMapPanel = drawMap(board);
-			mainBoardFrame.getContentPane().add(worldMapPanel, "Center");
+			WorldMapPanel worldMapPanel = drawMap(board);
 			PlayerPanelView playerPanel = new PlayerPanelView(board);
 			playerPanel.setPreferredSize(getPreferredSizeForBoardPanel());
-
-			mainBoardFrame.getContentPane().add(createDiceRollPanel(board), "Center");
-			mainBoardFrame.getContentPane().add(playerPanel);
+			JPanel turnDicePanel = createDiceRollPanel(board);
 			finishSetupPanel = createFinishPhasePanel("Finish Setup");
+
+			mainBoardFrame.getContentPane().add(worldMapPanel, "Center");
+			mainBoardFrame.getContentPane().add(turnDicePanel, "Center");
+			mainBoardFrame.getContentPane().add(playerPanel);
 			mainBoardFrame.getContentPane().add(finishSetupPanel, "Center");
+
 			mainBoardFrame.setVisible(true);
 			JOptionPane.showMessageDialog(mainBoardFrame, "Roll dice to decide the player turn");
 
@@ -108,18 +110,33 @@ public class BoardView implements Observer {
 			mainBoardFrame.remove(diceRollPanel);
 			mainBoardFrame.remove(finishSetupPanel);
 
-			if (board.getActivePlayer().getId() != currentPlayerId) {
-				if (messagePanel.getComponents().length > 0) {
-					messagePanel.removeAll();
-				}
-				messagePanel.add(updateActivePlayerLabel(board.getActivePlayer()));
-				messagePanel.setPreferredSize(getPreferredSizeForBoardPanel());
-				mainBoardFrame.add(messagePanel);
+			if (messagePanel != null && messagePanel.getComponents().length > 0) {
+				messagePanel.removeAll();
+				mainBoardFrame.remove(messagePanel);
 			}
+			messagePanel = createMessagePanel(updateActivePlayerLabel(board.getActivePlayer()));
+
 			if (!hideAttackButton(board)) {
 				finishSetupPanel = createFinishPhasePanel("Attack");
 				mainBoardFrame.add(finishSetupPanel);
 			}
+			mainBoardFrame.add(messagePanel);
+			mainBoardFrame.repaint();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void showAttackBoard(Board board) {
+
+		try {
+			JPanel panel = new JPanel();
+			panel.setPreferredSize(getPreferredSizeForBoardPanel());
+			panel.setLayout(new FlowLayout());
+			panel.add(createAttackDicePanel(board));
+			panel.add(createDefendDicePanel(board));
+			panel.setVisible(true);
+			mainBoardFrame.add(panel);
 			mainBoardFrame.repaint();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -172,18 +189,18 @@ public class BoardView implements Observer {
 
 	public JPanel createAttackDicePanel(Board board) {
 		attackDicePanel = new DicePanel(DiceType.Attack, board, false);
-		Dimension dim = getPreferredSizeForBoardPanel();
-		dim.width = dim.width / 2;
-		attackDicePanel.setPreferredSize(dim);
+//		Dimension dim = getPreferredSizeForBoardPanel();
+//		dim.width = dim.width / 2;
+//		attackDicePanel.setPreferredSize(dim);
 		attackDicePanel.setVisible(true);
 		return attackDicePanel;
 	}
 
 	public JPanel createDefendDicePanel(Board board) {
 		defendDicePanel = new DicePanel(DiceType.Defend, board, false);
-		Dimension dim = getPreferredSizeForBoardPanel();
-		dim.width = dim.width / 2;
-		defendDicePanel.setPreferredSize(dim);
+//		Dimension dim = getPreferredSizeForBoardPanel();
+//		dim.width = dim.width / 2;
+//		defendDicePanel.setPreferredSize(dim);
 		defendDicePanel.setVisible(true);
 		return defendDicePanel;
 	}
@@ -196,7 +213,9 @@ public class BoardView implements Observer {
 	 */
 	public JPanel createFinishPhasePanel(String name) {
 		finishSetupPanel = new JPanel();
-		finishSetupPanel.setPreferredSize(getPreferredSizeForBoardPanel());
+		Dimension dim = getPreferredSizeForBoardPanel();
+		dim.height = 30;
+		finishSetupPanel.setPreferredSize(dim);
 		JButton finishMove = viewUtility.createGamePhaseButton(name);
 		finishSetupPanel.add(finishMove, "Center");
 		finishSetupPanel.setVisible(true);
@@ -219,15 +238,24 @@ public class BoardView implements Observer {
 	public Dimension getPreferredSizeForBoardPanel() {
 
 		Dimension dimension = new Dimension();
-		dimension.setSize(mainBoardFrame.getWidth() - 350, 70);
+		dimension.setSize(mainBoardFrame.getWidth() - 350, 60);
 		return dimension;
 	}
 
 	private JLabel updateActivePlayerLabel(Player player) {
 		JLabel activePlayerLabel = new JLabel();
-		activePlayerLabel.setText("Current Player ::" + player.getName());
+		activePlayerLabel.setText("Current Player is" + player.getName());
 		activePlayerLabel.setForeground(Color.decode("#4842f5"));
 		activePlayerLabel.setVisible(true);
 		return activePlayerLabel;
+	}
+
+	private JPanel createMessagePanel(JLabel jlabel) {
+		messagePanel = new JPanel();
+		messagePanel.add(jlabel);
+		Dimension dimension = new Dimension();
+		dimension.setSize(mainBoardFrame.getWidth() - 350, 20);
+		messagePanel.setPreferredSize(dimension);
+		return messagePanel;
 	}
 }

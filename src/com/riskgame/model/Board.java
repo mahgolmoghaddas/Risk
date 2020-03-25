@@ -16,7 +16,7 @@ public class Board extends Observable implements Observer {
 	private List<Card> cardDeck;
 	private static Board board;
 	private Player nextPlayer;
-	
+	private GamePhase gamePhase;
 	private TurnManager turnManager;
 	
 
@@ -59,6 +59,15 @@ public class Board extends Observable implements Observer {
 	 */
 	public World getWorld() {
 		return world;
+	}
+	
+	public GamePhase getGamePhase() {
+		return gamePhase;
+	}
+
+	public void setGamePhase(GamePhase gamePhase) {
+		this.gamePhase = gamePhase;
+		boardDataChanged();
 	}
 	
 	

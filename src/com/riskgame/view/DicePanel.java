@@ -18,11 +18,12 @@ import com.riskgame.utility.DiceUtility;
 
 /**
  * This is the panel which provides a user GUI to roll a dice
- * @author gauta
+ * @author pushpa
  *
  */
 public class DicePanel extends JPanel {
 
+	private static final long serialVersionUID = 1L;
 	DiceUtility diceUtility = new DiceUtility();
 	private JButton rollButton;
 	private JLabel displayLabel;
@@ -33,19 +34,39 @@ public class DicePanel extends JPanel {
 	private boolean isSetUpPhase;
 	private int rolledCount;
 	private ArrayList tempDiceList = new ArrayList<>();
+	
 	public DicePanel(DiceType diceType, Board board,boolean isSetUpPhase) {
 		createDiceRollButton();
 		diceCount = 0;
 		this.diceType = diceType;
 		this.board =board;
 		this.isSetUpPhase =isSetUpPhase;
-		this.maxAllowedRoll = board.getPlayerList().size();
+		this.maxAllowedRoll = calculateMaxAllowedRoll();
 		rolledCount = 1;
 	}
 
-	public DicePanel() {
-		
+	/**
+	 * This method returns the maximum number of Roll allowed for a player defending in the Game Phase.
+	 *
+	 * @return 3 for attack, 2 for defend and for setup phase, max roll is equal to the number of players in the game
+	 */
+	public int calculateMaxAllowedRoll() {
+		int value = 0;
+		if(isSetUpPhase) {
+			value = board.getPlayerList().size();
+		}else {
+			if(DiceType.Attack.equals(this.diceType)) {
+				value  =DiceType.Attack.getMaxAllowedRoll();
+			}else if(DiceType.Defend.equals(diceType)) {
+				value =DiceType.Defend.getMaxAllowedRoll();
+			}
+		}
+		return value;
 	}
+	
+	/**
+	 * This method creates a dice roll botton, which when clicked displays 1-6 numbered faces die
+	 */
 	public void createDiceRollButton() {
 
 		rollButton = new JButton("Roll");
@@ -82,12 +103,14 @@ public class DicePanel extends JPanel {
 		add(displayLabel);
 	}
 	
-	
+	/**
+	 * Updates the start dice number for a particular player
+	 * @param diceCount
+	 */
 	private void updatePlayer(int diceCount) {
 		List<Player> playerList = this.board.getPlayerList();
 		
 		for(int i=0;i<playerList.size();i++) {
-			
 			Player player = playerList.get(i);
 			if(player.getId()==this.rolledCount) {
 				System.out.println("Updating player DiceCount");

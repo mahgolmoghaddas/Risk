@@ -83,11 +83,11 @@ public class GameController implements ActionListener {
 				System.out.println("************SETUP PHASE**************");
 				initiateBoardAndPlayGame();
 			} else if (GamePhase.REINFORCE.equals(this.gamePhase)) {
-				
-				System.out.println(board.getActivePlayer());
+				board.setGamePhase(GamePhase.REINFORCE);
 				System.out.println("************REINFORCE PHASE**************");
 				
 			} else if (GamePhase.ATTACK.equals(this.gamePhase)) {
+				board.setGamePhase(GamePhase.ATTACK);
 				System.out.println("************ATTACK PHASE**************");
 			}
 			

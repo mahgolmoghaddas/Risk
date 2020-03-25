@@ -10,14 +10,17 @@ import java.util.Iterator;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
+import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.table.DefaultTableModel;
 
+import com.riskgame.controller.GameController;
 import com.riskgame.enums.GameScreen;
 import com.riskgame.model.Continent;
 import com.riskgame.model.Player;
@@ -171,5 +174,15 @@ public class ViewUtility {
 		diceLabel.setVisible(true);
 		return diceLabel;
 
+	}
+	
+	public JButton createGamePhaseButton(String name) {
+		JButton finishMove = new JButton(name);
+		GameController gameController = GameController.getInstance();
+		finishMove.addActionListener(gameController);
+		finishMove.setBackground(Color.decode("#f5b942"));
+		finishMove.setUI(new BasicButtonUI());
+		finishMove.setVisible(true);
+		return finishMove;
 	}
 }

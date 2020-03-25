@@ -33,6 +33,7 @@ public class WorldMapPanel extends JPanel implements Observer{
 	private Board board;
 	private BufferedImage mapImage;
 	Dimension size = new Dimension();
+	int tempReinforcementCount = 0;
 	
 	HashMap<String,Territory> territoryMap = new HashMap<String,Territory>();
 	public WorldMapPanel(Board board, BufferedImage mapImage) {
@@ -93,10 +94,13 @@ public class WorldMapPanel extends JPanel implements Observer{
 
 						@Override
 						public void mouseClicked(java.awt.event.MouseEvent e) {
-							
-							Player activePlayer = board.getActivePlayer();
-							
+							Player activePlayer =board.getActivePlayer();
+							if(activePlayer.getArmiesHeld()<=0 || tempReinforcementCount >=3 ) {
+								tempReinforcementCount =0;
+								activePlayer = board.getNextPlayer();
+							}
 							JTextField targetTerritoryField = (JTextField) e.getComponent();
+							
 							Territory targetTerritory = territoryMap.get(targetTerritoryField.getName());
 							
 							if(targetTerritory.getOwner().equals(activePlayer) && activePlayer.getArmiesHeld()>0) {
@@ -108,9 +112,10 @@ public class WorldMapPanel extends JPanel implements Observer{
 								activePlayer.setArmiesHeld(oldArmiesCount - 1);
 								
 								targetTerritoryField.setText(targetTerritory.getArmyCount()+"");
+								tempReinforcementCount =tempReinforcementCount+1;
 							}
-									
-							System.out.println("Target " + targetTerritory.getCountryName());
+							System.out.println("Target " + targetTerritory.getCountryName() +"Temmpreinforcement ::: "+ tempReinforcementCount);
+							
 						}
 					});
 					this.setLayout(null);

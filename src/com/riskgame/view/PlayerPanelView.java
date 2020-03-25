@@ -38,8 +38,6 @@ public class PlayerPanelView extends JPanel implements Observer {
 
 	private ViewUtility viewUtility = new ViewUtility();
 
-	boolean isCurrentPlayerDisplayed = false;
-
 	public PlayerPanelView(Board board) {
 		this.board = board;
 		board.addObserver(this);
@@ -122,20 +120,9 @@ public class PlayerPanelView extends JPanel implements Observer {
 				this.remove(label);
 			}
 		}
-		if (!isCurrentPlayerDisplayed) {
-			isCurrentPlayerDisplayed =true;
-			updateActivePlayerLabel(player);
-		}
 		updateArmiesHeld(player);
 	}
 
-	private void updateActivePlayerLabel(Player player) {
-		JLabel activePlayerLabel = new JLabel();
-		activePlayerLabel.setText("Current Player ::" + player.getName());
-		activePlayerLabel.setForeground(Color.decode("#4842f5"));
-		activePlayerLabel.setVisible(true);
-		add(activePlayerLabel);
-	}
 	
 	private void updateArmiesHeld(Player player) {
 		

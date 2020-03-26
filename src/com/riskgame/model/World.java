@@ -18,6 +18,7 @@ public class World {
 	private String warn;
 	private String mapName;
 	private HashSet<Territory> territorySet;
+	private HashMap<String,Territory> territoryMap;
 
 	public World(HashSet<Continent> continents) {
 		this.continents = continents;
@@ -87,6 +88,7 @@ public class World {
 
 	private void setTerritorySet() {
 		territorySet = new HashSet<Territory>();
+		territoryMap = new HashMap<String,Territory>();
 		if (this.continents != null && !this.continents.isEmpty()) {
 			Iterator<Continent> continentIterator = this.continents.iterator();
 
@@ -97,10 +99,28 @@ public class World {
 				if (territories != null && !territories.isEmpty()) {
 
 					territorySet.addAll(territories);
+					
+					Iterator<Territory> territoryIterator = territorySet.iterator();
+					
+					while(territoryIterator.hasNext()) {
+						Territory territory= territoryIterator.next();
+						territoryMap.put(territory.getCountryName(), territory);
+					}
+					
 				}
 			}
 		}
 	}
+	
+	public Territory getTerritoryByName(String territoryName) {
+		Territory territory = null;
+		
+		if(territoryMap!=null && !territorySet.isEmpty()) {
+			territory = territoryMap.get(territoryName);
+		}
+		return territory;
+	}
+	
     public void addContinent(Continent continent){
     	
     	getContinents().add(continent);

@@ -18,6 +18,7 @@ import com.riskgame.utility.DiceUtility;
 
 /**
  * This is the panel which provides a user GUI to roll a dice
+ * 
  * @author pushpa
  *
  */
@@ -27,6 +28,7 @@ public class DicePanel extends JPanel {
 	DiceUtility diceUtility = new DiceUtility();
 	private JButton rollButton;
 	private JLabel displayLabel;
+	private JLabel diceCountLabel = new JLabel();
 	private int diceCount;
 	private DiceType diceType;
 	private int maxAllowedRoll;
@@ -34,38 +36,41 @@ public class DicePanel extends JPanel {
 	private boolean isSetUpPhase;
 	private int rolledCount;
 	private ArrayList tempDiceList = new ArrayList<>();
-	
-	public DicePanel(DiceType diceType, Board board,boolean isSetUpPhase) {
+
+	public DicePanel(DiceType diceType, Board board, boolean isSetUpPhase) {
 		createDiceRollButton();
 		diceCount = 0;
 		this.diceType = diceType;
-		this.board =board;
-		this.isSetUpPhase =isSetUpPhase;
+		this.board = board;
+		this.isSetUpPhase = isSetUpPhase;
 		this.maxAllowedRoll = calculateMaxAllowedRoll();
 		rolledCount = 1;
 	}
 
 	/**
-	 * This method returns the maximum number of Roll allowed for a player defending in the Game Phase.
+	 * This method returns the maximum number of Roll allowed for a player defending
+	 * in the Game Phase.
 	 *
-	 * @return 3 for attack, 2 for defend and for setup phase, max roll is equal to the number of players in the game
+	 * @return 3 for attack, 2 for defend and for setup phase, max roll is equal to
+	 *         the number of players in the game
 	 */
 	public int calculateMaxAllowedRoll() {
 		int value = 0;
-		if(isSetUpPhase) {
+		if (isSetUpPhase) {
 			value = board.getPlayerList().size();
-		}else {
-			if(DiceType.Attack.equals(this.diceType)) {
-				value  =DiceType.Attack.getMaxAllowedRoll();
-			}else if(DiceType.Defend.equals(diceType)) {
-				value =DiceType.Defend.getMaxAllowedRoll();
+		} else {
+			if (DiceType.Attack.equals(this.diceType)) {
+				value = DiceType.Attack.getMaxAllowedRoll();
+			} else if (DiceType.Defend.equals(diceType)) {
+				value = DiceType.Defend.getMaxAllowedRoll();
 			}
 		}
 		return value;
 	}
-	
+
 	/**
-	 * This method creates a dice roll botton, which when clicked displays 1-6 numbered faces die
+	 * This method creates a dice roll botton, which when clicked displays 1-6
+	 * numbered faces die
 	 */
 	public void createDiceRollButton() {
 
@@ -79,50 +84,63 @@ public class DicePanel extends JPanel {
 		displayLabel = new JLabel();
 		rollButton.addActionListener(e -> {
 			try {
-				System.out.println("RolledCount "+rolledCount +"MaxALlowedRoll "+maxAllowedRoll);
-					ImageIcon imageIcon = getDiceIcon();
-					imageIcon = new ImageIcon(
-							imageIcon.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH));
-					displayLabel.setIcon(imageIcon);
-					if(isSetUpPhase) {
-						updatePlayer(diceCount);
+				System.out.println("RolledCount " + rolledCount + "MaxALlowedRoll " + maxAllowedRoll);
+				ImageIcon imageIcon = getDiceIcon();
+				imageIcon = new ImageIcon(imageIcon.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH));
+				displayLabel.setIcon(imageIcon);
+				if (isSetUpPhase) {
+					updatePlayer(diceCount);
+				}else {
+					String text = "";
+					if (diceCountLabel.getText() != null && !diceCountLabel.getText().isEmpty()) {
+						text = diceCountLabel.getText().concat(" ") + diceCount;
+					}else {
+						text = diceCount+"";
 					}
-					rolledCount++;
-					
-					if(rolledCount>maxAllowedRoll) {
-						tempDiceList.clear();
-						rollButton.setEnabled(false);
-					}
-					
-					
+					diceCountLabel.setText(text);
+					diceCountLabel.setVisible(true);
+				}
+				
+
+				rolledCount++;
+
+				if (rolledCount > maxAllowedRoll) {
+					tempDiceList.clear();
+					rollButton.setEnabled(false);
+				}
+
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 		});
 		add(rollButton);
 		add(displayLabel);
+		add(diceCountLabel);
 	}
-	
+
 	/**
 	 * Updates the start dice number for a particular player
+	 * 
 	 * @param diceCount
 	 */
 	private void updatePlayer(int diceCount) {
 		List<Player> playerList = this.board.getPlayerList();
-		
-		for(int i=0;i<playerList.size();i++) {
+
+		for (int i = 0; i < playerList.size(); i++) {
 			Player player = playerList.get(i);
-			if(player.getId()==this.rolledCount) {
+			if (player.getId() == this.rolledCount) {
 				System.out.println("Updating player DiceCount");
 				player.setStartDiceNo(diceCount);
 				break;
 			}
 		}
-		
+
 	}
-	
+
 	/**
-	 * This returns the dice image as per the phase whether Attack/Defend with the randomly generated dice number from 1 to 6.
+	 * This returns the dice image as per the phase whether Attack/Defend with the
+	 * randomly generated dice number from 1 to 6.
+	 * 
 	 * @return ImageIcon
 	 * @throws Exception
 	 */
@@ -130,7 +148,7 @@ public class DicePanel extends JPanel {
 
 		ImageIcon imageIcon = null;
 		diceCount = getUniqueDice();
-		
+
 		switch (diceCount) {
 		case 1:
 			if (DiceType.Attack.equals(diceType)) {
@@ -190,6 +208,7 @@ public class DicePanel extends JPanel {
 
 	/**
 	 * Returns the diceCount on a particular role
+	 * 
 	 * @return
 	 */
 	public int getDiceCount() {
@@ -197,18 +216,20 @@ public class DicePanel extends JPanel {
 	}
 
 	/**
-	 * This method returns the unique Dice number in a particular rolling phase to ensure no players have the same dice number
+	 * This method returns the unique Dice number in a particular rolling phase to
+	 * ensure no players have the same dice number
+	 * 
 	 * @return int
 	 */
 	public int getUniqueDice() {
-		
+
 		int diceNum = 0;
 		try {
 			diceNum = diceUtility.rollDice();
-			System.out.println("Dice num :: "+diceNum);
-			while(this.tempDiceList.contains(diceNum)) {
-				
-				diceNum =diceUtility.rollDice();
+			System.out.println("Dice num :: " + diceNum);
+			while (this.tempDiceList.contains(diceNum)) {
+
+				diceNum = diceUtility.rollDice();
 			}
 			tempDiceList.add(diceNum);
 		} catch (Exception e) {
@@ -216,6 +237,5 @@ public class DicePanel extends JPanel {
 		}
 		return diceNum;
 	}
-	
-	
+
 }

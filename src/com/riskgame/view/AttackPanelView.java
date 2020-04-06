@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Observer;
+
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,33 +16,40 @@ import com.riskgame.model.Territory;
 import com.riskgame.model.World;
 import com.riskgame.utility.DiceType;
 
-public class AttackPanelView extends JPanel {
+import javafx.beans.Observable;
+
+public class AttackPanelView extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 1L;
 
 	private Board board;
 
-	JComboBox<String> defenderComboList  = new JComboBox<String>();
+	JComboBox<String> defenderComboList = new JComboBox<String>();
 	JPanel rollingDicePanel;
 
 	public AttackPanelView(Board board) {
 		this.board = board;
+		board.addObserver(this);
 		createAttackPanel();
 	}
 
 	public void createAttackPanel() {
-		JLabel attackerLabel = new JLabel("Select attacker:");
-		JComboBox<String> attackerComboList = createAttackerComboBox();
-		JLabel defenderLabel = new JLabel("Select defender:");
-		JPanel rollingDicePanel = createPanelForRollingDice();
+		try {
+			JLabel attackerLabel = new JLabel("Select attacker:");
+			JComboBox<String> attackerComboList = createAttackerComboBox();
+			JLabel defenderLabel = new JLabel("Select defender:");
+			JPanel rollingDicePanel = createPanelForRollingDice();
 
-		setLayout(new FlowLayout());
-		add(attackerLabel);
-		add(attackerComboList);
-		add(defenderLabel);
-		add(defenderComboList);
-		add(rollingDicePanel);
-		setVisible(true);
+			setLayout(new FlowLayout());
+			add(attackerLabel);
+			add(attackerComboList);
+			add(defenderLabel);
+			add(defenderComboList);
+			add(rollingDicePanel);
+			setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public JComboBox<String> createAttackerComboBox() {
@@ -75,7 +84,7 @@ public class AttackPanelView extends JPanel {
 	}
 
 	public JComboBox<String> createDefenderComboBox(HashSet<String> neighboursTerritory) {
-		if (defenderComboList != null && defenderComboList.getItemCount()>0) {
+		if (defenderComboList != null && defenderComboList.getItemCount() > 0) {
 			defenderComboList.removeAllItems();
 		}
 		defenderComboList.addItem("SELECT");
@@ -104,15 +113,27 @@ public class AttackPanelView extends JPanel {
 	public JPanel createPanelForRollingDice() {
 		rollingDicePanel = new JPanel();
 		rollingDicePanel.setLayout(new FlowLayout());
+		
 		JPanel attackDicePanel = new DicePanel(DiceType.Attack, board, false);
 		JPanel defendDicePanel = new DicePanel(DiceType.Defend, board, false);
+		
+		JLabel attackScore = new JLabel();
+		JLabel defenderScore = new JLabel();
+		
 		rollingDicePanel.add(attackDicePanel);
 		rollingDicePanel.add(defendDicePanel);
+		
 		Dimension dimension = new Dimension();
-		dimension.setSize(BoardView.mainBoardFrame.getWidth() - 350, 40);
-
+		dimension.setSize(BoardView.mainBoardFrame.getWidth() - 350, 55);
 		rollingDicePanel.setPreferredSize(dimension);
+		
 		return rollingDicePanel;
+
+	}
+
+	@Override
+	public void update(java.util.Observable o, Object arg) {
+		// TODO Auto-generated method stub
 
 	}
 

@@ -16,33 +16,35 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.riskgame.controller.GameController;
 import com.riskgame.model.Board;
 import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
-
+import com.riskgame.utility.GamePhase;
 
 /**
- * This class creates a WorldMap Panel and draws map with the provided World object.
- * It also allows option to place armies in the territories
+ * This class creates a WorldMap Panel and draws map with the provided World
+ * object. It also allows option to place armies in the territories
+ * 
  * @author gauta
  *
  */
-public class WorldMapPanel extends JPanel implements Observer{
+public class WorldMapPanel extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 1L;
 	private Board board;
 	private BufferedImage mapImage;
 	Dimension size = new Dimension();
 	int tempReinforcementCount = 0;
-	
-	HashMap<String,Territory> territoryMap = new HashMap<String,Territory>();
+
+	HashMap<String, Territory> territoryMap = new HashMap<String, Territory>();
+
 	public WorldMapPanel(Board board, BufferedImage mapImage) {
 		this.board = board;
 		this.mapImage = mapImage;
 		setComponentSize();
 		board.addObserver(this);
 	}
-	
 
 	@Override
 	public void paint(Graphics graphics) {
@@ -50,7 +52,9 @@ public class WorldMapPanel extends JPanel implements Observer{
 			Graphics2D g2D = (Graphics2D) graphics;
 			g2D.drawImage(this.mapImage, 0, 0, this);
 			setComponentSize();
-			drawTerritoriesInMap();
+			if(!GamePhase.SETUP.equals(GameController.getInstance().getGamePhase())){
+				drawTerritoriesInMap();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -74,7 +78,7 @@ public class WorldMapPanel extends JPanel implements Observer{
 					text.setName(territory.getCountryName());
 					text.setText(territory.getArmyCount() + "");
 					text.setBackground(territory.getOwner().getColor());
-					text.setBounds(x, y, 15, 15);
+					text.setBounds(x, y, 18, 15);
 					text.addMouseListener(new MouseListener() {
 						@Override
 						public void mouseReleased(java.awt.event.MouseEvent e) {
@@ -94,28 +98,29 @@ public class WorldMapPanel extends JPanel implements Observer{
 
 						@Override
 						public void mouseClicked(java.awt.event.MouseEvent e) {
-							Player activePlayer =board.getActivePlayer();
-							if(activePlayer.getArmiesHeld()<=0 || tempReinforcementCount >=3 ) {
-								tempReinforcementCount =0;
+							Player activePlayer = board.getActivePlayer();
+							if (activePlayer.getArmiesHeld() <= 0 || tempReinforcementCount >= 3) {
+								tempReinforcementCount = 0;
 								activePlayer = board.getNextPlayer();
 							}
 							JTextField targetTerritoryField = (JTextField) e.getComponent();
-							
+
 							Territory targetTerritory = territoryMap.get(targetTerritoryField.getName());
-							
-							if(targetTerritory.getOwner().equals(activePlayer) && activePlayer.getArmiesHeld()>0) {
-								
+
+							if (targetTerritory.getOwner().equals(activePlayer) && activePlayer.getArmiesHeld() > 0) {
+
 								activePlayer.getCountriesOwned().add(targetTerritory);
 								int oldTerritoryArmyCount = targetTerritory.getArmyCount();
-								targetTerritory.setArmyCount(oldTerritoryArmyCount+1);
+								targetTerritory.setArmyCount(oldTerritoryArmyCount + 1);
 								int oldArmiesCount = activePlayer.getArmiesHeld();
 								activePlayer.setArmiesHeld(oldArmiesCount - 1);
-								
-								targetTerritoryField.setText(targetTerritory.getArmyCount()+"");
-								tempReinforcementCount =tempReinforcementCount+1;
+
+								targetTerritoryField.setText(targetTerritory.getArmyCount() + "");
+								tempReinforcementCount = tempReinforcementCount + 1;
 							}
-							System.out.println("Target " + targetTerritory.getCountryName() +"Temmpreinforcement ::: "+ tempReinforcementCount);
-							
+							System.out.println("Target " + targetTerritory.getCountryName() + "Temmpreinforcement ::: "
+									+ tempReinforcementCount);
+
 						}
 					});
 					this.setLayout(null);
@@ -137,14 +142,9 @@ public class WorldMapPanel extends JPanel implements Observer{
 		}
 	}
 
-	private void mouseClicked(JTextField textField) {
-
-	}
-
-
 	@Override
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

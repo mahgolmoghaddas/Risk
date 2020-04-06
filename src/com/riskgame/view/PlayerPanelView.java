@@ -95,6 +95,7 @@ public class PlayerPanelView extends JPanel implements Observer {
 					}
 				} else if (GamePhase.REINFORCE.equals(gamePhase)) {
 					updateReinforcementPhase(board.getActivePlayer());
+					updateArmiesHeld(board);
 					revalidate();
 				}
 			}
@@ -120,13 +121,16 @@ public class PlayerPanelView extends JPanel implements Observer {
 				this.remove(label);
 			}
 		}
-		updateArmiesHeld(player);
 	}
 
-	
-	private void updateArmiesHeld(Player player) {
-		
-		JTextField armyHeldField = armiesFieldMap.get(player.getId());
-		armyHeldField.setText(player.getArmiesHeld()+"");
+	private void updateArmiesHeld(Board board) {
+
+		if (board != null && board.getPlayerList() != null) {
+			for (int i = 0; i < board.getPlayerList().size(); i++) {
+				Player player = board.getPlayerList().get(i);
+				JTextField armyHeldField = armiesFieldMap.get(player.getId());
+				armyHeldField.setText(player.getArmiesHeld() + "");
+			}
+		}
 	}
 }

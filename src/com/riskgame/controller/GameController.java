@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 import com.riskgame.model.Board;
 import com.riskgame.model.Card;
@@ -82,7 +83,9 @@ public class GameController implements ActionListener {
 			} else if (GamePhase.SETUP.equals(this.gamePhase)) {
 				System.out.println("************SETUP PHASE**************");
 				initiateBoardAndPlayGame();
+				
 			} else if (GamePhase.REINFORCE.equals(this.gamePhase)) {
+				distributeTerritories(board.getPlayerList(), world);
 				board.setGamePhase(GamePhase.REINFORCE);
 				System.out.println("************REINFORCE PHASE**************");
 				
@@ -108,9 +111,6 @@ public class GameController implements ActionListener {
 
 			// Assign armies for each player
 			assignArmiesToPlayer(playerList);
-
-			// assign 42 territories for each player evenly and place 1 army for each player
-			distributeTerritories(playerList, world);
 
 			board.initializeGame(world, playerList, cardDeck);
 
@@ -142,9 +142,10 @@ public class GameController implements ActionListener {
 	 * This method also place 1 army of each player to the respective territory
 	 * assigned to the player
 	 */
-	public void distributeTerritories(ArrayList<Player> playerList, World world) throws Exception {
+	public void distributeTerritories(List<Player> playerList, World world) throws Exception {
 
 		int playersCount = 0;
+		System.out.println(playerList.size());
 		if (world != null) {
 			HashSet<Territory> territorySet = world.getTerritories();
 

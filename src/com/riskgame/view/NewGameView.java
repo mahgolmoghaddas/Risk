@@ -86,24 +86,28 @@ public class NewGameView extends JFrame{
 	 * @return JPanel
 	 */
 	public JPanel createPlayerComboPanel() {
-
+		System.out.println("Create player Combo Panel");
 		JPanel panelComboBox = new JPanel();
 		panelComboBox.setLayout(new FlowLayout());
 		JLabel selectplayerlabel = new JLabel("Select Number of  Players:");
 		int maxnumberofplayers = 5;
 		JComboBox comboBoxlist = new JComboBox();
-		for (int i = 1; i <= maxnumberofplayers; i++) {
+		for (int i = 2; i <= maxnumberofplayers; i++) {
 			comboBoxlist.addItem(i);
 		}
 
 		comboBoxlist.addItemListener(itemListener -> {
 			playersCount = Integer.parseInt(comboBoxlist.getSelectedItem().toString());
 			if (playersCount < 2) {
+				System.out.println("players COUNT "+playersCount);
 				JOptionPane.showMessageDialog(newGameFrame.getContentPane(), "Minimum Number of Players Must be : 2",
 						"MESSAGE", JOptionPane.ERROR_MESSAGE);
 			}
 		});
 
+		if(playersCount==0) {
+			playersCount=2;
+		}
 		panelComboBox.add(selectplayerlabel);
 		panelComboBox.add(comboBoxlist);
 		return panelComboBox;
@@ -146,7 +150,6 @@ public class NewGameView extends JFrame{
 								JOptionPane.INFORMATION_MESSAGE);
 
 						currentWorldMap = mapReader.createWorldMap();
-//						printWorldMap();
 						gameController.setGameParameters(currentWorldMap, playersCount);
 						startGameButton.setVisible(true);
 						cancelButton.setVisible(true);
@@ -197,8 +200,7 @@ public class NewGameView extends JFrame{
 	}
 
 	public void printWorldMap() {
-		System.out.println("World MAP:: " + currentWorldMap);
-		System.out.println("WorldMap ::" + currentWorldMap.getAuthor());
+
 		Iterator<Continent> continentIterator = currentWorldMap.getContinents().iterator();
 
 		while (continentIterator.hasNext()) {

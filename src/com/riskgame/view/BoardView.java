@@ -50,6 +50,9 @@ public class BoardView implements Observer {
 	JPanel finishSetupPanel;
 	JPanel messagePanel;
 	int currentPlayerId = 0;
+	int diceRolledCnt = 0;
+	JPanel worldMapPanel;
+	JButton attackButton;
 
 	Map<Integer, JTextField> armiesField = new HashMap<>();
 	Map<Integer, JLabel> diceList = new HashMap<>();
@@ -65,8 +68,15 @@ public class BoardView implements Observer {
 		System.out.println("Updated..BOARD DATA");
 		if (o instanceof Board) {
 			board = (Board) o;
-			if (GamePhase.REINFORCE.equals(GameController.getInstance().getGamePhase())) {
+			if (GamePhase.SETUP.equals(GameController.getInstance().getGamePhase())) {
+				++diceRolledCnt;
+				if (diceRolledCnt == board.getPlayerList().size()) {
+					System.out.println("YOU CAN show finishSetupPanel NOW");
+					finishSetupPanel.setVisible(true);
+				}
+			} else if (GamePhase.REINFORCE.equals(GameController.getInstance().getGamePhase())) {
 				showReinforceBoard(board);
+				System.out.println("REINFORCE ARMY");
 			} else if (GamePhase.ATTACK.equals(GameController.getInstance().getGamePhase())) {
 				showAttackBoard(board);
 				System.out.println("ATTACK ARMY");
@@ -84,11 +94,12 @@ public class BoardView implements Observer {
 			mainBoardFrame = viewUtility.createMainFrame("Play Game", false);
 			mainBoardFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-			WorldMapPanel worldMapPanel = drawMap(board);
+			worldMapPanel = drawMap(board);
 			PlayerPanelView playerPanel = new PlayerPanelView(board);
 			playerPanel.setPreferredSize(getPreferredSizeForBoardPanel());
 			JPanel turnDicePanel = createDiceRollPanel(board);
-			finishSetupPanel = createFinishPhasePanel("Place armies");
+			finishSetupPanel = createFinishPhasePanel("Finish setup");
+			finishSetupPanel.setVisible(false);
 
 			mainBoardFrame.getContentPane().add(worldMapPanel, "Center");
 			mainBoardFrame.getContentPane().add(turnDicePanel, "Center");
@@ -114,7 +125,8 @@ public class BoardView implements Observer {
 			messagePanel = createMessagePanel(updateActivePlayerLabel(board.getActivePlayer()));
 			if (!hideAttackButton(board)) {
 				System.out.println("Created Attack Button");
-				messagePanel.add(viewUtility.createGamePhaseButton("Attack"));
+				attackButton= viewUtility.createGamePhaseButton("Attack");
+				messagePanel.add(attackButton);
 			}
 			mainBoardFrame.add(messagePanel);
 			mainBoardFrame.repaint();
@@ -126,11 +138,25 @@ public class BoardView implements Observer {
 	public void showAttackBoard(Board board) {
 
 		try {
+			
+			if(attackButton!=null) {
+				mainBoardFrame.remove(attackButton);
+			}
+			if(messagePanel!=null) {
+				mainBoardFrame.remove(messagePanel);
+			}
+			
 			AttackPanelView attackPanel = new AttackPanelView(board);
 			Dimension dim = new Dimension();
-			dim.setSize(mainBoardFrame.getWidth()-350, 80);
+			dim.setSize(mainBoardFrame.getWidth() - 350, 90);
 			attackPanel.setPreferredSize(dim);
+			attackButton = viewUtility.createGamePhaseButton("End Attack");
+			messagePanel = createMessagePanel(updateAttackMessage());
+
 			mainBoardFrame.add(attackPanel);
+			mainBoardFrame.add(messagePanel);
+			mainBoardFrame.add(attackButton);
+			
 			mainBoardFrame.repaint();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -170,7 +196,7 @@ public class BoardView implements Observer {
 	}
 
 	/**
-	 * This mehod creates the panel to roll the dice
+	 * This method creates the panel to roll the dice
 	 * 
 	 * @return
 	 */
@@ -212,16 +238,23 @@ public class BoardView implements Observer {
 	}
 
 	public Dimension getPreferredSizeForBoardPanel() {
-
 		Dimension dimension = new Dimension();
-		dimension.setSize(mainBoardFrame.getWidth(), 50);
+		dimension.setSize(mainBoardFrame.getWidth(), 55);
 		return dimension;
 	}
 
 	private JLabel updateActivePlayerLabel(Player player) {
 		JLabel activePlayerLabel = new JLabel();
-		activePlayerLabel.setText("Current Player is " + player.getName());
-		activePlayerLabel.setForeground(Color.decode("#4842f5"));
+		activePlayerLabel.setText("Place armies. A player can place 3 armies at single turn\n.Current Player is " + player.getName());
+		activePlayerLabel.setForeground(Color.decode("#525b5c"));
+		activePlayerLabel.setVisible(true);
+		return activePlayerLabel;
+	}
+	
+	private JLabel updateAttackMessage() {
+		JLabel activePlayerLabel = new JLabel();
+		activePlayerLabel.setText("Message goes here");
+		activePlayerLabel.setForeground(Color.decode("#525b5c"));
 		activePlayerLabel.setVisible(true);
 		return activePlayerLabel;
 	}

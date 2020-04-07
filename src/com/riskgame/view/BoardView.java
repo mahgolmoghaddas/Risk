@@ -46,11 +46,11 @@ public class BoardView implements Observer {
 	private Board board;
 	private ViewUtility viewUtility = new ViewUtility();
 	static JFrame mainBoardFrame;
-	JPanel diceRollPanel;
+	DicePanel diceRollPanel;
 	JPanel finishSetupPanel;
+	JButton reinforceButton;
 	JPanel messagePanel;
 	int currentPlayerId = 0;
-	int diceRolledCnt = 0;
 	JPanel worldMapPanel;
 	JButton attackButton;
 
@@ -65,15 +65,11 @@ public class BoardView implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		System.out.println("Updated..BOARD DATA");
+		System.out.println("Updated..BOARD DATA## PHASE::" + GameController.getInstance().getGamePhase());
 		if (o instanceof Board) {
 			board = (Board) o;
 			if (GamePhase.SETUP.equals(GameController.getInstance().getGamePhase())) {
-				++diceRolledCnt;
-				if (diceRolledCnt == board.getPlayerList().size()) {
-					System.out.println("YOU CAN show finishSetupPanel NOW");
-					finishSetupPanel.setVisible(true);
-				}
+				showSetupBoard(board);
 			} else if (GamePhase.REINFORCE.equals(GameController.getInstance().getGamePhase())) {
 				showReinforceBoard(board);
 				System.out.println("REINFORCE ARMY");
@@ -98,13 +94,10 @@ public class BoardView implements Observer {
 			PlayerPanelView playerPanel = new PlayerPanelView(board);
 			playerPanel.setPreferredSize(getPreferredSizeForBoardPanel());
 			JPanel turnDicePanel = createDiceRollPanel(board);
-			finishSetupPanel = createFinishPhasePanel("Finish setup");
-			finishSetupPanel.setVisible(false);
-
+			turnDicePanel.setPreferredSize(getPreferredSizeForBoardPanel());
 			mainBoardFrame.getContentPane().add(worldMapPanel, "Center");
 			mainBoardFrame.getContentPane().add(turnDicePanel, "Center");
 			mainBoardFrame.getContentPane().add(playerPanel);
-			mainBoardFrame.getContentPane().add(finishSetupPanel, "Center");
 
 			mainBoardFrame.setVisible(true);
 			JOptionPane.showMessageDialog(mainBoardFrame, "Roll dice to decide the player turn");
@@ -114,23 +107,70 @@ public class BoardView implements Observer {
 		}
 	}
 
+	public void showSetupBoard(Board board) {
+		try {
+			if (isStartDiceAllocatedToAll(board)) {
+				Player currentPlayer = board.getActivePlayer();
+				
+				mainBoardFrame.remove(diceRollPanel);
+				if (messagePanel != null) {
+					System.out.println("REMOVED");
+					mainBoardFrame.remove(messagePanel);
+				}
+				messagePanel = createMessagePanel(updateActivePlayerLabel(currentPlayer));
+				mainBoardFrame.add(messagePanel);
+			}
+
+			if (!hideNextPhaseButton(board)) {
+				System.out.println("Created Reinforce Button");
+				reinforceButton = viewUtility.createGamePhaseButton("Reinforce");
+				messagePanel.add(reinforceButton);
+			}
+
+			mainBoardFrame.revalidate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean isStartDiceAllocatedToAll(Board board) {
+
+		boolean isStartDiceAllocated = true;
+		if (board != null && board.getPlayerList() != null && !board.getPlayerList().isEmpty()) {
+
+			for (int i = 0; i < board.getPlayerList().size(); i++) {
+				Player player = board.getPlayerList().get(i);
+				if (player.getStartDiceNo() <= 0) {
+					isStartDiceAllocated = false;
+					break;
+				}
+			}
+		}
+		System.out.println("isStartDiceAllocated " + isStartDiceAllocated);
+		return isStartDiceAllocated;
+	}
+
 	public void showReinforceBoard(Board board) {
 		try {
-			mainBoardFrame.remove(diceRollPanel);
-			mainBoardFrame.remove(finishSetupPanel);
+			if (reinforceButton != null) {
+				messagePanel.remove(reinforceButton);
+			}
 			if (messagePanel != null && messagePanel.getComponents().length > 0) {
 				messagePanel.removeAll();
 				mainBoardFrame.remove(messagePanel);
 			}
 			messagePanel = createMessagePanel(updateActivePlayerLabel(board.getActivePlayer()));
-			if (!hideAttackButton(board)) {
+			if (!hideNextPhaseButton(board)) {
 				System.out.println("Created Attack Button");
-				attackButton= viewUtility.createGamePhaseButton("Attack");
+				attackButton = viewUtility.createGamePhaseButton("Attack");
 				messagePanel.add(attackButton);
 			}
 			mainBoardFrame.add(messagePanel);
-			mainBoardFrame.repaint();
-		} catch (Exception e) {
+			mainBoardFrame.revalidate();
+		} catch (
+
+		Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -138,14 +178,14 @@ public class BoardView implements Observer {
 	public void showAttackBoard(Board board) {
 
 		try {
-			
-			if(attackButton!=null) {
+
+			if (attackButton != null) {
 				mainBoardFrame.remove(attackButton);
 			}
-			if(messagePanel!=null) {
+			if (messagePanel != null) {
 				mainBoardFrame.remove(messagePanel);
 			}
-			
+
 			AttackPanelView attackPanel = new AttackPanelView(board);
 			Dimension dim = new Dimension();
 			dim.setSize(mainBoardFrame.getWidth() - 350, 90);
@@ -156,14 +196,14 @@ public class BoardView implements Observer {
 			mainBoardFrame.add(attackPanel);
 			mainBoardFrame.add(messagePanel);
 			mainBoardFrame.add(attackButton);
-			
+
 			mainBoardFrame.repaint();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public boolean hideAttackButton(Board board) {
+	public boolean hideNextPhaseButton(Board board) {
 		boolean hideAttackButton = false;
 		if (board != null && board.getPlayerList() != null) {
 			for (Player player : board.getPlayerList()) {
@@ -245,12 +285,12 @@ public class BoardView implements Observer {
 
 	private JLabel updateActivePlayerLabel(Player player) {
 		JLabel activePlayerLabel = new JLabel();
-		activePlayerLabel.setText("Place armies. A player can place 3 armies at single turn\n.Current Player is " + player.getName());
+		activePlayerLabel.setText("Place 3 armies at your turn. Current Player is " + player.getName());
 		activePlayerLabel.setForeground(Color.decode("#525b5c"));
 		activePlayerLabel.setVisible(true);
 		return activePlayerLabel;
 	}
-	
+
 	private JLabel updateAttackMessage() {
 		JLabel activePlayerLabel = new JLabel();
 		activePlayerLabel.setText("Message goes here");

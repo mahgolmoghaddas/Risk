@@ -16,9 +16,9 @@ public class Board extends Observable implements Observer {
 	private List<Card> cardDeck;
 	private static Board board;
 	private Player nextPlayer;
+	private Player activePlayer;
 	private GamePhase gamePhase;
 	private TurnManager turnManager;
-	
 
 	/**
 	 * Single instance for the board is maintained throughout the game phases.
@@ -60,7 +60,7 @@ public class Board extends Observable implements Observer {
 	public World getWorld() {
 		return world;
 	}
-	
+
 	public GamePhase getGamePhase() {
 		return gamePhase;
 	}
@@ -69,14 +69,12 @@ public class Board extends Observable implements Observer {
 		this.gamePhase = gamePhase;
 		boardDataChanged();
 	}
-	
-	
 
 	public Player getActivePlayer() {
-		if(this.nextPlayer==null) {
-			this.nextPlayer = getNextPlayer();
+		if (this.activePlayer == null) {
+			this.activePlayer = getNextPlayer();
 		}
-		return this.nextPlayer;
+		return this.activePlayer;
 	}
 
 	public Player getNextPlayer() {
@@ -85,14 +83,16 @@ public class Board extends Observable implements Observer {
 				turnManager = new TurnManager(board.getPlayerList());
 			}
 			this.nextPlayer = turnManager.getNextPlayer();
-			boardDataChanged();
+			if (this.activePlayer != null) {
+				this.activePlayer=this.nextPlayer;
+				boardDataChanged();
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return this.nextPlayer;
 	}
-
-
 
 	public void initializeGame(World world, ArrayList<Player> playerList, ArrayList<Card> cardDeck) {
 		this.world = world;
@@ -105,13 +105,12 @@ public class Board extends Observable implements Observer {
 				player.addObserver(this);
 			}
 		}
-		
+
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
 
-		System.out.println("PLayer data has been changed ");
 		if (o instanceof Player) {
 
 			Player updatedPlayer = (Player) o;
@@ -123,6 +122,7 @@ public class Board extends Observable implements Observer {
 
 					if (oldPlayer.getId() == updatedPlayer.getId()) {
 						oldPlayer = updatedPlayer;
+						System.out.println(oldPlayer.getName() + " Data has been changed");
 						boardDataChanged();// notify its observers
 					}
 				}
@@ -131,13 +131,10 @@ public class Board extends Observable implements Observer {
 
 	}
 
-	
-	
 	/**
 	 * This method notify the Observers of Board whenever any data changes
 	 */
 	public void boardDataChanged() {
-		System.out.println("Board Data has been changed");
 		setChanged();
 		notifyObservers();
 	}

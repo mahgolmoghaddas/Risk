@@ -31,6 +31,7 @@ public class AttackPanelView extends JPanel implements Observer {
 		this.board = board;
 		board.addObserver(this);
 		createAttackPanel();
+		revalidate();
 	}
 
 	public void createAttackPanel() {
@@ -46,7 +47,7 @@ public class AttackPanelView extends JPanel implements Observer {
 			add(defenderLabel);
 			add(defenderComboList);
 			add(rollingDicePanel);
-			setVisible(true);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

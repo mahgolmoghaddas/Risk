@@ -90,7 +90,7 @@ public class NewGameView extends JFrame{
 		JPanel panelComboBox = new JPanel();
 		panelComboBox.setLayout(new FlowLayout());
 		JLabel selectplayerlabel = new JLabel("Select Number of  Players:");
-		int maxnumberofplayers = 5;
+		int maxnumberofplayers = 6;
 		JComboBox comboBoxlist = new JComboBox();
 		for (int i = 2; i <= maxnumberofplayers; i++) {
 			comboBoxlist.addItem(i);

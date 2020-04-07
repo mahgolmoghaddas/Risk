@@ -84,26 +84,24 @@ public class DicePanel extends JPanel {
 		displayLabel = new JLabel();
 		rollButton.addActionListener(e -> {
 			try {
-				System.out.println("RolledCount " + rolledCount + "MaxALlowedRoll " + maxAllowedRoll);
 				ImageIcon imageIcon = getDiceIcon();
 				imageIcon = new ImageIcon(imageIcon.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH));
 				displayLabel.setIcon(imageIcon);
+
 				if (isSetUpPhase) {
 					updatePlayer(diceCount);
-				}else {
+				} else {
 					String text = "";
 					if (diceCountLabel.getText() != null && !diceCountLabel.getText().isEmpty()) {
 						text = diceCountLabel.getText().concat(" ") + diceCount;
-					}else {
-						text = diceCount+"";
+					} else {
+						text = diceCount + "";
 					}
 					diceCountLabel.setText(text);
 					diceCountLabel.setVisible(true);
 				}
 				
-
 				rolledCount++;
-
 				if (rolledCount > maxAllowedRoll) {
 					tempDiceList.clear();
 					rollButton.setEnabled(false);
@@ -129,7 +127,7 @@ public class DicePanel extends JPanel {
 		for (int i = 0; i < playerList.size(); i++) {
 			Player player = playerList.get(i);
 			if (player.getId() == this.rolledCount) {
-				System.out.println("Updating player DiceCount");
+				System.out.println("Updating "+player.getName()+" DiceCount");
 				player.setStartDiceNo(diceCount);
 				break;
 			}
@@ -236,6 +234,10 @@ public class DicePanel extends JPanel {
 			e.printStackTrace();
 		}
 		return diceNum;
+	}
+
+	public int getRolledCount() {
+		return this.rolledCount;
 	}
 
 }

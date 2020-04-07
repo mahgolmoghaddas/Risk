@@ -95,9 +95,9 @@ public class PlayerPanelView extends JPanel implements Observer {
 					}
 				} else if (GamePhase.REINFORCE.equals(gamePhase)) {
 					updateReinforcementPhase(board.getActivePlayer());
-					updateArmiesHeld(board);
 					revalidate();
 				}
+				updateArmiesHeld(board);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

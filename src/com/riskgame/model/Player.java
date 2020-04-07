@@ -20,7 +20,7 @@ public class Player extends Observable {
 	private HashSet<Territory> countriesOwned;
 	private HashSet<Continent> continentsOwned;
 	private List<Card> cardsHeld;
-	private Integer startDiceNo;
+	private int startDiceNo;
 	/**
 	 * The parameterized constructor takes player id and name as parameters
 	 * 
@@ -154,7 +154,6 @@ public class Player extends Observable {
 	}
 	
 	public void playerDataChanged() {
-		System.out.println("Notifying the observers "+this.countObservers());
 		setChanged();
 		notifyObservers();
 	}

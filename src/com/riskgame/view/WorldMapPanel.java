@@ -52,9 +52,7 @@ public class WorldMapPanel extends JPanel implements Observer {
 			Graphics2D g2D = (Graphics2D) graphics;
 			g2D.drawImage(this.mapImage, 0, 0, this);
 			setComponentSize();
-			if(!GamePhase.SETUP.equals(GameController.getInstance().getGamePhase())){
-				drawTerritoriesInMap();
-			}
+			drawTerritoriesInMap();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -99,7 +97,7 @@ public class WorldMapPanel extends JPanel implements Observer {
 						@Override
 						public void mouseClicked(java.awt.event.MouseEvent e) {
 							Player activePlayer = board.getActivePlayer();
-							if (activePlayer.getArmiesHeld() <= 0 || tempReinforcementCount >= 3) {
+							if ((activePlayer.getArmiesHeld() <= 0 || tempReinforcementCount >= 3) && playersHaveArmies()) {
 								tempReinforcementCount = 0;
 								activePlayer = board.getNextPlayer();
 							}
@@ -118,7 +116,8 @@ public class WorldMapPanel extends JPanel implements Observer {
 								targetTerritoryField.setText(targetTerritory.getArmyCount() + "");
 								tempReinforcementCount = tempReinforcementCount + 1;
 							}
-							System.out.println("Target " + targetTerritory.getCountryName() + "Temmpreinforcement ::: "
+
+							System.out.println("Target " + targetTerritory.getCountryName() + "Temp reinforcement ::: "
 									+ tempReinforcementCount);
 
 						}
@@ -146,5 +145,18 @@ public class WorldMapPanel extends JPanel implements Observer {
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
 
+	}
+
+	private boolean playersHaveArmies() {
+		boolean playersHaveArmies = false;
+		if (board != null && board.getPlayerList() != null) {
+			for (Player player : board.getPlayerList()) {
+				if (player.getArmiesHeld() > 0) {
+					playersHaveArmies = true;
+					break;
+				}
+			}
+		}
+		return playersHaveArmies;
 	}
 }

@@ -9,7 +9,9 @@ import java.util.List;
 
 import com.riskgame.model.Board;
 import com.riskgame.model.Card;
+import com.riskgame.model.Continent;
 import com.riskgame.model.Player;
+import com.riskgame.model.ScoreConfiguration;
 import com.riskgame.model.Territory;
 import com.riskgame.model.TurnManager;
 import com.riskgame.model.World;
@@ -31,13 +33,14 @@ public class GameController implements ActionListener {
 	private BoardView boardView;
 	private Board board;
 	private GameUtility gameUtility = new GameUtility();
+	ScoreConfiguration scoreConfig = new ScoreConfiguration();
 	private GamePhase gamePhase;
 	private static GameController gameController;
 	private TurnManager turnManager;
-	
 
 	/**
-	 * This constructor creates a GameController Object to set the turnPhase as <b>Start</b>
+	 * This constructor creates a GameController Object to set the turnPhase as
+	 * <b>Start</b>
 	 */
 	private GameController() {
 		this.gamePhase = GamePhase.PREGAME;
@@ -83,17 +86,18 @@ public class GameController implements ActionListener {
 			} else if (GamePhase.SETUP.equals(this.gamePhase)) {
 				System.out.println("************SETUP PHASE**************");
 				initiateBoardAndPlayGame();
-				
+
 			} else if (GamePhase.REINFORCE.equals(this.gamePhase)) {
-				distributeTerritories(board.getPlayerList(), world);
-				board.setGamePhase(GamePhase.REINFORCE);
+
 				System.out.println("************REINFORCE PHASE**************");
-				
+				board.setGamePhase(GamePhase.REINFORCE);
+				calculateReinforcementForPlayers();
+
 			} else if (GamePhase.ATTACK.equals(this.gamePhase)) {
 				board.setGamePhase(GamePhase.ATTACK);
 				System.out.println("************ATTACK PHASE**************");
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -106,13 +110,18 @@ public class GameController implements ActionListener {
 	 */
 	public void initiateBoardAndPlayGame() {
 		try {
+
 			ArrayList<Player> playerList = gameUtility.createPlayers(numberOfPlayers);
 			ArrayList<Card> cardDeck = gameUtility.buildCardDeck(world);
 
 			// Assign armies for each player
 			assignArmiesToPlayer(playerList);
-
+			
+			//initialize the Board Data
 			board.initializeGame(world, playerList, cardDeck);
+			
+			// Distribute 42 armies equally to the players
+			distributeTerritories(playerList, world);
 
 			boardView = new BoardView(board);
 		} catch (Exception e) {
@@ -145,7 +154,6 @@ public class GameController implements ActionListener {
 	public void distributeTerritories(List<Player> playerList, World world) throws Exception {
 
 		int playersCount = 0;
-		System.out.println(playerList.size());
 		if (world != null) {
 			HashSet<Territory> territorySet = world.getTerritories();
 
@@ -160,6 +168,9 @@ public class GameController implements ActionListener {
 						playersCount = 0;
 					}
 					playerList.get(playersCount).getCountriesOwned().add(territory);
+					int territoriesOccupied = playerList.get(playersCount).getPlayerScore()
+							.getNoOfOccupiedTerritories();
+					playerList.get(playersCount).getPlayerScore().setNoOfOccupiedTerritories(territoriesOccupied + 1);
 					territory.setOwner(playerList.get(playersCount));
 					territory.setArmyCount(1);
 					int oldArmiesCount = playerList.get(playersCount).getArmiesHeld();
@@ -170,9 +181,59 @@ public class GameController implements ActionListener {
 			}
 		}
 	}
-	
+
 	public GamePhase getGamePhase() {
 		return this.gamePhase;
+	}
+
+	public void calculateReinforcementForPlayers() {
+		try {
+			int reinforcement = 0;
+			Board board = Board.getInstance();
+			if (board != null && board.getPlayerList() != null) {
+
+				for (int i = 0; i < board.getPlayerList().size(); i++) {
+					Player player = board.getPlayerList().get(i);
+					reinforcement = calculateBonusFromOccupiedTerritories(player);
+					reinforcement += calculateBonusFromContinent(player);
+					player.setArmiesHeld(reinforcement);
+				}
+			}
+		} catch (Exception e) {
+		}
+	}
+
+	private int calculateBonusFromContinent(Player player) {
+		int reinforcement = 0;
+
+		if (this.world != null) {
+
+			HashSet<Continent> continents = world.getContinents();
+
+			Iterator<Continent> continentIterator = continents.iterator();
+
+			while (continentIterator.hasNext()) {
+				Continent continent = continentIterator.next();
+				HashSet<Territory> territorySet = continent.getTerritoryList();
+					
+				if(player.getCountriesOwned().containsAll(territorySet)) {
+					reinforcement += continent.getBonusPoint();
+					player.getContinentsOwned().add(continent);
+				}
+			}
+		}
+		System.out.println("Reinforcement from Continent");
+		return reinforcement;
+	}
+
+	private int calculateBonusFromOccupiedTerritories(Player player) throws Exception {
+		return scoreConfig.getOccupiedTerritoryBonus(player.getCountriesOwned().size());
+
+	}
+
+	private int calculateBonusFromCards() {
+		int reinforcement = 0;
+		return reinforcement;
 	}
 
 }

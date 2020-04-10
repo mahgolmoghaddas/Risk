@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Territory {
 	private String countryName;
-	private HashSet<String> neighborsTerritory;
+	private HashSet<String> neighborsTerritory=new HashSet<String>();
 	private Coordinates territoryPosition;
 	private Player owner;
 	private int armyCount;
@@ -69,6 +69,9 @@ public class Territory {
 	 */
 	public HashSet<String> getNeighborsTerritory() {
 		return neighborsTerritory;
+	}
+	public void setNeighborsTerritory(String territory) {
+		neighborsTerritory.add(territory);
 	}
 
 	/**

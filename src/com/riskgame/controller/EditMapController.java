@@ -2,6 +2,7 @@ package com.riskgame.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import javax.swing.*;
@@ -73,8 +74,100 @@ public class EditMapController implements ActionListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		}
+		else if(st=="Reload Map") {
+			MapReader mapReader=new MapReader();
+			try {
+				World world=mapReader.fileChooser();
+				EditMapView editMapView=new EditMapView(world);
+			}
+			catch (Exception exception){
+				exception.printStackTrace();
+			}
+		}
+		else if(st=="Delete Adjacency") {
+			deleteAdajacency();
+		}
+		else if(st=="Add Adjacency") {
+			addAdjacency();
+		}
+	}
+
+
+
+	private void addAdjacency() {
+		// TODO Auto-generated method stub
 		
+		//JTextField inputCountry = new JTextField();
+		int flag = 0;
+		ArrayList<String> arr=new ArrayList<String>();
+			int count = 0;
+			for (Continent continent : world.getContinents()) {
+				for(Territory territory:continent.getTerritoryList()) {
+					arr.add(territory.getCountryName());
+				}
+			}
+			String[] countryNames=new String[arr.size()];
+			for(int i=0; i<arr.size();i++) {
+				countryNames[i]=arr.get(i);
+			}
+			JComboBox<Object> countryFirstBox = new JComboBox<Object>(countryNames);
+			System.out.println(countryNames.toString());
+			JComboBox<Object> countrySecondBox = new JComboBox<Object>(countryNames);
+			Object[] message = {"Select the first country : ", countryFirstBox, "Select the second country : ", countrySecondBox};
+			countryFirstBox.setSelectedIndex(0);
+			countrySecondBox.setSelectedIndex(-1);
+			boolean loop = true;
+            while (loop) {
+                int adjAdd = JOptionPane.showConfirmDialog(null, message, "Country Name",
+                        JOptionPane.OK_CANCEL_OPTION);
+
+                if (adjAdd == JOptionPane.OK_OPTION) {
+                		String countryName=(String)countryFirstBox.getItemAt(countryFirstBox.getSelectedIndex());
+                		
+                		String countryAdjacentName=(String)countrySecondBox.getItemAt(countrySecondBox.getSelectedIndex());
+                		
+			
+                		Territory[] inputCountries=checkNeighborArgumentValidity(countryName,countryAdjacentName);
+                		if(!((inputCountries[0]!=null) && (inputCountries[1]!=null)))
+                			return;
+			
+                		if(inputCountries[0].getNeighborsTerritory().contains(countryAdjacentName)) {
+                			System.out.println(countryAdjacentName+" and "+countryName+" are already neighbors ");
+                			return;
+			}
+			
+                		else{	
+                			ArrayList<String> array=new ArrayList<String>();
+                			inputCountries[0].getNeighborsTerritory().add(countryAdjacentName);
+                			array.add(countryName);
+                			inputCountries[1].getNeighborsTerritory().addAll(array);
+                			
+                			System.out.println(countryAdjacentName+" and "+countryName+" are now neighbors ");
+                			loop=false;
+                		}
+	}
+                else{
+                	loop=false;}}
+                }
+	
+	
+	public Territory[] checkNeighborArgumentValidity(String countryName,String neighborName) {
+		Territory[] resultCountries=new Territory[2];
+		
+		for(Continent continent:world.getContinents()) {
+			Territory returnVal1=continent.findTerritory(countryName);
+			Territory returnVal2=continent.findTerritory(neighborName);
+			if(returnVal1!=null)
+					{resultCountries[0]=returnVal1;}
+			if(returnVal2!=null)
+					{resultCountries[1]=returnVal2;}
+			if((returnVal1!=null) && (returnVal2!=null) )
+				break;
+			}
+			
+			return (resultCountries);
 	}
 
 
@@ -82,10 +175,11 @@ public class EditMapController implements ActionListener {
 
 
 
-
-
-
-
+	private void deleteAdajacency() {
+		// TODO Auto-generated method stub
+		
+		
+	}
 
 
 
@@ -202,14 +296,18 @@ public class EditMapController implements ActionListener {
         HashSet<Territory> countries = new HashSet<Territory>();
         countries = world.getTerritories();
         HashSet<String> countryNames = new HashSet<String>();
-        for(Territory territory: countries) {
-        	countryNames.add(territory.getCountryName());
-        }
+        if(world.getTerritories()!=null) {
+
+        	for(Territory territory: countries) {
+        		countryNames.add(territory.getCountryName());
+        	}}
+        
         Territory newCountry = new Territory();
         Coordinates territoryPosition=new Coordinates(Math.random(),Math.random());
         newCountry.setTerritoryPosition(territoryPosition);
         newCountry.setCountryName(countryName);
         tempContinent.addTerritory(newCountry);
+        System.out.println(newCountry.getCountryName());
 	}
 	
 	
@@ -218,6 +316,7 @@ public class EditMapController implements ActionListener {
 		MapReader mapReader=new MapReader();
 		boolean flag=false;
 		while (!flag) {
+			
             String mapName = JOptionPane.showInputDialog(null, "Please enter the map name to save");
             if (mapName != null) {
                 if (mapName.trim().isEmpty()) {
@@ -351,12 +450,6 @@ public class EditMapController implements ActionListener {
 		
 	}
 	
-	
-	
-
-
-
-
 
 
 	/**

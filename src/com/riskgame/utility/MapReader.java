@@ -294,7 +294,7 @@ public class MapReader {
 		String newMap = "[Map]\nauthor=Sean O'Connor\nimage=world.bmp\nwrap=yes\nscroll=horizontal\nwarn=yes\n\n[Continents]\n";
 		for (Continent continent : world.getContinents()) {
 			newMap = newMap + continent.getContinentName();
-			if(continent.getBonusPoint()==0){
+			if((int)continent.getBonusPoint()==0){
 				continent.setBonusPoint(continent.getTerritoryList().size());	
 			}
 			newMap = newMap + "=" + continent.getBonusPoint();

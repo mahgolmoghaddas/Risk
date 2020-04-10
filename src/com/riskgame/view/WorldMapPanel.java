@@ -96,30 +96,13 @@ public class WorldMapPanel extends JPanel implements Observer {
 
 						@Override
 						public void mouseClicked(java.awt.event.MouseEvent e) {
-							Player activePlayer = board.getActivePlayer();
-							if ((activePlayer.getArmiesHeld() <= 0 || tempReinforcementCount >= 3) && playersHaveArmies()) {
-								tempReinforcementCount = 0;
-								activePlayer = board.getNextPlayer();
-							}
 							JTextField targetTerritoryField = (JTextField) e.getComponent();
 
-							Territory targetTerritory = territoryMap.get(targetTerritoryField.getName());
-
-							if (targetTerritory.getOwner().equals(activePlayer) && activePlayer.getArmiesHeld() > 0) {
-
-								activePlayer.getCountriesOwned().add(targetTerritory);
-								int oldTerritoryArmyCount = targetTerritory.getArmyCount();
-								targetTerritory.setArmyCount(oldTerritoryArmyCount + 1);
-								int oldArmiesCount = activePlayer.getArmiesHeld();
-								activePlayer.setArmiesHeld(oldArmiesCount - 1);
-
-								targetTerritoryField.setText(targetTerritory.getArmyCount() + "");
-								tempReinforcementCount = tempReinforcementCount + 1;
+							if (GameController.getInstance().getGamePhase().equals(GamePhase.SETUP)) {
+								handleSetUpPhase(targetTerritoryField);
+							} else if (GameController.getInstance().getGamePhase().equals(GamePhase.REINFORCE)) {
+								handleReinforcementPhase(targetTerritoryField);
 							}
-
-							System.out.println("Target " + targetTerritory.getCountryName() + "Temp reinforcement ::: "
-									+ tempReinforcementCount);
-
 						}
 					});
 					this.setLayout(null);
@@ -158,5 +141,52 @@ public class WorldMapPanel extends JPanel implements Observer {
 			}
 		}
 		return playersHaveArmies;
+	}
+
+	/**
+	 * 
+	 * @param targetTerritoryField
+	 */
+	private void handleReinforcementPhase(JTextField targetTerritoryField) {
+		Player activePlayer = board.getActivePlayer();
+		
+		Territory targetTerritory = territoryMap.get(targetTerritoryField.getName());
+
+		if (targetTerritory.getOwner().equals(activePlayer) && activePlayer.getArmiesHeld() > 0) {
+			activePlayer.getCountriesOwned().add(targetTerritory);
+			int oldTerritoryArmyCount = targetTerritory.getArmyCount();
+			targetTerritory.setArmyCount(oldTerritoryArmyCount + 1);
+			int oldArmiesCount = activePlayer.getArmiesHeld();
+			activePlayer.setArmiesHeld(oldArmiesCount - 1);
+
+			targetTerritoryField.setText(targetTerritory.getArmyCount() + "");
+			System.out.println("Target " + targetTerritory.getCountryName());
+		}
+	}
+
+	private void handleSetUpPhase(JTextField targetTerritoryField) {
+		Player activePlayer = board.getActivePlayer();
+
+		if ((activePlayer.getArmiesHeld() <= 0 || tempReinforcementCount >= 3) && playersHaveArmies()) {
+			tempReinforcementCount = 0;
+			activePlayer = board.getNextPlayer();
+		}
+
+		Territory targetTerritory = territoryMap.get(targetTerritoryField.getName());
+
+		if (targetTerritory.getOwner().equals(activePlayer) && activePlayer.getArmiesHeld() > 0) {
+
+			activePlayer.getCountriesOwned().add(targetTerritory);
+			int oldTerritoryArmyCount = targetTerritory.getArmyCount();
+			targetTerritory.setArmyCount(oldTerritoryArmyCount + 1);
+			int oldArmiesCount = activePlayer.getArmiesHeld();
+			activePlayer.setArmiesHeld(oldArmiesCount - 1);
+
+			targetTerritoryField.setText(targetTerritory.getArmyCount() + "");
+			tempReinforcementCount = tempReinforcementCount + 1;
+		}
+
+		System.out.println(
+				"Target " + targetTerritory.getCountryName() + "Temp reinforcement ::: " + tempReinforcementCount);
 	}
 }

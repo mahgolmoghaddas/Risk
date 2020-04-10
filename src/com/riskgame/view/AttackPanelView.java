@@ -1,22 +1,29 @@
 package com.riskgame.view;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.NavigableSet;
 import java.util.Observer;
+import java.util.TreeSet;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.plaf.basic.BasicButtonUI;
 
+import com.riskgame.controller.AttackController;
+import com.riskgame.controller.GameController;
 import com.riskgame.model.Board;
 import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
 import com.riskgame.model.World;
 import com.riskgame.utility.DiceType;
-
-import javafx.beans.Observable;
+import com.riskgame.utility.ViewUtility;
 
 public class AttackPanelView extends JPanel implements Observer {
 
@@ -25,12 +32,20 @@ public class AttackPanelView extends JPanel implements Observer {
 	private Board board;
 
 	JComboBox<String> defenderComboList = new JComboBox<String>();
-	JPanel rollingDicePanel;
+	public static DicePanel attackDicePanel;
+	public static DicePanel defendDicePanel;
+	public static Territory attackerTerritory;
+	public static Territory defenderTerritory;
 
 	public AttackPanelView(Board board) {
 		this.board = board;
 		board.addObserver(this);
 		createAttackPanel();
+		revalidate();
+	}
+
+	@Override
+	public void update(java.util.Observable o, Object arg) {
 		revalidate();
 	}
 
@@ -47,7 +62,7 @@ public class AttackPanelView extends JPanel implements Observer {
 			add(defenderLabel);
 			add(defenderComboList);
 			add(rollingDicePanel);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -72,10 +87,17 @@ public class AttackPanelView extends JPanel implements Observer {
 			System.out.println("ATTACKER*****" + attacker);
 			World world = board.getWorld();
 			if (world != null) {
-				Territory territory = world.getTerritoryByName(attacker);
-				if (territory != null) {
-					defenderComboList = createDefenderComboBox(territory.getNeighborsTerritory());
-					defenderComboList.revalidate();
+				attackerTerritory = world.getTerritoryByName(attacker);
+				if (attackerTerritory != null) {
+					if (attackerTerritory.getArmyCount() >= 2) {
+						defenderComboList = createDefenderComboBox(attackerTerritory.getNeighborsTerritory());
+						defenderComboList.revalidate();
+					} else {
+						JOptionPane.showMessageDialog(BoardView.mainBoardFrame.getContentPane(),
+								"You have less than 2 armies in this territory. Please select another", "ERROR",
+								JOptionPane.ERROR_MESSAGE);
+					}
+
 				}
 			}
 		});
@@ -88,12 +110,12 @@ public class AttackPanelView extends JPanel implements Observer {
 		if (defenderComboList != null && defenderComboList.getItemCount() > 0) {
 			defenderComboList.removeAllItems();
 		}
+		World world = board.getWorld();
 		defenderComboList.addItem("SELECT");
 		if (neighboursTerritory != null && !neighboursTerritory.isEmpty()) {
 			Iterator<String> neighboursIterator = neighboursTerritory.iterator();
 			while (neighboursIterator.hasNext()) {
 				String neighbour = neighboursIterator.next();
-				World world = board.getWorld();
 				if (world != null) {
 					Territory territory = world.getTerritoryByName(neighbour);
 					if (territory != null && territory.getOwner().getId() != board.getActivePlayer().getId()) {
@@ -105,6 +127,7 @@ public class AttackPanelView extends JPanel implements Observer {
 
 		defenderComboList.addItemListener(itemListener -> {
 			String defender = (String) defenderComboList.getSelectedItem();
+			defenderTerritory = world.getTerritoryByName(defender);
 			System.out.println("Defender*****" + defender);
 		});
 
@@ -112,30 +135,31 @@ public class AttackPanelView extends JPanel implements Observer {
 	}
 
 	public JPanel createPanelForRollingDice() {
-		rollingDicePanel = new JPanel();
+		JPanel rollingDicePanel = new JPanel();
 		rollingDicePanel.setLayout(new FlowLayout());
-		
-		JPanel attackDicePanel = new DicePanel(DiceType.Attack, board, false);
-		JPanel defendDicePanel = new DicePanel(DiceType.Defend, board, false);
-		
-		JLabel attackScore = new JLabel();
-		JLabel defenderScore = new JLabel();
-		
+
+		attackDicePanel = new DicePanel(DiceType.Attack, board, false);
+		defendDicePanel = new DicePanel(DiceType.Defend, board, false);
+
+		JButton attackResultBtn = attackResultButton("See Result");
+
 		rollingDicePanel.add(attackDicePanel);
 		rollingDicePanel.add(defendDicePanel);
-		
+		rollingDicePanel.add(attackResultBtn);
 		Dimension dimension = new Dimension();
 		dimension.setSize(BoardView.mainBoardFrame.getWidth() - 350, 55);
 		rollingDicePanel.setPreferredSize(dimension);
-		
-		return rollingDicePanel;
 
+		return rollingDicePanel;
 	}
 
-	@Override
-	public void update(java.util.Observable o, Object arg) {
-		// TODO Auto-generated method stub
-
+	public JButton attackResultButton(String name) {
+		JButton finishMove = new JButton(name);
+		finishMove.addActionListener(new AttackController());
+		finishMove.setBackground(Color.decode("#f5b942"));
+		finishMove.setUI(new BasicButtonUI());
+		finishMove.setVisible(true);
+		return finishMove;
 	}
 
 }

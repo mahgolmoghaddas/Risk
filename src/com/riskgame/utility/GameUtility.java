@@ -137,6 +137,8 @@ public class GameUtility {
 			return GamePhase.FORTIFY;
 		case FORTIFY:
 			return GamePhase.PICKCARD;
+		case PICKCARD:
+			return GamePhase.REINFORCE;
 		default:
 			return GamePhase.START;
 		}

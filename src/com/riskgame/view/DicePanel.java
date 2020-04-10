@@ -47,6 +47,16 @@ public class DicePanel extends JPanel {
 		rolledCount = 1;
 	}
 
+	public DicePanel(DiceType diceType, Board board, int maxAllowedRoll) {
+		createDiceRollButton();
+		diceCount = 0;
+		this.diceType = diceType;
+		this.board = board;
+		this.isSetUpPhase = false;
+		this.maxAllowedRoll = maxAllowedRoll;
+		rolledCount = 1;
+	}
+
 	/**
 	 * This method returns the maximum number of Roll allowed for a player defending
 	 * in the Game Phase.
@@ -100,7 +110,7 @@ public class DicePanel extends JPanel {
 					diceCountLabel.setText(text);
 					diceCountLabel.setVisible(true);
 				}
-				
+
 				rolledCount++;
 				if (rolledCount > maxAllowedRoll) {
 					tempDiceList.clear();
@@ -127,7 +137,7 @@ public class DicePanel extends JPanel {
 		for (int i = 0; i < playerList.size(); i++) {
 			Player player = playerList.get(i);
 			if (player.getId() == this.rolledCount) {
-				System.out.println("Updating "+player.getName()+" DiceCount");
+				System.out.println("Updating " + player.getName() + " DiceCount");
 				player.setStartDiceNo(diceCount);
 				break;
 			}
@@ -240,4 +250,11 @@ public class DicePanel extends JPanel {
 		return this.rolledCount;
 	}
 
+	public String getDiceLabelText() {
+		String diceText = "";
+		if (this.diceCountLabel != null) {
+			diceText = diceCountLabel.getText();
+		}
+		return diceText;
+	}
 }

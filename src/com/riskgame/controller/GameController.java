@@ -34,7 +34,7 @@ public class GameController implements ActionListener {
 	private Board board;
 	private GameUtility gameUtility = new GameUtility();
 	ScoreConfiguration scoreConfig = new ScoreConfiguration();
-	private GamePhase gamePhase;
+	static GamePhase gamePhase;
 	private static GameController gameController;
 	private TurnManager turnManager;
 
@@ -86,9 +86,7 @@ public class GameController implements ActionListener {
 			} else if (GamePhase.SETUP.equals(this.gamePhase)) {
 				System.out.println("************SETUP PHASE**************");
 				initiateBoardAndPlayGame();
-
 			} else if (GamePhase.REINFORCE.equals(this.gamePhase)) {
-
 				System.out.println("************REINFORCE PHASE**************");
 				board.setGamePhase(GamePhase.REINFORCE);
 				calculateReinforcementForPlayers();
@@ -96,6 +94,9 @@ public class GameController implements ActionListener {
 			} else if (GamePhase.ATTACK.equals(this.gamePhase)) {
 				board.setGamePhase(GamePhase.ATTACK);
 				System.out.println("************ATTACK PHASE**************");
+			} else if (GamePhase.FORTIFY.equals(this.gamePhase)) {
+				board.setGamePhase(GamePhase.FORTIFY);
+				System.out.println("************FORTIFY PHASE**************");
 			}
 
 		} catch (Exception e) {
@@ -116,10 +117,10 @@ public class GameController implements ActionListener {
 
 			// Assign armies for each player
 			assignArmiesToPlayer(playerList);
-			
-			//initialize the Board Data
+
+			// initialize the Board Data
 			board.initializeGame(world, playerList, cardDeck);
-			
+
 			// Distribute 42 armies equally to the players
 			distributeTerritories(playerList, world);
 
@@ -215,14 +216,14 @@ public class GameController implements ActionListener {
 			while (continentIterator.hasNext()) {
 				Continent continent = continentIterator.next();
 				HashSet<Territory> territorySet = continent.getTerritoryList();
-					
-				if(player.getCountriesOwned().containsAll(territorySet)) {
+
+				if (player.getCountriesOwned().containsAll(territorySet)) {
 					reinforcement += continent.getBonusPoint();
 					player.getContinentsOwned().add(continent);
 				}
 			}
 		}
-		System.out.println("Reinforcement from Continent");
+		System.out.println("Reinforcement from Continent " + reinforcement);
 		return reinforcement;
 	}
 
@@ -236,4 +237,7 @@ public class GameController implements ActionListener {
 		return reinforcement;
 	}
 
+	public BoardView getBoardView() {
+		return this.boardView;
+	}
 }

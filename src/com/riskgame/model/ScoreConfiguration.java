@@ -8,6 +8,8 @@ import java.util.Set;
 public class ScoreConfiguration {
 
 	private static HashMap<String, Integer> territoryReinforcementMap;
+	
+	private static HashMap<Integer,Integer> winnigCriteria;
 
 	static {
 		territoryReinforcementMap = new HashMap<>();

@@ -53,6 +53,8 @@ public class BoardView implements Observer {
 	int currentPlayerId = 0;
 	JPanel worldMapPanel;
 	JButton attackButton;
+	AttackPanelView attackPanel;
+	FortifyPanelView fortifyPanel;
 
 	Map<Integer, JTextField> armiesField = new HashMap<>();
 	Map<Integer, JLabel> diceList = new HashMap<>();
@@ -72,10 +74,10 @@ public class BoardView implements Observer {
 				showSetupBoard(board);
 			} else if (GamePhase.REINFORCE.equals(GameController.getInstance().getGamePhase())) {
 				showReinforceBoard(board);
-				System.out.println("REINFORCE ARMY");
 			} else if (GamePhase.ATTACK.equals(GameController.getInstance().getGamePhase())) {
 				showAttackBoard(board);
-				System.out.println("ATTACK ARMY");
+			} else if (GamePhase.FORTIFY.equals(GameController.getInstance().getGamePhase())) {
+				showFortifyBoard(board);
 			}
 		}
 	}
@@ -107,11 +109,16 @@ public class BoardView implements Observer {
 		}
 	}
 
+	/**
+	 * This method displays the initial setup Board view as per the Board data which
+	 * includes player,no of territories acquired by the player and number of armies
+	 * hold by player
+	 */
 	public void showSetupBoard(Board board) {
 		try {
 			if (isStartDiceAllocatedToAll(board)) {
 				Player currentPlayer = board.getActivePlayer();
-				
+
 				mainBoardFrame.remove(diceRollPanel);
 				if (messagePanel != null) {
 					System.out.println("REMOVED");
@@ -134,6 +141,13 @@ public class BoardView implements Observer {
 		}
 	}
 
+	/**
+	 * This method checks whether start dice has been allocated all the players in
+	 * the game
+	 * 
+	 * @param board
+	 * @return true/false
+	 */
 	public boolean isStartDiceAllocatedToAll(Board board) {
 
 		boolean isStartDiceAllocated = true;
@@ -151,6 +165,11 @@ public class BoardView implements Observer {
 		return isStartDiceAllocated;
 	}
 
+	/**
+	 * This method shows the BoardView for the Reinforcement Phase
+	 * 
+	 * @param board
+	 */
 	public void showReinforceBoard(Board board) {
 		try {
 			if (reinforceButton != null) {
@@ -161,8 +180,7 @@ public class BoardView implements Observer {
 				mainBoardFrame.remove(messagePanel);
 			}
 			messagePanel = createMessagePanel(updateActivePlayerLabel(board.getActivePlayer()));
-			if (!hideNextPhaseButton(board)) {
-				System.out.println("Created Attack Button");
+			if (!hideAttackButton(board.getActivePlayer())) {
 				attackButton = viewUtility.createGamePhaseButton("Attack");
 				messagePanel.add(attackButton);
 			}
@@ -175,6 +193,11 @@ public class BoardView implements Observer {
 		}
 	}
 
+	/**
+	 * This method shows the BoardView for the Attack Phase
+	 * 
+	 * @param board
+	 */
 	public void showAttackBoard(Board board) {
 
 		try {
@@ -182,27 +205,75 @@ public class BoardView implements Observer {
 			if (attackButton != null) {
 				mainBoardFrame.remove(attackButton);
 			}
-			if (messagePanel != null) {
-				mainBoardFrame.remove(messagePanel);
-			}
 
-			AttackPanelView attackPanel = new AttackPanelView(board);
+			attackPanel = new AttackPanelView(board);
 			Dimension dim = new Dimension();
 			dim.setSize(mainBoardFrame.getWidth() - 350, 90);
 			attackPanel.setPreferredSize(dim);
-			attackButton = viewUtility.createGamePhaseButton("End Attack");
-			messagePanel = createMessagePanel(updateAttackMessage());
 
 			mainBoardFrame.add(attackPanel);
-			mainBoardFrame.add(messagePanel);
-			mainBoardFrame.add(attackButton);
-
 			mainBoardFrame.repaint();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * This method shows the BoardView for the Re-Attack Phase
+	 * 
+	 * @param board
+	 */
+	public void showReAttackBoard(String message) {
+		if (attackPanel != null) {
+			mainBoardFrame.remove(attackPanel);
+		}
+		if (messagePanel != null) {
+			mainBoardFrame.remove(messagePanel);
+		}
+		messagePanel = createMessagePanel(updateAttackMessage(message));
+
+		if (attackButton != null) {
+			mainBoardFrame.remove(attackButton);
+		}
+		attackButton = viewUtility.createGamePhaseButton("Attack");
+		JButton endAttackButton = viewUtility.createGamePhaseButton("End Attack");
+
+		mainBoardFrame.add(messagePanel);
+		mainBoardFrame.add(attackButton);
+		mainBoardFrame.add(endAttackButton);
+		mainBoardFrame.repaint();
+	}
+
+	/**
+	 * This method shows the BoardView for the Fortify Phase
+	 * @param message
+	 */
+	public void showFortifyBoard(Board board) {
+		if (attackPanel != null) {
+			mainBoardFrame.remove(attackPanel);
+		}
+		if (messagePanel != null) {
+			mainBoardFrame.remove(messagePanel);
+		}
+		if (attackButton != null) {
+			mainBoardFrame.remove(attackButton);
+		}
+		if (attackButton != null) {
+			mainBoardFrame.remove(attackButton);
+		}
+
+		fortifyPanel = new FortifyPanelView(board);
+		
+		mainBoardFrame.add(fortifyPanel);
+		mainBoardFrame.repaint();
+	}
+
+	/**
+	 * This method decides whether to hide the next phase button or not
+	 * 
+	 * @param board
+	 * @return
+	 */
 	public boolean hideNextPhaseButton(Board board) {
 		boolean hideAttackButton = false;
 		if (board != null && board.getPlayerList() != null) {
@@ -212,6 +283,14 @@ public class BoardView implements Observer {
 					break;
 				}
 			}
+		}
+		return hideAttackButton;
+	}
+
+	public boolean hideAttackButton(Player player) {
+		boolean hideAttackButton = false;
+		if (player.getArmiesHeld() > 0) {
+			hideAttackButton = true;
 		}
 		return hideAttackButton;
 	}
@@ -291,9 +370,9 @@ public class BoardView implements Observer {
 		return activePlayerLabel;
 	}
 
-	private JLabel updateAttackMessage() {
+	private JLabel updateAttackMessage(String message) {
 		JLabel activePlayerLabel = new JLabel();
-		activePlayerLabel.setText("Message goes here");
+		activePlayerLabel.setText(message);
 		activePlayerLabel.setForeground(Color.decode("#525b5c"));
 		activePlayerLabel.setVisible(true);
 		return activePlayerLabel;

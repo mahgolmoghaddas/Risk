@@ -20,6 +20,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.table.DefaultTableModel;
 
+import com.riskgame.controller.AttackController;
 import com.riskgame.controller.GameController;
 import com.riskgame.enums.GameScreen;
 import com.riskgame.model.Continent;
@@ -185,4 +186,5 @@ public class ViewUtility {
 		finishMove.setVisible(true);
 		return finishMove;
 	}
+	
 }

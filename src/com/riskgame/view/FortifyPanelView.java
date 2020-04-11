@@ -74,7 +74,7 @@ public class FortifyPanelView extends JPanel implements Observer {
 				System.out.println("SOURCE*****" + sourceTerritory.getCountryName());
 				if (sourceTerritory != null) {
 					createArmyCountCombo(sourceTerritory.getArmyCount());
-					destComboList =createDestinationComboBox(sourceTerritory.getNeighborsTerritory());
+					destComboList = createDestinationComboBox(sourceTerritory.getNeighborsTerritory());
 					destComboList.revalidate();
 					armyCountCombo.revalidate();
 				}
@@ -104,17 +104,16 @@ public class FortifyPanelView extends JPanel implements Observer {
 		if (destComboList != null && destComboList.getItemCount() > 0) {
 			destComboList.removeAllItems();
 		}
-
+		destComboList.addItem("Select");
 		World world = board.getWorld();
 		if (neighboursTerritory != null && !neighboursTerritory.isEmpty()) {
 			Iterator<String> neighboursIterator = neighboursTerritory.iterator();
 			while (neighboursIterator.hasNext()) {
 				String neighbour = neighboursIterator.next();
-				if (world != null) {
-					Territory territory = world.getTerritoryByName(neighbour);
-					if (territory != null && territory.getOwner().getId() == board.getActivePlayer().getId()) {
-						destComboList.addItem(territory.getCountryName());
-					}
+
+				Territory territory = world.getTerritoryByName(neighbour);
+				if (territory != null && territory.getOwner().getId() == board.getActivePlayer().getId()) {
+					destComboList.addItem(territory.getCountryName());
 				}
 			}
 		}
@@ -122,7 +121,6 @@ public class FortifyPanelView extends JPanel implements Observer {
 		destComboList.addItemListener(itemListener -> {
 			String destination = (String) destComboList.getSelectedItem();
 			destinationTerritory = world.getTerritoryByName(destination);
-			System.out.println("Destination*****" + destinationTerritory.getCountryName());
 		});
 
 		return destComboList;

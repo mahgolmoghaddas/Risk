@@ -275,6 +275,9 @@ public class BoardView implements Observer {
 		if (endAttackButton != null) {
 			mainBoardFrame.remove(endAttackButton);
 		}
+		if(fortifyPanel!=null) {
+			mainBoardFrame.remove(fortifyPanel);
+		}
 
 		fortifyPanel = new FortifyPanelView(board);
 

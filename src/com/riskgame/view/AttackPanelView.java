@@ -78,7 +78,9 @@ public class AttackPanelView extends JPanel implements Observer {
 			Iterator<Territory> attackerTerritoryIterator = countriesOwned.iterator();
 			while (attackerTerritoryIterator.hasNext()) {
 				Territory territory = attackerTerritoryIterator.next();
-				attackerComboList.addItem(territory.getCountryName());
+				if (territory != null && territory.getArmyCount() > 1) {
+					attackerComboList.addItem(territory.getCountryName());
+				}
 			}
 		}
 

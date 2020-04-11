@@ -102,7 +102,7 @@ public class GameUtility {
 		switch (numberOfPlayers) {
 
 		case 2:
-			numberOfArmies = 40;
+			numberOfArmies = 22;
 			break;
 		case 3:
 			numberOfArmies = 35;

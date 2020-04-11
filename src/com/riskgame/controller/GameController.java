@@ -34,7 +34,7 @@ public class GameController implements ActionListener {
 	private Board board;
 	private GameUtility gameUtility = new GameUtility();
 	ScoreConfiguration scoreConfig = new ScoreConfiguration();
-	static GamePhase gamePhase;
+	public static GamePhase gamePhase;
 	private static GameController gameController;
 	private TurnManager turnManager;
 

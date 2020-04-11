@@ -11,10 +11,13 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.riskgame.controller.GameController;
 import com.riskgame.model.Board;
 import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
 import com.riskgame.model.World;
+import com.riskgame.utility.GamePhase;
+import com.riskgame.utility.ViewUtility;
 
 public class FortifyPanelView extends JPanel implements Observer {
 
@@ -25,6 +28,8 @@ public class FortifyPanelView extends JPanel implements Observer {
 	public static Territory sourceTerritory;
 	public static Territory destinationTerritory;
 	Integer selectedArmyCount = 0;
+	JButton finishButton;
+	JPanel comboPanel = new JPanel();
 
 	public FortifyPanelView(Board board) {
 		this.board = board;
@@ -34,20 +39,32 @@ public class FortifyPanelView extends JPanel implements Observer {
 	}
 
 	private void createFortifyPanel() {
+		finishButton = new ViewUtility().createGamePhaseButton("Finish");
+		finishButton.setVisible(false);
+		finishButton.addActionListener(GameController.getInstance());
+		setLayout(new FlowLayout());
+		
+		add(createComboPanel());
+		add(finishButton);
+	}
+
+	private JPanel createComboPanel() {
+
 		JLabel sourceLabel = new JLabel("Source:");
 		JComboBox<String> sourceComboList = createSourceComboBox();
 		JLabel destinationLabel = new JLabel("Destination:");
 		JLabel armyCntLabel = new JLabel("Select army count:");
 		JButton moveButton = createMoveButton();
 
-		setLayout(new FlowLayout());
-		add(sourceLabel);
-		add(sourceComboList);
-		add(destinationLabel);
-		add(destComboList);
-		add(armyCntLabel);
-		add(armyCountCombo);
-		add(moveButton);
+		comboPanel.setLayout(new FlowLayout());
+		comboPanel.add(sourceLabel);
+		comboPanel.add(sourceComboList);
+		comboPanel.add(destinationLabel);
+		comboPanel.add(destComboList);
+		comboPanel.add(armyCntLabel);
+		comboPanel.add(armyCountCombo);
+		comboPanel.add(moveButton);
+		return comboPanel;
 	}
 
 	public JComboBox<String> createSourceComboBox() {
@@ -128,24 +145,22 @@ public class FortifyPanelView extends JPanel implements Observer {
 
 	private JButton createMoveButton() {
 		JButton moveButton = new JButton("Move");
-
 		moveButton.addActionListener(e -> {
-
 			if (sourceTerritory != null && destinationTerritory != null && selectedArmyCount > 0) {
 				int sourceArmyCnt = sourceTerritory.getArmyCount();
 				int destArmyCnt = destinationTerritory.getArmyCount();
 				sourceTerritory.setArmyCount(sourceArmyCnt - selectedArmyCount);
 				destinationTerritory.setArmyCount(destArmyCnt + selectedArmyCount);
-				board.getNextPlayer();
 			}
-
+			comboPanel.setVisible(false);
+			finishButton.setVisible(true);
+			board.getNextPlayer();
 		});
-
 		return moveButton;
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
-//		revalidate();
+		revalidate();
 	}
 }

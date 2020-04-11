@@ -187,4 +187,15 @@ public class ViewUtility {
 		return finishMove;
 	}
 	
+	public JButton createEndAttackButton(String name) {
+		JButton finishMove = new JButton(name);
+		GameController gameController = GameController.getInstance();
+		GameController.gamePhase =GamePhase.ATTACK;
+		finishMove.addActionListener(gameController);
+		finishMove.setBackground(Color.decode("#f5b942"));
+		finishMove.setUI(new BasicButtonUI());
+		finishMove.setVisible(true);
+		return finishMove;
+	}
+	
 }

@@ -101,7 +101,7 @@ public class AttackController implements ActionListener {
 			int armyCnt = defenderTerritory.getArmyCount();
 			defenderTerritory.setArmyCount(armyCnt - 1);
 			System.out.println(attacker.getName() + " lost the territory " + attackerTerritory.getCountryName());
-		} else {
+		} else if(attackerTerritory.getArmyCount()>1){
 			int armyCnt = attackerTerritory.getArmyCount();
 			attackerTerritory.setArmyCount(armyCnt - 1);
 			System.out.println(attackerTerritory.getOwner().getName() + " lost the 1 army");
@@ -122,13 +122,12 @@ public class AttackController implements ActionListener {
 			attackerTerritory.setArmyCount(armyCnt - 1);
 
 			System.out.println(defender.getName() + " lost the territory " + defenderTerritory.getCountryName());
-		} else {
+		} else if(defenderTerritory.getArmyCount()>1){
 			// Decrease the army in territory
 			int armyCnt = defenderTerritory.getArmyCount();
 			defenderTerritory.setArmyCount(armyCnt - 1);
 
 			System.out.println(defenderTerritory.getOwner().getName() + " lost the 1 army");
-
 		}
 	}
 

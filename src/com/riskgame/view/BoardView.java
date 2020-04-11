@@ -55,6 +55,7 @@ public class BoardView implements Observer {
 	JButton attackButton;
 	AttackPanelView attackPanel;
 	FortifyPanelView fortifyPanel;
+	JButton endAttackButton;
 
 	Map<Integer, JTextField> armiesField = new HashMap<>();
 	Map<Integer, JLabel> diceList = new HashMap<>();
@@ -175,6 +176,9 @@ public class BoardView implements Observer {
 			if (reinforceButton != null) {
 				messagePanel.remove(reinforceButton);
 			}
+			if (fortifyPanel != null) {
+				mainBoardFrame.remove(fortifyPanel);
+			}
 			if (messagePanel != null && messagePanel.getComponents().length > 0) {
 				messagePanel.removeAll();
 				mainBoardFrame.remove(messagePanel);
@@ -185,6 +189,7 @@ public class BoardView implements Observer {
 				messagePanel.add(attackButton);
 			}
 			mainBoardFrame.add(messagePanel);
+			mainBoardFrame.repaint();
 			mainBoardFrame.revalidate();
 		} catch (
 
@@ -205,6 +210,12 @@ public class BoardView implements Observer {
 			if (attackButton != null) {
 				mainBoardFrame.remove(attackButton);
 			}
+			if (endAttackButton != null) {
+				mainBoardFrame.remove(endAttackButton);
+			}
+			if (messagePanel != null) {
+				mainBoardFrame.remove(messagePanel);
+			}
 
 			attackPanel = new AttackPanelView(board);
 			Dimension dim = new Dimension();
@@ -213,6 +224,7 @@ public class BoardView implements Observer {
 
 			mainBoardFrame.add(attackPanel);
 			mainBoardFrame.repaint();
+			mainBoardFrame.revalidate();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -236,16 +248,18 @@ public class BoardView implements Observer {
 			mainBoardFrame.remove(attackButton);
 		}
 		attackButton = viewUtility.createGamePhaseButton("Attack");
-		JButton endAttackButton = viewUtility.createGamePhaseButton("End Attack");
+		endAttackButton = viewUtility.createEndAttackButton("End Attack");
 
 		mainBoardFrame.add(messagePanel);
 		mainBoardFrame.add(attackButton);
 		mainBoardFrame.add(endAttackButton);
 		mainBoardFrame.repaint();
+		mainBoardFrame.revalidate();
 	}
 
 	/**
 	 * This method shows the BoardView for the Fortify Phase
+	 * 
 	 * @param message
 	 */
 	public void showFortifyBoard(Board board) {
@@ -258,14 +272,15 @@ public class BoardView implements Observer {
 		if (attackButton != null) {
 			mainBoardFrame.remove(attackButton);
 		}
-		if (attackButton != null) {
-			mainBoardFrame.remove(attackButton);
+		if (endAttackButton != null) {
+			mainBoardFrame.remove(endAttackButton);
 		}
 
 		fortifyPanel = new FortifyPanelView(board);
-		
+
 		mainBoardFrame.add(fortifyPanel);
 		mainBoardFrame.repaint();
+		mainBoardFrame.revalidate();
 	}
 
 	/**
@@ -364,7 +379,12 @@ public class BoardView implements Observer {
 
 	private JLabel updateActivePlayerLabel(Player player) {
 		JLabel activePlayerLabel = new JLabel();
-		activePlayerLabel.setText("Place 3 armies at your turn. Current Player is " + player.getName());
+		if (GameController.gamePhase.equals(GamePhase.SETUP)) {
+			activePlayerLabel.setText("Place 3 armies at your turn. Current Player is " + player.getName());
+		} else {
+			activePlayerLabel.setText("Current Player is " + player.getName());
+		}
+
 		activePlayerLabel.setForeground(Color.decode("#525b5c"));
 		activePlayerLabel.setVisible(true);
 		return activePlayerLabel;

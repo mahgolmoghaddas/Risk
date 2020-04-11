@@ -146,7 +146,12 @@ public class EditMapController implements ActionListener {
                 			
                 			System.out.println(countryAdjacentName+" and "+countryName+" are now neighbors ");
                 			loop=false;
-                		}
+                		}try {
+							viewUtility.createWorldMapTable(world);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 	}
                 else{
                 	loop=false;}}
@@ -176,10 +181,68 @@ public class EditMapController implements ActionListener {
 
 
 	private void deleteAdajacency() {
+		
 		// TODO Auto-generated method stub
 		
+				//JTextField inputCountry = new JTextField();
+				int flag = 0;
+				ArrayList<String> arr=new ArrayList<String>();
+					int count = 0;
+					for (Continent continent : world.getContinents()) {
+						for(Territory territory:continent.getTerritoryList()) {
+							arr.add(territory.getCountryName());
+						}
+					}
+					String[] countryNames=new String[arr.size()];
+					for(int i=0; i<arr.size();i++) {
+						countryNames[i]=arr.get(i);
+					}
+					JComboBox<Object> countryFirstBox = new JComboBox<Object>(countryNames);
+					System.out.println(countryNames.toString());
+					JComboBox<Object> countrySecondBox = new JComboBox<Object>(countryNames);
+					Object[] message = {"Select the first country : ", countryFirstBox, "Select the second country : ", countrySecondBox};
+					countryFirstBox.setSelectedIndex(0);
+					countrySecondBox.setSelectedIndex(-1);
+					boolean loop = true;
+		            while (loop) {
+		                int adjAdd = JOptionPane.showConfirmDialog(null, message, "Country Name",
+		                        JOptionPane.OK_CANCEL_OPTION);
+
+		                if (adjAdd == JOptionPane.OK_OPTION) {
+		                		String countryName=(String)countryFirstBox.getItemAt(countryFirstBox.getSelectedIndex());
+		                		
+		                		String countryAdjacentName=(String)countrySecondBox.getItemAt(countrySecondBox.getSelectedIndex());
+		                		
+					
+		                		Territory[] inputCountries=checkNeighborArgumentValidity(countryName,countryAdjacentName);
+		                		if(!((inputCountries[0]!=null) && (inputCountries[1]!=null)))
+		                			return;
+					
+		                		if(!(inputCountries[0].getNeighborsTerritory().contains(countryAdjacentName))) {
+		                			inputCountries[0].getNeighborsTerritory().remove(countryAdjacentName);
+		                			inputCountries[1].getNeighborsTerritory().remove(countryName);
+		                			loop=false;
+					}
+					
+		                		else{	
+		                			
+		                			
+		                			System.out.println(countryAdjacentName+" and "+countryName+" are not neighbors ");
+		                			loop=false;
+		                			
+		                		}
+		                		try {
+									viewUtility.createWorldMapTable(world);
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+			}
+		                else{
+		                	loop=false;}}
+		                }
 		
-	}
+	
 
 
 
@@ -201,12 +264,10 @@ public class EditMapController implements ActionListener {
 			if(continentName.isEmpty()) {
 				JOptionPane.showMessageDialog(null, "Please specify the name!");
 			}
-			int count=1;
-			System.out.println(count++);
 			loop=false;
 			createContinet(continentName, controlValue);
 		}
-
+		EditMapView editMapView=new EditMapView(world);
 
 
 	}
@@ -269,14 +330,10 @@ public class EditMapController implements ActionListener {
                 } else {
                 	createCountry((String)continentBox.getItemAt(continentBox.getSelectedIndex()),inputCountry.getText());
                     
-                	try {
-						createTable.createWorldMapTable(getWorld());
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+                	EditMapView editMapView=new EditMapView(world);
                     loop = false;
                 }
+                
                 }
                 else {
                 loop = false;
@@ -372,12 +429,7 @@ public class EditMapController implements ActionListener {
                     }
                 }
               
-            	try {
-					viewUtility.createWorldMapTable(world);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+                EditMapView editMapView=new EditMapView(world);
             }
         }
             }

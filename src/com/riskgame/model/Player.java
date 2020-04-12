@@ -67,7 +67,7 @@ public class Player extends Observable {
 	/**
 	 * this method gets the number of armies that the player has
 	 * 
-	 * @param playerId is the id of the player
+	 * 
 	 * @return the number of armies of the player
 	 */
 	public int getArmiesHeld() {

@@ -233,7 +233,7 @@ public class BoardView implements Observer {
 	/**
 	 * This method shows the BoardView for the Re-Attack Phase
 	 * 
-	 * @param board
+	 * @param message
 	 */
 	public void showReAttackBoard(String message) {
 		if (attackPanel != null) {
@@ -260,7 +260,7 @@ public class BoardView implements Observer {
 	/**
 	 * This method shows the BoardView for the Fortify Phase
 	 * 
-	 * @param message
+	 * @param board
 	 */
 	public void showFortifyBoard(Board board) {
 		if (attackPanel != null) {

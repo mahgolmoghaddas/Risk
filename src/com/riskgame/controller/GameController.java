@@ -64,7 +64,6 @@ public class GameController implements ActionListener {
 	 * 
 	 * @param world
 	 * @param numberOfPlayers
-	 * @param turnPhase
 	 */
 	public void setGameParameters(World world, int numberOfPlayers) {
 		this.world = world;

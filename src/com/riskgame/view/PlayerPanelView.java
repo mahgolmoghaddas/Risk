@@ -56,7 +56,7 @@ public class PlayerPanelView extends JPanel implements Observer {
 	 * number of players
 	 * 
 	 * @param board
-	 * @return
+	 * 
 	 */
 	public void createPlayerPanel(Board board) {
 

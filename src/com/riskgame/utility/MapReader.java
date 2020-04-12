@@ -87,7 +87,7 @@ public class MapReader {
 
 	public boolean isValidMap(File mapFile) throws Exception {
 
-		boolean isValidMap = true;
+		boolean isValidMap = false;
 
 		if (mapFile != null) {
 			BufferedReader br = new BufferedReader(new FileReader(mapFile));

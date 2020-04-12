@@ -15,12 +15,12 @@
 ---
 Risk is a turn-based game for two to six players. The standard version is played on a board depicting a political map of the Earth, divided into forty-two territories. The objective of the game is to eliminate other players by occupying every territory on the board. Players use armies to attack and defend territories from other players. A random number generator determines the outcomes of battles. 
 
-MVC Architecture has been followed in this Project. 
+MVC Architecture has been followed in this Project. The main menu of the game has three options: New Game, Map, Editor Menu. Once you click on New Game, you have two options: Selecting number of Players and Loading Map. Editor Menu lets Create a new Map or edit Existing map. Creating a new map has functionalities to add or delete a continent and/or a country and thereafter saving the changes.
+
 ###### Game Setup Phase:
 
 The Game SetUp Phase involves placement of armies depending on the order in which player gets a chance. Initially armies are placed randomly till all the territories are captured. Then Player with highest dice number initiates the game and places three armies as per his wish. This continues unil all armies are placed.
 
----
 ###### Game Play Phase:
 
 This Phase involves three major steps: Reinforcement, Attack, Fortification

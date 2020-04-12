@@ -11,7 +11,7 @@ import com.riskgame.utility.CardType; import
 /**
  * This class provides required test cases for Continent class.
  * 
- * @author Jasmeet
+ * @author Himani
  *
  */
  public class ContinentTest {

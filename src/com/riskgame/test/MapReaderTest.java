@@ -25,7 +25,7 @@ public class MapReaderTest {
     @Test
     public void mapg(){
         MapReader map = new MapReader();
-//        assertFalse(map.mapValidity(new World(), path2));
+//       assertFalse(map.mapValidity(new World(), path2));
     }
 
 

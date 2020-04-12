@@ -13,7 +13,7 @@ import java.util.ArrayList;
 /**
  * This class provides test cases for GameController class.
  * 
- * @author Jasmeet
+ * @author Himani
  *
  */
 public class GameControllerTest {

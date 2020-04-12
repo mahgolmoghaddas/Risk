@@ -3,11 +3,14 @@ import static org.hamcrest.CoreMatchers.hasItems;
 import com.riskgame.controller.GameController;
 import com.riskgame.model.*;
 import com.riskgame.utility.GameUtility;
+
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 //import org.junit.jupiter.api.Test;
 /**
@@ -18,7 +21,8 @@ import java.util.ArrayList;
  */
 public class GameControllerTest {
 
-		
+	GameController gameController = GameController.getInstance();
+
 	@Test
 	public void testAssignArmiesToPlayer() throws Exception {
 		ArrayList<Player> playerList = new ArrayList<>();
@@ -44,7 +48,6 @@ public class GameControllerTest {
 		
 		int noOfArmies;
 		boolean condition = false;
-		GameController gameController = GameController.getInstance();
 		gameController.assignArmiesToPlayer(playerList);
 		noOfArmies = p1.getArmiesHeld(); 
 		if(noOfArmies>0) {
@@ -54,5 +57,4 @@ public class GameControllerTest {
 		  
 		 
 	}
-
 }

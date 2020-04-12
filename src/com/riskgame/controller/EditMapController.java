@@ -73,17 +73,28 @@ public class EditMapController implements ActionListener {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}}
+////		else if(st=="Return to the main window") {
+////			
+////			try {
+////				MainWindowView mainWindowView = MainWindowView.getInstance();
+////
+////				mainWindowView.launchMainWindow();
+////
+////			} catch (Exception e) {
+////				e.printStackTrace();
+////			}
+//			}
 			
-		}
+		
 		else if(st=="Reload Map") {
 			MapReader mapReader=new MapReader();
 			try {
 				World world=mapReader.fileChooser();
-				EditMapView editMapView=new EditMapView(world);
+				new EditMapView(world);
 			}
 			catch (Exception exception){
-				exception.printStackTrace();
+				JOptionPane.showMessageDialog(null, "The map you chose is not valid try another one please");
 			}
 		}
 		else if(st=="Delete Adjacency") {
@@ -94,15 +105,17 @@ public class EditMapController implements ActionListener {
 		}
 	}
 
-
+/**
+ * the method for adding the adjacency between countries
+ */
 
 	private void addAdjacency() {
 		// TODO Auto-generated method stub
 		
 		//JTextField inputCountry = new JTextField();
-		int flag = 0;
+		
 		ArrayList<String> arr=new ArrayList<String>();
-			int count = 0;
+			
 			for (Continent continent : world.getContinents()) {
 				for(Territory territory:continent.getTerritoryList()) {
 					arr.add(territory.getCountryName());
@@ -129,7 +142,7 @@ public class EditMapController implements ActionListener {
                 		String countryAdjacentName=(String)countrySecondBox.getItemAt(countrySecondBox.getSelectedIndex());
                 		
 			
-                		Territory[] inputCountries=checkNeighborArgumentValidity(countryName,countryAdjacentName);
+                		Territory[] inputCountries=neighborhood(countryName,countryAdjacentName);
                 		if(!((inputCountries[0]!=null) && (inputCountries[1]!=null)))
                 			return;
 			
@@ -157,8 +170,13 @@ public class EditMapController implements ActionListener {
                 	loop=false;}}
                 }
 	
-	
-	public Territory[] checkNeighborArgumentValidity(String countryName,String neighborName) {
+	/**
+	 * the method checks the connectivity between the countries
+	 * @param countryName
+	 * @param neighborName
+	 * @return array of  the type of Territory
+	 */
+	public Territory[] neighborhood(String countryName,String neighborName) {
 		Territory[] resultCountries=new Territory[2];
 		
 		for(Continent continent:world.getContinents()) {
@@ -178,7 +196,9 @@ public class EditMapController implements ActionListener {
 
 
 
-
+	/**
+	 * the method for delete the adjacency between countries
+	 */
 
 	private void deleteAdajacency() {
 		
@@ -214,7 +234,7 @@ public class EditMapController implements ActionListener {
 		                		String countryAdjacentName=(String)countrySecondBox.getItemAt(countrySecondBox.getSelectedIndex());
 		                		
 					
-		                		Territory[] inputCountries=checkNeighborArgumentValidity(countryName,countryAdjacentName);
+		                		Territory[] inputCountries=neighborhood(countryName,countryAdjacentName);
 		                		if(!((inputCountries[0]!=null) && (inputCountries[1]!=null)))
 		                			return;
 					
@@ -255,22 +275,28 @@ public class EditMapController implements ActionListener {
 	public void addContinent() {
 		boolean loop=true;
 		while(loop==true) {
-			String continentName = JOptionPane.showInputDialog(null, "Enter the Continent name: ", "Add Continent", JOptionPane.OK_CANCEL_OPTION | JOptionPane.QUESTION_MESSAGE);
+			try {
+				String continentName = JOptionPane.showInputDialog(null, "Enter the Continent name: ", "Add Continent", JOptionPane.OK_CANCEL_OPTION | JOptionPane.QUESTION_MESSAGE);
 			
-			double controlValue=Integer.parseInt(JOptionPane.showInputDialog(null, "Enter the Continent Control Value: ", "Add Continent Control Value", JOptionPane.OK_CANCEL_OPTION | JOptionPane.QUESTION_MESSAGE));
+				double controlValue=Integer.parseInt(JOptionPane.showInputDialog(null, "Enter the Continent Control Value: ", "Add Continent Control Value", JOptionPane.OK_CANCEL_OPTION | JOptionPane.QUESTION_MESSAGE));
+				
 			
 			
+				if(continentName.isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Please specify the name!");
+				}
+				loop=false;
+				createContinet(continentName, controlValue);
 			
-			if(continentName.isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Please specify the name!");
-			}
-			loop=false;
-			createContinet(continentName, controlValue);
+			EditMapView editMapView=new EditMapView(world);
 		}
-		EditMapView editMapView=new EditMapView(world);
+		catch(Exception e){
+			
+			JOptionPane.showMessageDialog(null, "Please enter the name of the continent that you want to create!");
+			loop=false;
+		}
 
-
-	}
+	}}
 	
 	
 	
@@ -341,6 +367,12 @@ public class EditMapController implements ActionListener {
             }}
 
 }
+	
+	/**
+	 * for creating the country in the world
+	 * @param continentName
+	 * @param countryName
+	 */
 	public void createCountry(String continentName, String countryName){
 		Continent tempContinent = null;
         
@@ -368,7 +400,9 @@ public class EditMapController implements ActionListener {
 	}
 	
 	
-	
+	/**
+	 * saving the changes in a file
+	 */
 	private void saveChanges() {
 		MapReader mapReader=new MapReader();
 		boolean flag=false;
@@ -393,7 +427,9 @@ public class EditMapController implements ActionListener {
         }
 		
 	}
-	
+	/**
+	 * Delete whole the continent plus corresponding countries
+	 */
     public void deleteContinent() {
         
     	String continents[] = new String[world.getContinents().size()];
@@ -436,7 +472,10 @@ public class EditMapController implements ActionListener {
         
 
 
-
+/**
+ * deletes the specified country
+ * @throws Exception
+ */
 	private void deleteCountry() throws Exception {
 		// TODO Auto-generated method stub
 		HashSet<String> continentsList=new HashSet<String>();
@@ -496,7 +535,7 @@ public class EditMapController implements ActionListener {
                             }
                             }
                            
-                        viewUtility.createWorldMapTable(world);
+                        EditMapView editMapView=new EditMapView(world); 
                         }}}}
                     
 		

@@ -14,11 +14,12 @@ import org.junit.runners.Suite;
 	ContinentTest.class,
 	GameControllerTest.class,
 	GameTest.class,
-	LoadGameTest.class,
 	MapReaderTest.class,
 	PlayerDiceNumberComparatorTest.class,
 	TurnManagerTest.class,
-	ViewUtilityTest.class
+	ViewUtilityTest.class,
+	ScoreConfigTest.class,
+	GameUtilityTest.class
 })
 
 public class JunitTestSuite {   

@@ -201,10 +201,11 @@ public class GameController implements ActionListener {
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
-	private int calculateBonusFromContinent(Player player) {
+	public int calculateBonusFromContinent(Player player) {
 		int reinforcement = 0;
 
 		if (this.world != null) {
@@ -227,12 +228,12 @@ public class GameController implements ActionListener {
 		return reinforcement;
 	}
 
-	private int calculateBonusFromOccupiedTerritories(Player player) throws Exception {
+	public int calculateBonusFromOccupiedTerritories(Player player) throws Exception {
 		return scoreConfig.getOccupiedTerritoryBonus(player.getCountriesOwned().size());
 
 	}
 
-	private int calculateBonusFromCards() {
+	public int calculateBonusFromCards() {
 		int reinforcement = 0;
 		return reinforcement;
 	}

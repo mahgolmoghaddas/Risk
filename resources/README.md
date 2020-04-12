@@ -1,4 +1,4 @@
-## Risk Game Mission Mode developed for Concordia University's Project
+## Implementing Risk Game Mission Mode for Concordia University's SOEN6441 Project
 
 **Version 1.0.0**
 ---

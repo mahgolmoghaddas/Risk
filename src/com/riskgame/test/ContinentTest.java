@@ -9,7 +9,7 @@
 import com.riskgame.utility.CardType; import
   com.riskgame.utility.RiskUtility;
 /**
- * This class provides required test cases for Continent class.
+ * This class provides required test case to check valid Continent.
  * 
  * @author Himani
  *

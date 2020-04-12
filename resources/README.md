@@ -36,4 +36,9 @@ This Phase involves three major steps: Reinforcement, Attack, Fortification
 *Fortify:* Once the player decides to not attack further, he gets a free move to reshuffle armies at the end of his turn.
 
 ---
+# License & copyright
+
+© Himani Gandhi, Concordia University
+
+---
 

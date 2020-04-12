@@ -4,7 +4,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
-
+/**
+ * This class provides the data for getting bonus score as per the number of territories occupied by the player.
+ * It also provides the winningCriteria for the game
+ * @author gauta
+ *
+ */
 public class ScoreConfiguration {
 
 	private static HashMap<String, Integer> territoryReinforcementMap;

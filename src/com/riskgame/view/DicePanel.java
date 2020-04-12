@@ -17,7 +17,7 @@ import com.riskgame.utility.DiceType;
 import com.riskgame.utility.DiceUtility;
 
 /**
- * This is the panel which provides a user GUI to roll a dice
+ * This is the panel which provides a user GUI to roll a dice.
  * 
  * @author pushpa
  *
@@ -37,6 +37,12 @@ public class DicePanel extends JPanel {
 	private int rolledCount;
 	private ArrayList tempDiceList = new ArrayList<>();
 
+	/**
+	 * This constructor creates an instance of JPanel with custom view
+	 * @param diceType  Defend or Attack
+	 * @param board  Board object used in the game
+	 * @param isSetUpPhase true if the game phase is setup else false
+	 */
 	public DicePanel(DiceType diceType, Board board, boolean isSetUpPhase) {
 		createDiceRollButton();
 		diceCount = 0;
@@ -47,6 +53,12 @@ public class DicePanel extends JPanel {
 		rolledCount = 1;
 	}
 
+	/**
+	 * This constructor creates an instance of JPanel with custom view
+	 * @param diceType  Defend or Attack
+	 * @param board  Board object used in the game
+	 * @param maxAllowedRoll maximum count allowed for dice to roll
+	 */
 	public DicePanel(DiceType diceType, Board board, int maxAllowedRoll) {
 		createDiceRollButton();
 		diceCount = 0;

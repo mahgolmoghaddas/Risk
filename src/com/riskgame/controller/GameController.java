@@ -114,6 +114,7 @@ public class GameController implements ActionListener {
 
 			ArrayList<Player> playerList = gameUtility.createPlayers(numberOfPlayers);
 			ArrayList<Card> cardDeck = gameUtility.buildCardDeck(world);
+			System.out.println("Card Deck "+cardDeck.toString());
 
 			// Assign armies for each player
 			assignArmiesToPlayer(playerList);

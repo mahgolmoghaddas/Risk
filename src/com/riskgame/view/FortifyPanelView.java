@@ -17,7 +17,12 @@ import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
 import com.riskgame.model.World;
 import com.riskgame.utility.ViewUtility;
-
+/**
+ * This class shows the view for displaying the fortify phase in the game. It has selection box to select
+ * the source territory, destination territory and number of armies to be moved from source to destination territory
+ * @author gauta
+ *
+ */
 public class FortifyPanelView extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 1L;

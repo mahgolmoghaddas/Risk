@@ -11,6 +11,12 @@ import com.riskgame.model.Territory;
 import com.riskgame.utility.GamePhase;
 import com.riskgame.view.AttackPanelView;
 
+/**
+ * This class handles the action to decide who wons the battle i.e. Attacker or Defender. Then it calls BoardView to
+ * display the reattack board.
+ * @author gautam
+ *
+ */
 public class AttackController implements ActionListener {
 
 	private String attackDiceScore;

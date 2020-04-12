@@ -25,6 +25,12 @@ import com.riskgame.model.World;
 import com.riskgame.utility.DiceType;
 import com.riskgame.utility.ViewUtility;
 
+/**
+ * This class shows the view for attacking. It has drop downs to choose attacker and defender territory.
+ * It also has the dice panel to role attacker and defender dice.
+ * @author gautam
+ *
+ */
 public class AttackPanelView extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 1L;

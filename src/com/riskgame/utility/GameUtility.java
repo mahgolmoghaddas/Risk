@@ -69,6 +69,7 @@ public class GameUtility {
 	 * @return ArrayList of card for each territory
 	 */
 	public ArrayList<Card> buildCardDeck(World world) {
+		System.out.println("***********8Building the Territory Card Deck**************");
 		ArrayList<Card> cardDeck = new ArrayList<Card>();
 		try {
 			if (world != null) {

@@ -1,5 +1,9 @@
 package com.riskgame.model;
-
+/**
+ * This specifies the x and y coordinates for the territory
+ * @author gauta
+ *
+ */
 public class Coordinates {
 
 	private double x;

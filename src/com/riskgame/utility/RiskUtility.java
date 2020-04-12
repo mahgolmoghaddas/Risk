@@ -1,5 +1,10 @@
 package com.riskgame.utility;
 
+/**
+ * This class has the reusable methods to be used in the RISK Game
+ * @author gauta
+ *
+ */
 public class RiskUtility {
 
 	/**

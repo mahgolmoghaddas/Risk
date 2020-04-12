@@ -74,17 +74,7 @@ public class EditMapController implements ActionListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}}
-////		else if(st=="Return to the main window") {
-////			
-////			try {
-////				MainWindowView mainWindowView = MainWindowView.getInstance();
-////
-////				mainWindowView.launchMainWindow();
-////
-////			} catch (Exception e) {
-////				e.printStackTrace();
-////			}
-//			}
+
 			
 		
 		else if(st=="Reload Map") {

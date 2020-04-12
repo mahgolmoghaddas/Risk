@@ -19,6 +19,8 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.text.TableView.TableRow;
 
 import com.riskgame.controller.AttackController;
 import com.riskgame.controller.GameController;
@@ -104,9 +106,11 @@ public class ViewUtility {
 			DefaultTableModel dataModel = new DefaultTableModel(0, 0);
 			dataModel.setColumnIdentifiers(columnNames);
 			if (world != null && world.getContinents() != null && !world.getContinents().isEmpty()) {
-
+				dataModel.addRow(new Object[] {"Continent", "Bonus", "Territory"} );
 				Iterator<Continent> continentIterator = world.getContinents().iterator();
-
+				
+				
+				
 				while (continentIterator.hasNext()) {
 
 					Continent continent = continentIterator.next();
@@ -120,13 +124,25 @@ public class ViewUtility {
 						territories = territories + "," + territoryIterator.next().getCountryName();
 					}
 
-					territories = territories.replace(",", "");
-
+					territories = territories.replace(",", ", ");
+					
 					dataModel.addRow(new Object[] { continent.getContinentName(), bonus + "", territories });
-				}
+					dataModel.setColumnCount(3);
+					
 				worldMapTable.setModel(dataModel);
-				worldMapTable.setLocation(250, 300);
+				TableColumn column = null;
+				for (int i = 0; i < 3; i++) {
+				    column = worldMapTable.getColumnModel().getColumn(i);
+				    if (i == 2) {
+				        column.setPreferredWidth(700); //third column is bigger
+				    } else {
+				        column.setPreferredWidth(70);
+				    }
+				}
+			}
+				worldMapTable.setLocation(250, 400);
 				worldMapTable.setVisible(true);
+				worldMapTable.setSize(250, 400);
 			} else {
 				if (world == null) {
 					System.out.print("world is null");

@@ -16,6 +16,14 @@ import com.riskgame.model.Territory;
 import com.riskgame.utility.MapReader;
 import com.riskgame.utility.ViewUtility;
 import com.riskgame.view.*;
+
+
+/**
+ * This class handles the actions that performed in the EditMapView and do the corresponding actions
+ * 
+ * @author Mahgol
+ *
+ */
 public class EditMapController implements ActionListener {
 
 	MainWindowView mainWindowView;

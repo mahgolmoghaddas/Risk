@@ -16,7 +16,12 @@ import org.junit.Test;
 import com.riskgame.utility.CardType;
 import com.riskgame.utility.DiceUtility;
 import com.riskgame.utility.RiskUtility;
-
+/**
+ * This class provides test cases for RiskUtility
+ * 
+ * @author Jasmeet
+ *
+ */
 public class CardTypeTest {
 
 	@Test

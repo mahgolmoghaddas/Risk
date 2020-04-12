@@ -10,7 +10,12 @@ import org.junit.runner.RunWith;
 
 import com.riskgame.model.Player;
 import com.riskgame.model.TurnManager;
-
+/**
+ * This class provides required test cases for TurnManager class.
+ * 
+ * @author Jasmeet
+ *
+ */
 public class TurnManagerTest {
 
 	@Test

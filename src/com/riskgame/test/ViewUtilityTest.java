@@ -6,27 +6,14 @@ import java.util.List;
 import org.junit.Test;
 import com.riskgame.model.*;
 import com.riskgame.utility.*;
-
+/**
+ * This class provides required test cases for ViewUtility class.
+ * 
+ * @author Jasmeet
+ *
+ */
 public class ViewUtilityTest {
 	ViewUtility vu = new ViewUtility();
-
-	@Test
-	public void nullWorldTest() throws Exception {
-		World world = null;
-		boolean val = false;
-		if (world == null)
-			val = true;
-		assertTrue("world is null", val);
-	}
-
-	@Test
-	public void nullContinentTest() throws Exception {
-		boolean val = false;
-		World world = new World();
-		if (world.getContinents() != null)
-			val = true;
-		assertTrue("Continent is null", val);
-	}
 
 	@Test
 	public void emptyContinentTest() throws Exception {
@@ -49,7 +36,6 @@ public class ViewUtilityTest {
 		assertTrue(val);
 	}
 	
-
 	@Test
 	public void nullStartDiceNo() throws Exception {
 		List<Player> playerList = new ArrayList<>();
@@ -60,5 +46,23 @@ public class ViewUtilityTest {
 		if (p1.getStartDiceNo()>0) 
 			val = true;
 		assertFalse(val);
+	}
+
+	@Test
+	public void nullWorldTest() throws Exception {
+		World world = null;
+		boolean val = false;
+		if (world == null)
+			val = true;
+		assertTrue("world is null", val);
+	}
+
+	@Test
+	public void nullContinentTest() throws Exception {
+		boolean val = false;
+		World world = new World();
+		if (world.getContinents() != null)
+			val = true;
+		assertTrue("Continent is null", val);
 	}
 }

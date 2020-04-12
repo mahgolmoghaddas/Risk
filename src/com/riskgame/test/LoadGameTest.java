@@ -13,7 +13,12 @@ import org.junit.Test;
 import com.riskgame.model.Card;
 import com.riskgame.model.Board;
 import com.riskgame.model.Player;
-
+/**
+ * This class provides test cases for Player module.
+ * 
+ * @author Jasmeet
+ *
+ */
 public class LoadGameTest {
 	Board game;
 	List<String> cardTypeList = Arrays.asList("Infantry", "Cavalry", "Artillery");

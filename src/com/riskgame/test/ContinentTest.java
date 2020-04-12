@@ -8,7 +8,12 @@
   import com.riskgame.model.Continent;
 import com.riskgame.utility.CardType; import
   com.riskgame.utility.RiskUtility;
-  
+/**
+ * This class provides required test cases for Continent class.
+ * 
+ * @author Jasmeet
+ *
+ */
  public class ContinentTest {
   
   @Test 

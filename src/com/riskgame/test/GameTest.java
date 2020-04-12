@@ -7,7 +7,12 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 
 import org.junit.Test;
-
+/**
+ * This class provides test cases for GameController class.
+ * 
+ * @author Jasmeet
+ *
+ */
 public class GameTest {
 	@Test
 	public void addPlayerTest() {

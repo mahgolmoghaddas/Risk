@@ -126,7 +126,7 @@ public class NewGameView extends JFrame{
 	 * Creates a button to load an existing world map file in the window.
 	 * It validates the map file and creates a world object and show the button to start the game if the map file is valid one.
 	 * @return JButton
-	 * @throws Exception
+	 * 
 	 */
 	public JButton createLoadMapButton() {
 		JButton loadMapButton = new JButton("Choose Map");

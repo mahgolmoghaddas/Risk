@@ -4,8 +4,7 @@ import java.util.*;
 import com.riskgame.utility.*;
 
 /**
- * This class maintains the data throught the game such as the world map
- * details, player details
+ * This class maintains the data throught the game such as the world map details, player details
  * 
  * @author pushpa
  *

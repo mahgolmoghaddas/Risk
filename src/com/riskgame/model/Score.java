@@ -1,8 +1,7 @@
 package com.riskgame.model;
 
 /**
- * This class maintains the score of the player in terms of number of territories occupied by player and the number of 
- * reinforcements as received by the Player.
+ * This class maintains the score of the player in terms of number of territories occupied by player and the number of reinforcements as received by the Player.
  * @author gauta
  *
  */

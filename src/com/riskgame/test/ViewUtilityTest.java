@@ -54,11 +54,11 @@ public class ViewUtilityTest {
 	public void nullStartDiceNo() throws Exception {
 		List<Player> playerList = new ArrayList<>();
 		Player p1 = new Player(1,"Jasmeet");
-		p1.setStartDiceNo(null);
+		p1.setStartDiceNo(0);
 		playerList.add(p1);
 		boolean val = false;
-		if (p1.getStartDiceNo() == null) 
+		if (p1.getStartDiceNo()>0) 
 			val = true;
-		assertTrue(val);
+		assertFalse(val);
 	}
 }

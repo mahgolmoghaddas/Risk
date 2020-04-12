@@ -10,7 +10,12 @@ import org.junit.runner.RunWith;
 
 import com.riskgame.model.Player;
 import com.riskgame.model.TurnManager;
-
+/**
+ * This class provides required test cases for TurnManager class.
+ * 
+ * @author Jasmeet
+ *
+ */
 public class TurnManagerTest {
 
 	@Test
@@ -38,8 +43,8 @@ public class TurnManagerTest {
 			playerList.add(p5);
 			playerList.add(p6);
 			TurnManager manager = new TurnManager(playerList);
-			assertEquals(manager.getNextPlayer().getPlayer_name(), "Dilip");
-			assertEquals(manager.getNextPlayer().getPlayer_name(), "Evelyn");
+			assertEquals(manager.getNextPlayer().getPlayerName(), "Dilip");
+			assertEquals(manager.getNextPlayer().getPlayerName(), "Evelyn");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

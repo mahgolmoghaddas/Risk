@@ -4,7 +4,11 @@ import java.util.Comparator;
 
 
 import com.riskgame.model.Player;
-
+/**
+ * This class compares the start dice number for two players to decide who has the greater dice number
+ * @author gauta
+ *
+ */
 public class PlayerDiceNumberComparator  implements Comparator<Player>{
 
 	@Override

@@ -1,270 +1,412 @@
 package com.riskgame.view;
 
-import com.riskgame.model.Game;
-
-import java.awt.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import javax.swing.*;
-import com.riskgame.utility.MapReader;
+
+import javax.imageio.ImageIO;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.plaf.basic.BasicButtonUI;
+
+import com.riskgame.controller.GameController;
+import com.riskgame.model.Board;
 import com.riskgame.model.Player;
-import com.riskgame.view.GameFrame;
-public class BoardView extends JFrame {
-    public static JPanel cardHolder;
-    //public static JPanel cardsContainerPanel;
-    public static CardLayout cardLayout;
-    private JMenu GameMenu;
-    private JMenu fileMenu;
-    private JMenu editMenu;
-    private JMenu playMenu;
-    private JLabel removeplayerLabel;
-    private JTextField removePlayerName;
-    private JButton removePlayerButton;
-    private JMenuBar menuBar;
-    private JFrame gameWindow;
-    private JPanel gameLaunchPanel;
-    private JPanel StartupViewPanel;
-    private JButton addPlayerButton;
-    private JButton mapSelectorButton;
-    private JTextField mapPath;
-    private JLabel playerNameLabel;
-    private JLabel mapSelectorLabel;
-    private JTextField playerName;
-    private JButton populateCountriesButton;
-    private JList<String> currentPlayerList;
-    private DefaultListModel<String> model;
-    private JButton showMapButton;
-    private JComboBox<String> playerCount;
-    private JLabel playerCountLabel;
-    private MapReader reader;
-    private JComboBox<String> playerList;
-    private JLabel playerListLabel;
-    private JMenu helpMenu;
-    private JMenuItem open;
-    private JMenuItem save;
-    private JMenuItem placearmiesoncountry;
-    private JMenuItem addContinent;
-    private JMenuItem addCountry;
-    private JMenuItem removeContinent;
-    private JMenuItem endreinforcementphase;
-    private JMenuItem removeCountry;
-    private JMenuItem showplayercountries;
-    private JMenuItem addPlayer;
-    private JMenuItem ExchangeCardsforplayer;
-    private JMenuItem createMap;
-    private JMenuItem ShowCurrentPlayer;
-    private JMenuItem numberofplayers;
-    private JMenuItem startgame;
-    private JMenuItem help;
-    private JMenuItem start, pause;
-    private String[] numberOfPlayers={"2","3", "4","5"};
-    public BoardView(JFrame frame,JPanel panel){
-        this.gameWindow=frame;
-        BoardView.cardHolder=panel;
-        gameLaunchPanel = new JPanel();
-        gameLaunchPanel.setLayout(null);
-        gameLaunchPanel.setVisible(true);
+import com.riskgame.model.Territory;
+import com.riskgame.utility.DiceType;
+import com.riskgame.utility.GamePhase;
+import com.riskgame.utility.ViewUtility;
 
-        placeCards();
+/**
+ * This is the board view for the risk game which displays the world map in the
+ * gui with the selected number of players.
+ * 
+ * @author pushpa
+ *
+ */
+public class BoardView implements Observer {
 
+	private Board board;
+	private ViewUtility viewUtility = new ViewUtility();
+	static JFrame mainBoardFrame;
+	DicePanel diceRollPanel;
+	JPanel finishSetupPanel;
+	JButton reinforceButton;
+	JPanel messagePanel;
+	int currentPlayerId = 0;
+	JPanel worldMapPanel;
+	JButton attackButton;
+	AttackPanelView attackPanel;
+	FortifyPanelView fortifyPanel;
+	JButton endAttackButton;
 
-    }
+	Map<Integer, JTextField> armiesField = new HashMap<>();
+	Map<Integer, JLabel> diceList = new HashMap<>();
 
-    public void placeCards() {
+	public BoardView(Board board) {
+		this.board = board;
+		board.addObserver(this);
+		showGameBoard(board);
+	}
 
-        cardHolder=new JPanel(new CardLayout());
-        cardHolder.add(gameLaunchPanel, "Card with Game Launching View");
+	@Override
+	public void update(Observable o, Object arg) {
+		System.out.println("Updated..BOARD DATA## PHASE::" + GameController.getInstance().getGamePhase());
+		if (o instanceof Board) {
+			board = (Board) o;
+			if (GamePhase.SETUP.equals(GameController.getInstance().getGamePhase())) {
+				showSetupBoard(board);
+			} else if (GamePhase.REINFORCE.equals(GameController.getInstance().getGamePhase())) {
+				showReinforceBoard(board);
+			} else if (GamePhase.ATTACK.equals(GameController.getInstance().getGamePhase())) {
+				showAttackBoard(board);
+			} else if (GamePhase.FORTIFY.equals(GameController.getInstance().getGamePhase())) {
+				showFortifyBoard(board);
+			}
+		}
+	}
 
-        gameWindow.getContentPane().add(cardHolder, BorderLayout.CENTER);
-        cardLayout=(CardLayout) cardHolder.getLayout();
-        cardLayout.show(cardHolder, "Card with Game Launching View");
+	/**
+	 * This method displays the board view as per the Board data which includes
+	 * player,no of territories acquired by the player and number of armies hold by
+	 * player
+	 */
+	public void showGameBoard(Board board) {
+		try {
+			mainBoardFrame = viewUtility.createMainFrame("Play Game", false);
+			mainBoardFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        gameWindow.pack();
-        gameWindow.setSize(600, 700);
-        gameWindow.setLocationRelativeTo(null);
-        gameWindow.setVisible(true);
-        initaliseUI();
-    }
+			worldMapPanel = drawMap(board);
+			PlayerPanelView playerPanel = new PlayerPanelView(board);
+			playerPanel.setPreferredSize(getPreferredSizeForBoardPanel());
+			JPanel turnDicePanel = createDiceRollPanel(board);
+			turnDicePanel.setPreferredSize(getPreferredSizeForBoardPanel());
+			mainBoardFrame.getContentPane().add(worldMapPanel, "Center");
+			mainBoardFrame.getContentPane().add(turnDicePanel, "Center");
+			mainBoardFrame.getContentPane().add(playerPanel);
 
-    public void initaliseUI(){
-        JFrame.setDefaultLookAndFeelDecorated(true);
-        menuBar = new JMenuBar();
-        menuBar.setBackground(Color.LIGHT_GRAY);
-        fileMenu = new JMenu("File");
-        fileMenu.setFont(new Font("Rockwell Extra Bold", Font.PLAIN, 13));
-        editMenu = new JMenu("Edit");
-        editMenu.setFont(new Font("Rockwell Extra Bold", Font.PLAIN, 13));
-        GameMenu = new JMenu("Game");
-        GameMenu.setFont(new Font("Rockwell Extra Bold", Font.PLAIN, 13));
-        helpMenu = new JMenu("Help");
-        helpMenu.setFont(new Font("Rockwell Extra Bold", Font.PLAIN, 13));
-        playMenu = new JMenu("Play");
-        playMenu.setFont(new Font("Rockwell Extra Bold", Font.PLAIN, 13));
+			mainBoardFrame.setVisible(true);
+			JOptionPane.showMessageDialog(mainBoardFrame, "Roll dice to decide the player turn");
 
-        open = new JMenuItem("Open");
-        save = new JMenuItem("Save to file");
-        addContinent = new JMenuItem("Add Continent");
-        addCountry = new JMenuItem("Add  Country");
-        removeContinent = new JMenuItem("Remove Continent");
-        removeCountry = new JMenuItem("Remove Country");
-        showplayercountries = new JMenuItem("Show Player Countries");
-        numberofplayers = new JMenuItem(" Start Game");
-        endreinforcementphase = new JMenuItem("End reinforcement phase");
-        createMap = new JMenuItem("Create Map");
-        ShowCurrentPlayer = new JMenuItem("Show Current Player");
-        placearmiesoncountry = new JMenuItem("Place Armies On Country");
-        placearmiesoncountry = new JMenuItem("Place Armies On Country");
-        ExchangeCardsforplayer = new JMenuItem("Exchange Cards");
-        /*
-         * Create the menu items for the simulation menu.
-         */
-        help = new JMenuItem("Help");
-        start = new JMenuItem("Start");
-        pause = new JMenuItem("Pause");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-        fileMenu.add(open);
-        fileMenu.addSeparator();
-        fileMenu.add(save);
-        fileMenu.add(createMap);
+	/**
+	 * This method displays the initial setup Board view as per the Board data which
+	 * includes player,no of territories acquired by the player and number of armies
+	 * hold by player
+	 */
+	public void showSetupBoard(Board board) {
+		try {
+			if (isStartDiceAllocatedToAll(board)) {
+				Player currentPlayer = board.getActivePlayer();
 
-        editMenu.add(addContinent);
-        editMenu.add(removeContinent);
-        editMenu.addSeparator();
-        editMenu.add(addCountry);
-        editMenu.add(removeCountry);
-        GameMenu.add(numberofplayers);
-        GameMenu.add(ShowCurrentPlayer);
-        GameMenu.add(showplayercountries);
-        GameMenu.add(endreinforcementphase);
-        GameMenu.add(ExchangeCardsforplayer);
-        playMenu.add(placearmiesoncountry);
-        helpMenu.add(help);
-        menuBar.add(fileMenu);
-        menuBar.add(editMenu);
-        menuBar.add(GameMenu);
-        menuBar.add(playMenu);
-        menuBar.add(helpMenu);
-        StartupViewPanel = new JPanel();
-        StartupViewPanel.setVisible(true);
-        StartupViewPanel.setLayout(null);
+				mainBoardFrame.remove(diceRollPanel);
+				if (messagePanel != null) {
+					System.out.println("REMOVED");
+					mainBoardFrame.remove(messagePanel);
+				}
+				messagePanel = createMessagePanel(updateActivePlayerLabel(currentPlayer));
+				mainBoardFrame.add(messagePanel);
+			}
 
+			if (!hideNextPhaseButton(board)) {
+				System.out.println("Created Reinforce Button");
+				reinforceButton = viewUtility.createGamePhaseButton("Reinforce");
+				messagePanel.add(reinforceButton);
+			}
 
-        playerCount = new JComboBox<String>(numberOfPlayers);
-        playerCountLabel = new JLabel("Select player count");
-        StartupViewPanel.add(playerCountLabel);
-        playerCountLabel.setVisible(true);
-        playerCountLabel.setBounds(36, 90, 121,20);
-        StartupViewPanel.add(playerCount);
-        playerCount.setBounds(216, 90, 121, 20);
+			mainBoardFrame.revalidate();
 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
+	/**
+	 * This method checks whether start dice has been allocated all the players in
+	 * the game
+	 * 
+	 * @param board
+	 * @return true/false
+	 */
+	public boolean isStartDiceAllocatedToAll(Board board) {
 
+		boolean isStartDiceAllocated = true;
+		if (board != null && board.getPlayerList() != null && !board.getPlayerList().isEmpty()) {
 
-        playerNameLabel = new JLabel("Enter Player name to add");
-        StartupViewPanel.add(playerNameLabel);
-        playerNameLabel.setVisible(true);
-        playerNameLabel.setBounds(36, 120, 200, 21);
+			for (int i = 0; i < board.getPlayerList().size(); i++) {
+				Player player = board.getPlayerList().get(i);
+				if (player.getStartDiceNo() <= 0) {
+					isStartDiceAllocated = false;
+					break;
+				}
+			}
+		}
+		System.out.println("isStartDiceAllocated " + isStartDiceAllocated);
+		return isStartDiceAllocated;
+	}
 
-        playerName = new JTextField();
-        StartupViewPanel.add(playerName);
-        playerName.setVisible(true);
-        playerName.setBounds(216, 120, 121, 20);
+	/**
+	 * This method shows the BoardView for the Reinforcement Phase
+	 * 
+	 * @param board
+	 */
+	public void showReinforceBoard(Board board) {
+		try {
+			if (reinforceButton != null) {
+				messagePanel.remove(reinforceButton);
+			}
+			if (fortifyPanel != null) {
+				mainBoardFrame.remove(fortifyPanel);
+			}
+			if (messagePanel != null && messagePanel.getComponents().length > 0) {
+				messagePanel.removeAll();
+				mainBoardFrame.remove(messagePanel);
+			}
+			messagePanel = createMessagePanel(updateActivePlayerLabel(board.getActivePlayer()));
+			if (!hideAttackButton(board.getActivePlayer())) {
+				attackButton = viewUtility.createGamePhaseButton("Attack");
+				messagePanel.add(attackButton);
+			}
+			mainBoardFrame.add(messagePanel);
+			mainBoardFrame.repaint();
+			mainBoardFrame.revalidate();
+		} catch (
 
-        addPlayerButton=new JButton("Add Player");
-        addPlayerButton.setBounds(350, 120, 121, 20);
-        addPlayerButton.setVisible(true);
-        StartupViewPanel.add(addPlayerButton);
-        //addPlayerButton.color(Black);
+		Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-        removeplayerLabel = new JLabel("Enter Player name to remove");
-        StartupViewPanel.add(removeplayerLabel);
-        removeplayerLabel.setVisible(true);
-        removeplayerLabel.setBounds(36, 150, 200, 21);
+	/**
+	 * This method shows the BoardView for the Attack Phase
+	 * 
+	 * @param board
+	 */
+	public void showAttackBoard(Board board) {
 
-        removePlayerName = new JTextField();
-        StartupViewPanel.add(removePlayerName);
-        removePlayerName.setVisible(true);
-        removePlayerName.setBounds(216, 150, 121, 20);
+		try {
 
-        removePlayerButton=new JButton("Remove Player");
-        removePlayerButton.setBounds(350, 150, 121, 20);
-        removePlayerButton.setVisible(true);
-        StartupViewPanel.add(removePlayerButton);
+			if (attackButton != null) {
+				mainBoardFrame.remove(attackButton);
+			}
+			if (endAttackButton != null) {
+				mainBoardFrame.remove(endAttackButton);
+			}
+			if (messagePanel != null) {
+				mainBoardFrame.remove(messagePanel);
+			}
 
+			attackPanel = new AttackPanelView(board);
+			Dimension dim = new Dimension();
+			dim.setSize(mainBoardFrame.getWidth() - 350, 90);
+			attackPanel.setPreferredSize(dim);
 
-        populateCountriesButton = new JButton("Populate Countries and Assign Armies");
-        StartupViewPanel.add(populateCountriesButton);
-        populateCountriesButton.setBounds(36, 180, 250, 30);
-        populateCountriesButton.setVisible(true);
+			mainBoardFrame.add(attackPanel);
+			mainBoardFrame.repaint();
+			mainBoardFrame.revalidate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
+	/**
+	 * This method shows the BoardView for the Re-Attack Phase
+	 * 
+	 * @param message
+	 */
+	public void showReAttackBoard(String message) {
+		if (attackPanel != null) {
+			mainBoardFrame.remove(attackPanel);
+		}
+		if (messagePanel != null) {
+			mainBoardFrame.remove(messagePanel);
+		}
+		messagePanel = createMessagePanel(updateAttackMessage(message));
 
+		if (attackButton != null) {
+			mainBoardFrame.remove(attackButton);
+		}
+		attackButton = viewUtility.createGamePhaseButton("Attack");
+		endAttackButton = viewUtility.createEndAttackButton("End Attack");
 
-        showMapButton = new JButton("Show Current Game Map");
-        StartupViewPanel.add(showMapButton);
-        showMapButton.setBounds(300, 180, 200, 30);
-        //showMapButton.setHorizontalAlignment(SwingConstants.LEFT);
-        showMapButton.setVisible(true);
-        gameWindow.setJMenuBar(menuBar);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        cardHolder.add(StartupViewPanel,"");
-        gameWindow.getContentPane().add(cardHolder, BorderLayout.CENTER);
-        cardLayout=(CardLayout) cardHolder.getLayout();
-        cardLayout.show(cardHolder, "");
-    }
+		mainBoardFrame.add(messagePanel);
+		mainBoardFrame.add(attackButton);
+		mainBoardFrame.add(endAttackButton);
+		mainBoardFrame.repaint();
+		mainBoardFrame.revalidate();
+	}
 
+	/**
+	 * This method shows the BoardView for the Fortify Phase
+	 * 
+	 * @param board
+	 */
+	public void showFortifyBoard(Board board) {
+		if (attackPanel != null) {
+			mainBoardFrame.remove(attackPanel);
+		}
+		if (messagePanel != null) {
+			mainBoardFrame.remove(messagePanel);
+		}
+		if (attackButton != null) {
+			mainBoardFrame.remove(attackButton);
+		}
+		if (endAttackButton != null) {
+			mainBoardFrame.remove(endAttackButton);
+		}
+		if(fortifyPanel!=null) {
+			mainBoardFrame.remove(fortifyPanel);
+		}
 
+		fortifyPanel = new FortifyPanelView(board);
 
+		mainBoardFrame.add(fortifyPanel);
+		mainBoardFrame.repaint();
+		mainBoardFrame.revalidate();
+	}
 
-    /**
-     * Getter to the element shopMapButton
-     * @return shopMapButton
-     */
-    public JButton getShowMapButton() {
-        return showMapButton;
-    }
+	/**
+	 * This method decides whether to hide the next phase button or not
+	 * 
+	 * @param board
+	 * @return
+	 */
+	public boolean hideNextPhaseButton(Board board) {
+		boolean hideAttackButton = false;
+		if (board != null && board.getPlayerList() != null) {
+			for (Player player : board.getPlayerList()) {
+				if (player.getArmiesHeld() > 0) {
+					hideAttackButton = true;
+					break;
+				}
+			}
+		}
+		return hideAttackButton;
+	}
 
-    /**
-     * Getter method for the Playername text field
-     * @return playerName
-     */
-    public JTextField getPlayerName() {
-        return playerName;
-    }
+	public boolean hideAttackButton(Player player) {
+		boolean hideAttackButton = false;
+		if (player.getArmiesHeld() > 0) {
+			hideAttackButton = true;
+		}
+		return hideAttackButton;
+	}
 
-    /**
-     * Getter method for the populate countries Button
-     * @return populateCountriesButton
-     */
-    public JButton getPopulateCountriesButton() {
-        return populateCountriesButton;
-    }
+	/**
+	 * This method draws map with the provided World data with the respective
+	 * continents and the countries details
+	 * 
+	 * @param board
+	 * @return
+	 * @throws Exception
+	 */
+	public WorldMapPanel drawMap(Board board) throws Exception {
+		String mapName = board.getWorld().getImage();
+		String fileName = "resources/images/" + mapName;
+		File file = new File(fileName);
+		BufferedImage image = ImageIO.read(file);
+		WorldMapPanel worldMapPanel = new WorldMapPanel(board, image);
+		worldMapPanel.setLayout(new FlowLayout());
+		worldMapPanel.setVisible(true);
+		return worldMapPanel;
+	}
 
-    /**
-     * Getter method for removeplayer Button
-     * @return removePlayerButton
-     */
-    public JButton getRemovePlayerButton() {
-        return removePlayerButton;
-    }
+	/**
+	 * This method creates the panel to roll the dice
+	 * 
+	 * @return
+	 */
+	public JPanel createDiceRollPanel(Board board) {
+		diceRollPanel = new DicePanel(DiceType.Defend, board, true);
+		diceRollPanel.setPreferredSize(getPreferredSizeForBoardPanel());
+		diceRollPanel.setBackground(Color.decode("#03c2fc"));
+		return diceRollPanel;
+	}
 
-    /**
-     * Getter method for the getRemovePlayerName text field
-     * @return removePlayerName
-     */
-    public JTextField getRemovePlayerName() {
-        return removePlayerName;
-    }
+	/**
+	 * This method creates a finish button to specify that a current user is done
+	 * with a particular move.
+	 * 
+	 * @return
+	 */
+	public JPanel createFinishPhasePanel(String name) {
+		finishSetupPanel = new JPanel();
+		Dimension dim = getPreferredSizeForBoardPanel();
+		dim.height = 30;
+		finishSetupPanel.setPreferredSize(dim);
+		JButton finishMove = viewUtility.createGamePhaseButton(name);
+		finishSetupPanel.add(finishMove, "Center");
+		finishSetupPanel.setVisible(true);
+		return finishSetupPanel;
+	}
 
-    /**
-     * Getter method for the Model
-     * @return model
-     */
-    public DefaultListModel<String> getModel() {
-        return model;
-    }
+	public void printPlayerDetails(Board board) {
+		System.out.println("playerlist size:::" + board.getPlayerList().size());
+		for (Player player : board.getPlayerList()) {
+			System.out.println(player.getName() + " ::" + player.getArmiesHeld());
+			System.out.println(player.getCountriesOwned().size());
+			for (Territory territory : player.getCountriesOwned()) {
+				System.out.println(territory.getArmyCount());
+				System.out.println(territory.getCountryName());
+				System.err.println(territory.getOwner().getName());
+			}
+		}
+	}
 
+	public Dimension getPreferredSizeForBoardPanel() {
+		Dimension dimension = new Dimension();
+		dimension.setSize(mainBoardFrame.getWidth(), 55);
+		return dimension;
+	}
 
+	private JLabel updateActivePlayerLabel(Player player) {
+		JLabel activePlayerLabel = new JLabel();
+		if (GameController.gamePhase.equals(GamePhase.SETUP)) {
+			activePlayerLabel.setText("Place 3 armies at your turn. Current Player is " + player.getName());
+		} else {
+			activePlayerLabel.setText("Current Player is " + player.getName());
+		}
 
+		activePlayerLabel.setForeground(Color.decode("#525b5c"));
+		activePlayerLabel.setVisible(true);
+		return activePlayerLabel;
+	}
 
+	private JLabel updateAttackMessage(String message) {
+		JLabel activePlayerLabel = new JLabel();
+		activePlayerLabel.setText(message);
+		activePlayerLabel.setForeground(Color.decode("#525b5c"));
+		activePlayerLabel.setVisible(true);
+		return activePlayerLabel;
+	}
+
+	private JPanel createMessagePanel(JLabel jlabel) {
+		messagePanel = new JPanel();
+		messagePanel.add(jlabel);
+		Dimension dimension = new Dimension();
+		dimension.setSize(mainBoardFrame.getWidth() - 350, 40);
+		messagePanel.setPreferredSize(dimension);
+		return messagePanel;
+	}
 }

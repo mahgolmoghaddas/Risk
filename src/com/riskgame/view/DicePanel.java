@@ -98,6 +98,7 @@ public class DicePanel extends JPanel {
 
 		rollButton = new JButton("Roll");
 		Dimension prefSize = rollButton.getPreferredSize();
+		prefSize.setSize(60, 40);
 		prefSize.setSize(prefSize.getWidth(), 40);
 		rollButton.setPreferredSize(prefSize);
 		rollButton.setUI(new BasicButtonUI());

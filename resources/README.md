@@ -16,8 +16,8 @@
 Risk is a turn-based game for two to six players. The standard version is played on a board depicting a political map of the Earth, divided into forty-two territories. The objective of the game is to eliminate other players by occupying every territory on the board. Players use armies to attack and defend territories from other players. A random number generator determines the outcomes of battles. 
 
 MVC Architecture has been followed in this Project. The main menu of the game has options: New Game and Editor Menu. 
-
 Editor Menu lets Create a new Map or edit Existing map. Creating a new map has functionalities to add or delete a continent and/or a country and thereafter saving the changes. Once you click on New Game, you have two options: Selecting number of Players and Loading Map.
+
 ---
 **Steps to execute and test the game**
 

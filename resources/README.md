@@ -20,6 +20,7 @@ MVC Architecture has been followed in this Project. The main menu of the game ha
 Editor Menu lets Create a new Map or edit Existing map. Creating a new map has functionalities to add or delete a continent and/or a country and thereafter saving the changes. Once you click on New Game, you have two options: Selecting number of Players and Loading Map.
 ---
 **Steps to execute and test the game**
+
 -Open and run com.riskgame.view.StartApplication
 
 -click on Game Tab -> New Game

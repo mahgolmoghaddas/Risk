@@ -18,7 +18,7 @@ public class CheaterPlayerStrategy implements PlayerStrategy{
 	public void runSetupPhase(Player activePlayer) {
 		// Sort the activePlayers territory
 		HashSet<Territory> playersTerritorySet = activePlayer.getCountriesOwned();
-		playersTerritorySet = gameUtility.sortTerritoryByArmies(playersTerritorySet);
+		playersTerritorySet = gameUtility.sortTerritoryByArmiesASC(playersTerritorySet);
 		if (playersTerritorySet != null && !playersTerritorySet.isEmpty()) {
 			Iterator<Territory> playersTerritoryIterator = playersTerritorySet.iterator();
 

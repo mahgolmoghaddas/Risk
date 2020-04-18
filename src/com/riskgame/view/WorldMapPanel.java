@@ -41,7 +41,7 @@ public class WorldMapPanel extends JPanel implements Observer {
 	int tempReinforcementCount = 0;
 
 	HashMap<String, Territory> territoryMap = new HashMap<String, Territory>();
-	private GameUtility gameUtility =new GameUtility();
+	private GameUtility gameUtility = new GameUtility();
 
 	public WorldMapPanel(Board board, BufferedImage mapImage) {
 		this.board = board;
@@ -84,10 +84,10 @@ public class WorldMapPanel extends JPanel implements Observer {
 					text.addMouseListener(new MouseListener() {
 						@Override
 						public void mouseReleased(java.awt.event.MouseEvent e) {
-							if(tempReinforcementCount==2 || tempReinforcementCount==0) {
-								if(GameController.getInstance().getGamePhase().equals(GamePhase.SETUP)) {
+							if (tempReinforcementCount == 2 || tempReinforcementCount == 0) {
+								if (GameController.getInstance().getGamePhase().equals(GamePhase.SETUP)) {
 									Player activePlayer = Board.getInstance().getActivePlayer();
-									if(!PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
+									if (!PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
 										System.out.println("********AUTO ARMIES PLACEMENT***********");
 										PlayerStrategy strategy = activePlayer.getPlayerStrategy();
 										strategy.runSetupPhase(activePlayer);
@@ -110,14 +110,14 @@ public class WorldMapPanel extends JPanel implements Observer {
 
 						@Override
 						public void mouseClicked(java.awt.event.MouseEvent e) {
-							System.out.println("Mouse clicked"+tempReinforcementCount);
 							JTextField targetTerritoryField = (JTextField) e.getComponent();
 							if (GameController.getInstance().getGamePhase().equals(GamePhase.SETUP)) {
 								Player activePlayer = Board.getInstance().getActivePlayer();
-								if(PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
+								if (PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
 									handleSetUpPhase(targetTerritoryField);
 								}
-							} else if (GameController.getInstance().getGamePhase().equals(GamePhase.REINFORCE)) {
+							} else if (GameController.getInstance().getGamePhase().equals(GamePhase.REINFORCE)
+									&& PlayerType.HUMAN.equals(board.getActivePlayer().getPlayerType())) {
 								handleReinforcementPhase(targetTerritoryField);
 							}
 						}
@@ -153,7 +153,7 @@ public class WorldMapPanel extends JPanel implements Observer {
 	 */
 	private void handleReinforcementPhase(JTextField targetTerritoryField) {
 		Player activePlayer = board.getActivePlayer();
-		
+
 		Territory targetTerritory = territoryMap.get(targetTerritoryField.getName());
 
 		if (targetTerritory.getOwner().equals(activePlayer) && activePlayer.getArmiesHeld() > 0) {
@@ -182,14 +182,14 @@ public class WorldMapPanel extends JPanel implements Observer {
 			targetTerritoryField.setText(targetTerritory.getArmyCount() + "");
 			tempReinforcementCount = tempReinforcementCount + 1;
 
-			//pick up next player
+			// pick up next player
 			if ((activePlayer.getArmiesHeld() <= 0 || tempReinforcementCount >= 3) && gameUtility.playersHaveArmies()) {
 				tempReinforcementCount = 0;
 				activePlayer = board.getNextPlayer();
 			}
-			
+
 		}
 
-		System.out.println(activePlayer.getName()+" places 1 army in "+targetTerritory.getCountryName());
+		System.out.println(activePlayer.getName() + " places 1 army in " + targetTerritory.getCountryName());
 	}
 }

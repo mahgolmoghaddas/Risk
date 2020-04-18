@@ -214,12 +214,75 @@ public class GameUtility {
 		return playersHaveArmies;
 	}
 
-	public HashSet<Territory> sortTerritoryByArmies(HashSet<Territory> territorySet) {
+	public void calculateReinforcementForPlayers(Player player) {
+		try {
+			int reinforcement = 0;
+			reinforcement = calculateBonusFromOccupiedTerritories(player);
+			reinforcement += calculateBonusFromContinent(player);
+			player.setArmiesHeld(reinforcement);
+			System.out.println("Reinforcement received by player " + player.getName() + "::" + reinforcement);
+		} catch (
+
+		Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public HashSet<Territory> sortTerritoryByArmiesASC(HashSet<Territory> territorySet) {
 		List<Territory> playersTerritoryList = new ArrayList<Territory>(territorySet); // set -> list
 
 		Collections.sort(playersTerritoryList, new TerritoriesArmiesComparator());
 		HashSet sortedTerritorySet = new LinkedHashSet<Territory>(playersTerritoryList);
 		return sortedTerritorySet;
+	}
+
+	public HashSet<Territory> sortTerritoryByArmiesDESC(HashSet<Territory> territorySet) {
+		List<Territory> playersTerritoryList = new ArrayList<Territory>(territorySet); // set -> list
+
+		Collections.sort(playersTerritoryList, new TerritoriesArmiesComparator());
+		Collections.reverse(playersTerritoryList);
+		HashSet sortedTerritorySet = new LinkedHashSet<Territory>(playersTerritoryList);
+		return sortedTerritorySet;
+	}
+
+	public HashSet<Territory> getDefenderTerritories(Territory attackerTerritory) {
+		HashSet<Territory> defenderTerritories = new HashSet<>();
+		try {
+			HashSet<String> neighboursTerr = attackerTerritory.getNeighborsTerritory();
+
+			Iterator<String> neighTerrIterator = neighboursTerr.iterator();
+
+			while (neighTerrIterator.hasNext()) {
+				World world = Board.getInstance().getWorld();
+				Territory territory = world.getTerritoryByName(neighTerrIterator.next());
+				if (territory != null && territory.getOwner().getId() != attackerTerritory.getOwner().getId()) {
+					defenderTerritories.add(territory);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return defenderTerritories;
+	}
+
+	public HashSet<Territory> getDestinationTerritories(Territory sourceTerritory) {
+		HashSet<Territory> destinationTerritories = new HashSet<>();
+		try {
+			HashSet<String> neighboursTerr = sourceTerritory.getNeighborsTerritory();
+
+			Iterator<String> neighTerrIterator = neighboursTerr.iterator();
+
+			while (neighTerrIterator.hasNext()) {
+				World world = Board.getInstance().getWorld();
+				Territory territory = world.getTerritoryByName(neighTerrIterator.next());
+				if (territory != null && territory.getOwner().getId() == sourceTerritory.getOwner().getId()) {
+					destinationTerritories.add(territory);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return destinationTerritories;
 	}
 
 }

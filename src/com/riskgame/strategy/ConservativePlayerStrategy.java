@@ -18,7 +18,7 @@ public class ConservativePlayerStrategy implements PlayerStrategy{
 
 		// Sort the activePlayers territory
 		HashSet<Territory> playersTerritorySet = activePlayer.getCountriesOwned();
-		playersTerritorySet = gameUtility.sortTerritoryByArmies(playersTerritorySet);
+		playersTerritorySet = gameUtility.sortTerritoryByArmiesASC(playersTerritorySet);
 		if (playersTerritorySet != null && !playersTerritorySet.isEmpty()) {
 			Iterator<Territory> playersTerritoryIterator = playersTerritorySet.iterator();
 
@@ -54,8 +54,7 @@ public class ConservativePlayerStrategy implements PlayerStrategy{
 
 	@Override
 	public void runAttackPhase(Player attacker) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("Player "+attacker.getPlayerName()+" chooses not to attack..");
 	}
 
 	@Override

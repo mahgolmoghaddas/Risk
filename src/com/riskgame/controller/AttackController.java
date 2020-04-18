@@ -12,24 +12,24 @@ import com.riskgame.utility.GamePhase;
 import com.riskgame.view.AttackPanelView;
 
 /**
- * This class handles the action to decide who wons the battle that is Attacker or Defender. Then it calls BoardView to display the reattack board.
+ * This class handles the action to decide who wons the battle that is Attacker
+ * or Defender. Then it calls BoardView to display the reattack board.
+ * 
  * @author gautam
  *
  */
 public class AttackController implements ActionListener {
 
-	private String attackDiceScore;
-	private String defenderDiceScore;
-	private Territory attackerTerritory;
-	private Territory defenderTerritory;
+	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
 		try {
-
-			attackerTerritory = AttackPanelView.attackerTerritory;
-			defenderTerritory = AttackPanelView.defenderTerritory;
+			String attackDiceScore ="";
+			String defenderDiceScore="";
+			Territory attackerTerritory = AttackPanelView.attackerTerritory;
+			Territory defenderTerritory = AttackPanelView.defenderTerritory;
 
 			if (AttackPanelView.attackDicePanel != null) {
 				attackDiceScore = AttackPanelView.attackDicePanel.getDiceLabelText();
@@ -42,7 +42,10 @@ public class AttackController implements ActionListener {
 			System.out.println("Attacker " + attackerTerritory + " Defender " + defenderTerritory + " AScore "
 					+ attackDiceScore + " DScore " + defenderDiceScore);
 
-			String attackResult = decideAttackWinner();
+			NavigableSet<Integer> attackerScoreSet = getAttackerDiceScore(attackDiceScore);
+			NavigableSet<Integer> defenderScoreSet = getDefenderDiceScore(defenderDiceScore);
+
+			String attackResult = decideAttackWinner(attackerTerritory,attackerScoreSet, defenderTerritory,defenderScoreSet);
 			GameController.gamePhase = GamePhase.REINFORCE;
 			GameController.getInstance().getBoardView().showReAttackBoard(attackResult);
 
@@ -52,18 +55,17 @@ public class AttackController implements ActionListener {
 
 	}
 
-	public String decideAttackWinner() throws Exception {
+	public String decideAttackWinner(Territory attackerTerritory, NavigableSet<Integer> attackerScoreSet,
+			Territory defenderTerritory, NavigableSet<Integer> defenderScoreSet) throws Exception {
 		String result = "";
 		int attackerWinCnt = 0;
-		NavigableSet<Integer> attackerScoreSet = getAttackerDiceScore(attackDiceScore);
-		NavigableSet<Integer> defenderScoreSet = getDefenderDiceScore(defenderDiceScore);
-		String attackerName ="";
-		String defenderName ="";
+		String attackerName = "";
+		String defenderName = "";
 		if (attackerScoreSet != null && !attackerScoreSet.isEmpty() && defenderScoreSet != null
 				&& !defenderScoreSet.isEmpty() && attackerTerritory != null && defenderTerritory != null) {
 			Iterator<Integer> attackerScoreIterator = attackerScoreSet.iterator();
 			Iterator<Integer> defenderScoreIterator = defenderScoreSet.iterator();
-			attackerName  =attackerTerritory.getOwner().getName();
+			attackerName = attackerTerritory.getOwner().getName();
 			defenderName = defenderTerritory.getOwner().getName();
 			while (attackerScoreIterator.hasNext()) {
 				int attackerScore = attackerScoreIterator.next();
@@ -72,28 +74,28 @@ public class AttackController implements ActionListener {
 					if (attackerScore > defenderScore) {
 						// Attacker Win
 						++attackerWinCnt;
-						attackerWin();
+						attackerWin(attackerTerritory,defenderTerritory);
 					} else {
 						// Attacker LOSE
-						defenderWin();
+						defenderWin(attackerTerritory,defenderTerritory);
 					}
 				}
 			}
 		} else {
 			result = "Mandatory data is missing or null";
 		}
-		if(attackerWinCnt ==2) {
-			result = "Attacker "+attackerName+" won the battle. Defender "+defenderName+" lost 2 armies";
-		}else if(attackerWinCnt ==1) {
-			result = "Attacker "+attackerName+" lost 1 army. Defender "+defenderName+" lost 1 army";
-		}else {
-			result = "Defender "+defenderName+" won the battle. Attacker "+attackerName+" lost 2 armies";
+		if (attackerWinCnt == 2) {
+			result = "Attacker " + attackerName + " won the battle. Defender " + defenderName + " lost 2 armies";
+		} else if (attackerWinCnt == 1) {
+			result = "Attacker " + attackerName + " lost 1 army. Defender " + defenderName + " lost 1 army";
+		} else {
+			result = "Defender " + defenderName + " won the battle. Attacker " + attackerName + " lost 2 armies";
 		}
-		System.out.println("Attack Result "+ result);
+		System.out.println("ATTACK RESULT::: " + result);
 		return result;
 	}
 
-	private void defenderWin() {
+	private void defenderWin(Territory attackerTerritory,Territory defenderTerritory) {
 		if (attackerTerritory.getArmyCount() == 1) {
 			Player attacker = attackerTerritory.getOwner();
 			Player defender = defenderTerritory.getOwner();
@@ -106,14 +108,14 @@ public class AttackController implements ActionListener {
 			int armyCnt = defenderTerritory.getArmyCount();
 			defenderTerritory.setArmyCount(armyCnt - 1);
 			System.out.println(attacker.getName() + " lost the territory " + attackerTerritory.getCountryName());
-		} else if(attackerTerritory.getArmyCount()>1){
+		} else if (attackerTerritory.getArmyCount() > 1) {
 			int armyCnt = attackerTerritory.getArmyCount();
 			attackerTerritory.setArmyCount(armyCnt - 1);
 			System.out.println(attackerTerritory.getOwner().getName() + " lost the 1 army");
 		}
 	}
 
-	private void attackerWin() {
+	private void attackerWin(Territory attackerTerritory,Territory defenderTerritory) {
 		if (defenderTerritory.getArmyCount() == 1) {
 			Player attacker = attackerTerritory.getOwner();
 			Player defender = defenderTerritory.getOwner();
@@ -127,7 +129,7 @@ public class AttackController implements ActionListener {
 			attackerTerritory.setArmyCount(armyCnt - 1);
 
 			System.out.println(defender.getName() + " lost the territory " + defenderTerritory.getCountryName());
-		} else if(defenderTerritory.getArmyCount()>1){
+		} else if (defenderTerritory.getArmyCount() > 1) {
 			// Decrease the army in territory
 			int armyCnt = defenderTerritory.getArmyCount();
 			defenderTerritory.setArmyCount(armyCnt - 1);

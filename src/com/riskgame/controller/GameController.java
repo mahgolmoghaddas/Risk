@@ -15,6 +15,7 @@ import com.riskgame.model.ScoreConfiguration;
 import com.riskgame.model.Territory;
 import com.riskgame.model.TurnManager;
 import com.riskgame.model.World;
+import com.riskgame.strategy.PlayerStrategy;
 import com.riskgame.utility.GamePhase;
 import com.riskgame.utility.GameUtility;
 import com.riskgame.utility.PlayerType;
@@ -38,6 +39,7 @@ public class GameController implements ActionListener {
 	private TurnManager turnManager;
 	private PlayerType playerType;
 	private ArrayList<Player> playerList = new ArrayList<>();
+
 	/**
 	 * This constructor creates a GameController Object to set the turnPhase as
 	 * <b>Start</b>
@@ -60,7 +62,9 @@ public class GameController implements ActionListener {
 	}
 
 	/**
-	 * This method sets the world data, playerList with the details of player in the game
+	 * This method sets the world data, playerList with the details of player in the
+	 * game
+	 * 
 	 * @param world
 	 * @param playerList
 	 */
@@ -82,19 +86,36 @@ public class GameController implements ActionListener {
 				NewGameView newGameView = new NewGameView();
 				newGameView.launchNewGameFrame();
 			} else if (GamePhase.SETUP.equals(this.gamePhase)) {
+				
 				System.out.println("************SETUP PHASE**************");
 				initiateBoardAndPlayGame();
+				
 			} else if (GamePhase.REINFORCE.equals(this.gamePhase)) {
+				
 				System.out.println("************REINFORCE PHASE**************");
-				board.setGamePhase(GamePhase.REINFORCE);
-				calculateReinforcementForPlayers();
+				Player activePlayer = board.getActivePlayer();
+				
+				if (PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
+					gameUtility.calculateReinforcementForPlayers(activePlayer);
+				} else {
+					autoRunReinforceToFortify(activePlayer);
+				}
 
 			} else if (GamePhase.ATTACK.equals(this.gamePhase)) {
-				board.setGamePhase(GamePhase.ATTACK);
+				
 				System.out.println("************ATTACK PHASE**************");
+				Player activePlayer = board.getActivePlayer();
+				if (PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
+					board.setGamePhase(GamePhase.ATTACK);
+				}
+				
 			} else if (GamePhase.FORTIFY.equals(this.gamePhase)) {
-				board.setGamePhase(GamePhase.FORTIFY);
 				System.out.println("************FORTIFY PHASE**************");
+				
+				Player activePlayer = board.getActivePlayer();
+				if (PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
+					board.setGamePhase(GamePhase.FORTIFY);
+				}
 			}
 
 		} catch (Exception e) {
@@ -110,7 +131,7 @@ public class GameController implements ActionListener {
 	public void initiateBoardAndPlayGame() {
 		try {
 			ArrayList<Card> cardDeck = gameUtility.buildCardDeck(world);
-			System.out.println("Card Deck "+cardDeck.toString());
+			System.out.println("Card Deck " + cardDeck.toString());
 
 			// Assign armies for each player
 			assignArmiesToPlayer(playerList);
@@ -184,26 +205,22 @@ public class GameController implements ActionListener {
 		return this.gamePhase;
 	}
 
-	public void calculateReinforcementForPlayers() {
-		try {
-			int reinforcement = 0;
-			Board board = Board.getInstance();
-			if (board != null && board.getPlayerList() != null) {
+	public BoardView getBoardView() {
+		return this.boardView;
+	}
 
-				for (int i = 0; i < board.getPlayerList().size(); i++) {
-					Player player = board.getPlayerList().get(i);
-					reinforcement = gameUtility.calculateBonusFromOccupiedTerritories(player);
-					reinforcement += gameUtility.calculateBonusFromContinent(player);
-					player.setArmiesHeld(reinforcement);
-				}
-			}
+	public void autoRunReinforceToFortify(Player activePlayer) {
+		try {
+			PlayerStrategy playerStrategy = activePlayer.getPlayerStrategy();
+			
+			playerStrategy.runReinforcePhase(activePlayer);
+			playerStrategy.runAttackPhase(activePlayer);
+			playerStrategy.runFortifyPhase(activePlayer);
+			this.gamePhase = GamePhase.SETUP;
+			board.getNextPlayer();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
 
-
-	public BoardView getBoardView() {
-		return this.boardView;
 	}
 }

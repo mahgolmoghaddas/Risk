@@ -57,16 +57,6 @@ public class GameUtilityTest {
 	}
 
 	@Test
-	public void createPlayersTest() {
-		try {
-			ArrayList<Player> playerList = gameUtility.createPlayers(5);
-			org.hamcrest.MatcherAssert.assertThat(playerList.size(), is(5));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
 	public void getNumberOfArmiesForEachPlayerTest() {
 
 		int noOfArmies = gameUtility.getNumberOfArmiesForEachPlayer(2);

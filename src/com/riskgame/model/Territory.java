@@ -100,5 +100,10 @@ public class Territory {
 		// TODO Auto-generated method stub
 		this.territoryPosition=territoryPosition;
 	}
+	
+	@Override
+	public String toString() {
+		return this.armyCount+"";
+	}
 
 }

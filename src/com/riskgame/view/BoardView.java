@@ -68,7 +68,6 @@ public class BoardView implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		System.out.println("Updated..BOARD DATA## PHASE::" + GameController.getInstance().getGamePhase());
 		if (o instanceof Board) {
 			board = (Board) o;
 			if (GamePhase.SETUP.equals(GameController.getInstance().getGamePhase())) {
@@ -122,7 +121,6 @@ public class BoardView implements Observer {
 
 				mainBoardFrame.remove(diceRollPanel);
 				if (messagePanel != null) {
-					System.out.println("REMOVED");
 					mainBoardFrame.remove(messagePanel);
 				}
 				messagePanel = createMessagePanel(updateActivePlayerLabel(currentPlayer));
@@ -162,7 +160,6 @@ public class BoardView implements Observer {
 				}
 			}
 		}
-		System.out.println("isStartDiceAllocated " + isStartDiceAllocated);
 		return isStartDiceAllocated;
 	}
 

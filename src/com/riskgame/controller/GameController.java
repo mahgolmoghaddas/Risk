@@ -17,6 +17,7 @@ import com.riskgame.model.TurnManager;
 import com.riskgame.model.World;
 import com.riskgame.utility.GamePhase;
 import com.riskgame.utility.GameUtility;
+import com.riskgame.utility.PlayerType;
 import com.riskgame.view.BoardView;
 import com.riskgame.view.NewGameView;
 
@@ -29,15 +30,14 @@ import com.riskgame.view.NewGameView;
 public class GameController implements ActionListener {
 
 	private World world;
-	private int numberOfPlayers;
 	private BoardView boardView;
 	private Board board;
 	private GameUtility gameUtility = new GameUtility();
-	ScoreConfiguration scoreConfig = new ScoreConfiguration();
 	public static GamePhase gamePhase;
 	private static GameController gameController;
 	private TurnManager turnManager;
-
+	private PlayerType playerType;
+	private ArrayList<Player> playerList = new ArrayList<>();
 	/**
 	 * This constructor creates a GameController Object to set the turnPhase as
 	 * <b>Start</b>
@@ -60,14 +60,13 @@ public class GameController implements ActionListener {
 	}
 
 	/**
-	 * This method sets the world data, number of players and the phase of the turn
-	 * 
+	 * This method sets the world data, playerList with the details of player in the game
 	 * @param world
-	 * @param numberOfPlayers
+	 * @param playerList
 	 */
-	public void setGameParameters(World world, int numberOfPlayers) {
+	public void setGameParameters(World world, ArrayList<Player> playerList) {
 		this.world = world;
-		this.numberOfPlayers = numberOfPlayers;
+		this.playerList = playerList;
 	}
 
 	/**
@@ -110,8 +109,6 @@ public class GameController implements ActionListener {
 	 */
 	public void initiateBoardAndPlayGame() {
 		try {
-
-			ArrayList<Player> playerList = gameUtility.createPlayers(numberOfPlayers);
 			ArrayList<Card> cardDeck = gameUtility.buildCardDeck(world);
 			System.out.println("Card Deck "+cardDeck.toString());
 
@@ -195,8 +192,8 @@ public class GameController implements ActionListener {
 
 				for (int i = 0; i < board.getPlayerList().size(); i++) {
 					Player player = board.getPlayerList().get(i);
-					reinforcement = calculateBonusFromOccupiedTerritories(player);
-					reinforcement += calculateBonusFromContinent(player);
+					reinforcement = gameUtility.calculateBonusFromOccupiedTerritories(player);
+					reinforcement += gameUtility.calculateBonusFromContinent(player);
 					player.setArmiesHeld(reinforcement);
 				}
 			}
@@ -205,38 +202,6 @@ public class GameController implements ActionListener {
 		}
 	}
 
-	public int calculateBonusFromContinent(Player player) {
-		int reinforcement = 0;
-
-		if (this.world != null) {
-
-			HashSet<Continent> continents = world.getContinents();
-
-			Iterator<Continent> continentIterator = continents.iterator();
-
-			while (continentIterator.hasNext()) {
-				Continent continent = continentIterator.next();
-				HashSet<Territory> territorySet = continent.getTerritoryList();
-
-				if (player.getCountriesOwned().containsAll(territorySet)) {
-					reinforcement += continent.getBonusPoint();
-					player.getContinentsOwned().add(continent);
-				}
-			}
-		}
-		System.out.println("Reinforcement from Continent " + reinforcement);
-		return reinforcement;
-	}
-
-	public int calculateBonusFromOccupiedTerritories(Player player) throws Exception {
-		return scoreConfig.getOccupiedTerritoryBonus(player.getCountriesOwned().size());
-
-	}
-
-	public int calculateBonusFromCards() {
-		int reinforcement = 0;
-		return reinforcement;
-	}
 
 	public BoardView getBoardView() {
 		return this.boardView;

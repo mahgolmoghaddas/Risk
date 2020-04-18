@@ -121,7 +121,6 @@ public class Board extends Observable implements Observer {
 
 					if (oldPlayer.getId() == updatedPlayer.getId()) {
 						oldPlayer = updatedPlayer;
-						System.out.println(oldPlayer.getName() + " Data has been changed");
 						boardDataChanged();// notify its observers
 					}
 				}

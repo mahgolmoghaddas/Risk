@@ -20,7 +20,10 @@ import com.riskgame.controller.GameController;
 import com.riskgame.model.Board;
 import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
+import com.riskgame.strategy.PlayerStrategy;
 import com.riskgame.utility.GamePhase;
+import com.riskgame.utility.GameUtility;
+import com.riskgame.utility.PlayerType;
 
 /**
  * This class creates a WorldMap Panel and draws map with the provided World
@@ -38,6 +41,7 @@ public class WorldMapPanel extends JPanel implements Observer {
 	int tempReinforcementCount = 0;
 
 	HashMap<String, Territory> territoryMap = new HashMap<String, Territory>();
+	private GameUtility gameUtility =new GameUtility();
 
 	public WorldMapPanel(Board board, BufferedImage mapImage) {
 		this.board = board;
@@ -80,6 +84,16 @@ public class WorldMapPanel extends JPanel implements Observer {
 					text.addMouseListener(new MouseListener() {
 						@Override
 						public void mouseReleased(java.awt.event.MouseEvent e) {
+							if(tempReinforcementCount==2 || tempReinforcementCount==0) {
+								if(GameController.getInstance().getGamePhase().equals(GamePhase.SETUP)) {
+									Player activePlayer = Board.getInstance().getActivePlayer();
+									if(!PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
+										System.out.println("********AUTO ARMIES PLACEMENT***********");
+										PlayerStrategy strategy = activePlayer.getPlayerStrategy();
+										strategy.runSetupPhase(activePlayer);
+									}
+								}
+							}
 						}
 
 						@Override
@@ -96,10 +110,13 @@ public class WorldMapPanel extends JPanel implements Observer {
 
 						@Override
 						public void mouseClicked(java.awt.event.MouseEvent e) {
+							System.out.println("Mouse clicked"+tempReinforcementCount);
 							JTextField targetTerritoryField = (JTextField) e.getComponent();
-
 							if (GameController.getInstance().getGamePhase().equals(GamePhase.SETUP)) {
-								handleSetUpPhase(targetTerritoryField);
+								Player activePlayer = Board.getInstance().getActivePlayer();
+								if(PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
+									handleSetUpPhase(targetTerritoryField);
+								}
 							} else if (GameController.getInstance().getGamePhase().equals(GamePhase.REINFORCE)) {
 								handleReinforcementPhase(targetTerritoryField);
 							}
@@ -130,19 +147,6 @@ public class WorldMapPanel extends JPanel implements Observer {
 
 	}
 
-	private boolean playersHaveArmies() {
-		boolean playersHaveArmies = false;
-		if (board != null && board.getPlayerList() != null) {
-			for (Player player : board.getPlayerList()) {
-				if (player.getArmiesHeld() > 0) {
-					playersHaveArmies = true;
-					break;
-				}
-			}
-		}
-		return playersHaveArmies;
-	}
-
 	/**
 	 * 
 	 * @param targetTerritoryField
@@ -158,19 +162,12 @@ public class WorldMapPanel extends JPanel implements Observer {
 			targetTerritory.setArmyCount(oldTerritoryArmyCount + 1);
 			int oldArmiesCount = activePlayer.getArmiesHeld();
 			activePlayer.setArmiesHeld(oldArmiesCount - 1);
-
 			targetTerritoryField.setText(targetTerritory.getArmyCount() + "");
-			System.out.println("Target " + targetTerritory.getCountryName());
 		}
 	}
 
 	private void handleSetUpPhase(JTextField targetTerritoryField) {
 		Player activePlayer = board.getActivePlayer();
-
-		if ((activePlayer.getArmiesHeld() <= 0 || tempReinforcementCount >= 3) && playersHaveArmies()) {
-			tempReinforcementCount = 0;
-			activePlayer = board.getNextPlayer();
-		}
 
 		Territory targetTerritory = territoryMap.get(targetTerritoryField.getName());
 
@@ -184,9 +181,15 @@ public class WorldMapPanel extends JPanel implements Observer {
 
 			targetTerritoryField.setText(targetTerritory.getArmyCount() + "");
 			tempReinforcementCount = tempReinforcementCount + 1;
+
+			//pick up next player
+			if ((activePlayer.getArmiesHeld() <= 0 || tempReinforcementCount >= 3) && gameUtility.playersHaveArmies()) {
+				tempReinforcementCount = 0;
+				activePlayer = board.getNextPlayer();
+			}
+			
 		}
 
-		System.out.println(
-				"Target " + targetTerritory.getCountryName() + "Temp reinforcement ::: " + tempReinforcementCount);
+		System.out.println(activePlayer.getName()+" places 1 army in "+targetTerritory.getCountryName());
 	}
 }

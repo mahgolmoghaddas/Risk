@@ -1,67 +1,44 @@
 package com.riskgame.strategy;
 
-import java.util.HashSet;
-import java.util.Iterator;
-
-import com.riskgame.model.Board;
+import java.util.Random;
 import com.riskgame.model.Player;
-import com.riskgame.model.Territory;
-import com.riskgame.utility.GameUtility;
 
-public class RandomPlayerStrategy implements PlayerStrategy{
-
-	private int tempReinforcementCount = 0;
-	private GameUtility gameUtility = new GameUtility();
-	Board board = Board.getInstance();
-
-	@Override
-	public void runSetupPhase(Player activePlayer) {
-		// Sort the activePlayers territory
-		HashSet<Territory> playersTerritorySet = activePlayer.getCountriesOwned();
-		playersTerritorySet = gameUtility.sortTerritoryByArmiesASC(playersTerritorySet);
-		if (playersTerritorySet != null && !playersTerritorySet.isEmpty()) {
-			Iterator<Territory> playersTerritoryIterator = playersTerritorySet.iterator();
-
-			while (playersTerritoryIterator.hasNext()) {
-				if (tempReinforcementCount < 3 && activePlayer.getArmiesHeld() > 0) {
-					Territory targetTerritory = playersTerritoryIterator.next();
-					System.out.println("*****" + activePlayer.getName() + " places army in "
-							+ targetTerritory.getCountryName() + "*****");
-					int oldTerritoryArmyCount = targetTerritory.getArmyCount();
-					targetTerritory.setArmyCount(oldTerritoryArmyCount + 1);
-					int oldArmiesCount = activePlayer.getArmiesHeld();
-					activePlayer.setArmiesHeld(oldArmiesCount - 1);
-					tempReinforcementCount = tempReinforcementCount + 1;
-
-					if ((activePlayer.getArmiesHeld() <= 0 || tempReinforcementCount >= 3)
-							&& gameUtility.playersHaveArmies()) {
-						tempReinforcementCount = 0;
-						activePlayer = board.getNextPlayer();
-						break;
-					}
-				} else {
-					break;
-				}
-			}
-		}
-	}
+public class RandomPlayerStrategy extends PlayerStrategy {
 
 	@Override
 	public void runReinforcePhase(Player player) {
-		// TODO Auto-generated method stub
-		
+		PlayerStrategy playerStrategy = generateRandomPlayerStrategy();
+		playerStrategy.runReinforcePhase(player);
 	}
 
 	@Override
-	public void runAttackPhase(Player attacker) {
-		// TODO Auto-generated method stub
-		
+	public void runAttackPhase(Player player) {
+		PlayerStrategy playerStrategy = generateRandomPlayerStrategy();
+		playerStrategy.runAttackPhase(player);
 	}
 
-	@Override
-	public void runFortifyPhase(Player player) {
-		// TODO Auto-generated method stub
-		
+	/**
+	 * This method generates random behaviour for the player. He/she may play aggressive or conservative 
+	 * player for the single game
+	 * @return
+	 * @throws Exception @param
+	 */
+	public PlayerStrategy generateRandomPlayerStrategy(){
+		PlayerStrategy playerStrategy = null;
+		try {
+			Random rd = new Random();
+			boolean isGreedy = rd.nextBoolean();
+			if (isGreedy) {
+				System.out.println("*** Playing as Aggressive Player ******");
+				playerStrategy = new AggressivePlayerStrategy();
+			} else {
+				System.out.println("*** Playing as Conservative Player ******");
+				playerStrategy = new ConservativePlayerStrategy();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return playerStrategy;
 	}
 
 }

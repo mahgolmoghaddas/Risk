@@ -25,33 +25,34 @@ public class PlayerSelectionView extends JPanel {
 	private HashMap<Integer, PlayerType> playerTypeMap = new HashMap<>();
 	private ArrayList<Player> playerList = new ArrayList<>();
 
-	public PlayerSelectionView(int playersCount) {
+	public PlayerSelectionView(int playersCount,boolean isTournament) {
 		this.playersCount = playersCount;
 		if (playersCount == 0) {
 			playersCount = 2;
 		}
 		setLayout(new FlowLayout());
-		createPlayerNamePanel();
-		Dimension dim = new Dimension(300,150);
+		createPlayerNamePanel(isTournament);
+		Dimension dim = new Dimension(300, 150);
 		this.setPreferredSize(dim);
 		revalidate();
 	}
+
 	public PlayerSelectionView() {
-		
+
 	}
 
-	private void createPlayerNamePanel() {
+	private void createPlayerNamePanel(boolean isTournament) {
 		for (int i = 1; i <= playersCount; i++) {
 			add(createPlayerNameLabel(i));
 			add(createPlayerNameField(i));
-			add(createPlayerTypeCombo(i));
+			add(createPlayerTypeCombo(i,isTournament));
 		}
 	}
 
 	private JTextField createPlayerNameField(int playerId) {
 		JTextField playerTextField = new JTextField();
 		playerTextField.setName("" + playerId);
-		Dimension prefSize = new Dimension(80,20);
+		Dimension prefSize = new Dimension(80, 20);
 		playerTextField.setPreferredSize(prefSize);
 		playerTextField.addActionListener(e -> {
 			String playerName = playerTextField.getText();
@@ -60,20 +61,19 @@ public class PlayerSelectionView extends JPanel {
 			}
 			playerNameMap.put(playerId, playerName);
 		});
-		
+
 		playerTextField.addKeyListener(new KeyAdapter() {
 			@Override
-		    public void keyReleased(KeyEvent e) {
-		        JTextField textField = (JTextField) e.getSource();
-		        String playerName = textField.getText();
-		        if (playerName == null || playerName.isEmpty()) {
+			public void keyReleased(KeyEvent e) {
+				JTextField textField = (JTextField) e.getSource();
+				String playerName = textField.getText();
+				if (playerName == null || playerName.isEmpty()) {
 					playerName = "Player" + playerId;
 				}
 				playerNameMap.put(playerId, playerName);
-		    }
+			}
 		});
 
-		
 		return playerTextField;
 	}
 
@@ -82,18 +82,20 @@ public class PlayerSelectionView extends JPanel {
 		return playerNameLabel;
 	}
 
-	public JComboBox<String> createPlayerTypeCombo(int playerId) {
+	public JComboBox<String> createPlayerTypeCombo(int playerId, boolean isTournament) {
 		JComboBox<String> playerTypeComboList = new JComboBox<>();
 		playerTypeComboList.setName("" + playerId);
 		playerTypeComboList.addItem("SELECT");
-		playerTypeComboList.addItem(PlayerType.HUMAN.toString());
+		if (!isTournament) {
+			playerTypeComboList.addItem(PlayerType.HUMAN.toString());
+		}
 		playerTypeComboList.addItem(PlayerType.AGGRESIVE.toString());
 		playerTypeComboList.addItem(PlayerType.CONSERVATIVE.toString());
 		playerTypeComboList.addItem(PlayerType.CHEATER.toString());
 		playerTypeComboList.addItem(PlayerType.RANDOM.toString());
 		playerTypeComboList.addItemListener(itemListener -> {
 			String type = playerTypeComboList.getSelectedItem().toString();
-			if(!"SELECT".equalsIgnoreCase(type)) {
+			if (!"SELECT".equalsIgnoreCase(type)) {
 				PlayerType playerType = PlayerType.valueOf(type);
 				playerTypeMap.put(playerId, playerType);
 			}
@@ -106,15 +108,15 @@ public class PlayerSelectionView extends JPanel {
 			for (int i = 1; i <= playersCount; i++) {
 				String playerName = playerNameMap.get(i);
 				PlayerType playerType = playerTypeMap.get(i);
-				if(playerName==null || playerName.isEmpty()) {
-					playerName = "Player"+i;
+				if (playerName == null || playerName.isEmpty()) {
+					playerName = "Player" + i;
 				}
 				Player player = new Player(i, playerName, playerType);
 				player.setColor(gameUtility.getPlayerColorById(i));
 				this.playerList.add(player);
 			}
 			System.out.println("****Created Player List for the game ********");
-		}else {
+		} else {
 			System.out.println("Something is null");
 		}
 		return this.playerList;

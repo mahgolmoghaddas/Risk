@@ -118,7 +118,7 @@ public class NewGameView extends JFrame {
 				if(loadMapPanel !=null) {
 					gamePanel.remove(loadMapPanel);
 				}
-				playerSelectView = new PlayerSelectionView(playersCount);
+				playerSelectView = new PlayerSelectionView(playersCount,false);
 				loadMapPanel = createLoadMapPanel();
 				gamePanel.add(playerSelectView);
 				gamePanel.add(loadMapPanel);

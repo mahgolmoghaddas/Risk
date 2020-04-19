@@ -46,7 +46,6 @@ public class ViewUtility {
 			dim.width = (int) (dim.width * width);
 			dim.height = (int) (dim.height * height);
 
-			System.out.println(dim.getHeight() + " " + dim.getWidth());
 			frame.setSize(dim);
 
 			frame.getContentPane().setLayout(new FlowLayout());

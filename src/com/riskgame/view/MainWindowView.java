@@ -16,6 +16,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import com.riskgame.controller.GameController;
+import com.riskgame.controller.TournamentController;
 import com.riskgame.model.World;
 import com.riskgame.utility.MapReader;
 import com.riskgame.utility.ViewUtility;
@@ -104,12 +105,21 @@ public class MainWindowView extends JFrame {
 		gameMenuItem.setCursor(cursor);
 		gameMenuItem.addActionListener(GameController.getInstance());
 
+		
+		JMenuItem tournamentItem = new JMenuItem("Tournament Mode");
+		tournamentItem.setCursor(cursor);
+		tournamentItem.addActionListener(new TournamentController(false));
+
+		
 		JMenuItem exitMenuItem = new JMenuItem("Exit");
 		exitMenuItem.setCursor(cursor);
-//		gameMenuItem.addActionListener(new GameController());
-
+		exitMenuItem.addActionListener(actionEvent ->{
+			this.dispose();
+		});
 		openMenu.add(gameMenuItem);
+		openMenu.add(tournamentItem);
 		openMenu.add(exitMenuItem);
+
 		return openMenu;
 	}
 

@@ -66,24 +66,32 @@ public class TournamentController {
 			gameLogs.log(" [Pre SETUP START]  ");
 			executePreSetup(playerList, world);
 			gameLogs.log(" [Pre SETUP END]  ");
-
+			
+			gameLogs.log(" [DICE ROLL FOR TURN MANAGEMENT START]  ");
 			rollDiceForTurnManagement(playerList);
+			gameLogs.log(" [DICE ROLL FOR TURN MANAGEMENT END]  ");
+
+			// run setupPhase here
+			gameLogs.log(" [SETUP PHASE START] ");
+			autoRunSetupPhase();
+			gameLogs.log(" [SETUP PHASE END]");
 			
-			//run setupPhase here
-			
-			while(turnCount <= maxAllowedTurn) {//Need to add 1 more case here
+			gameLogs.log(" [ACTUAL GAME PLAY PHASE START] ");
+			while (turnCount <= maxAllowedTurn) {// Need to add 1 more case here
 				Player activePlayer = Board.getInstance().getActivePlayer();
-				gameLogs.log("############CURRENT PLAYER IS "+activePlayer.getName()+"############");
+				gameLogs.log("############CURRENT PLAYER IS " + activePlayer.getName() + "############");
 				autoRunReinforceToFortify(activePlayer);
 				turnCount++;
 			}
-			
-			if(turnCount > maxAllowedTurn) {
-				gameResult="DRAW";
-			}else {
-				gameResult = "WINNER SOMEBODY";//TODO modify this
+			gameLogs.log(" [ACTUAL GAME PLAY PHASE START] ");
+			System.out.println("Turn COUNT...."+turnCount);
+
+			if (turnCount > maxAllowedTurn) {
+				gameResult = "DRAW";
+			} else {
+				gameResult = "WINNER SOMEBODY";// TODO modify this
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -104,13 +112,12 @@ public class TournamentController {
 	}
 
 	/**
-	 * This method assigns unique start Dice number to each player
-	 * to decide the turn to be followed throughout the game
+	 * This method assigns unique start Dice number to each player to decide the
+	 * turn to be followed throughout the game
 	 */
 	private void rollDiceForTurnManagement(ArrayList<Player> playerList) {
 		ArrayList<Integer> tempDiceList = new ArrayList<>();
 		try {
-			gameLogs.log("*****AUTO ROLLING DICE TO DECIDE THE PLAYER'S TURN****");
 			if (playerList != null && !playerList.isEmpty()) {
 				for (Player player : playerList) {
 					int diceNum = diceUtility.rollDice();
@@ -119,21 +126,28 @@ public class TournamentController {
 					}
 					tempDiceList.add(diceNum);
 					player.setStartDiceNo(diceNum);
-					gameLogs.log(player.getName() +" gets start dice ::"+ diceNum);
+					gameLogs.log(player.getName() + " gets start dice ::" + diceNum);
 				}
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	
-	public void autoRunReinforceToFortify(Player activePlayer) {
+	private void autoRunSetupPhase() {
+		while (gameUtility.playersHaveArmies()) {
+			Player activePlayer = Board.getInstance().getActivePlayer();
+			PlayerStrategy playerStrategy = activePlayer.getPlayerStrategy();
+			playerStrategy.runSetupPhase(activePlayer);
+		}
+	}
+
+	private void autoRunReinforceToFortify(Player activePlayer) {
 		try {
 			PlayerStrategy playerStrategy = activePlayer.getPlayerStrategy();
-			
+
 			playerStrategy.runReinforcePhase(activePlayer);
 			playerStrategy.runAttackPhase(activePlayer);
 			playerStrategy.runFortifyPhase(activePlayer);

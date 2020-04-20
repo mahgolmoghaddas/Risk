@@ -11,6 +11,7 @@ import java.util.List;
 import com.riskgame.model.Board;
 import com.riskgame.model.Card;
 import com.riskgame.model.Continent;
+import com.riskgame.model.GameLogs;
 import com.riskgame.model.Player;
 import com.riskgame.model.ScoreConfiguration;
 import com.riskgame.model.Territory;
@@ -27,6 +28,7 @@ public class GameUtility {
 
 	ScoreConfiguration scoreConfig = new ScoreConfiguration();
 	Board board = Board.getInstance();
+	GameLogs gameLogs = GameLogs.getInstance();
 
 	/**
 	 * This method returns Color as per the playerID
@@ -69,7 +71,8 @@ public class GameUtility {
 	 * @return ArrayList of card for each territory
 	 */
 	public ArrayList<Card> buildCardDeck(World world) {
-		System.out.println("***********8Building the Territory Card Deck**************");
+		System.out.println("************Building the Territory Card Deck**************");
+		gameLogs.log("***Building the Territory Card Deck****");
 		ArrayList<Card> cardDeck = new ArrayList<Card>();
 		try {
 			if (world != null) {
@@ -88,6 +91,7 @@ public class GameUtility {
 					}
 				}
 			}
+			gameLogs.log("*** Territory Card Deck with total "+cardDeck.size()+" territory cards Built****");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

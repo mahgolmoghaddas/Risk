@@ -5,8 +5,20 @@ import java.util.Observable;
 public class GameLogs extends Observable {
 
 	private String logs;
+	
+	private static GameLogs gameLogs;
+	
+	private GameLogs() {
+		
+	}
 
-
+	public static GameLogs getInstance() {
+		if (gameLogs==null) {
+			gameLogs = new GameLogs();
+		}
+		return gameLogs;
+	}
+	
 	public String getLogs() {
 		return logs;
 	}

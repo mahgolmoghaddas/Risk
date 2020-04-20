@@ -10,6 +10,7 @@ import java.util.List;
 import com.riskgame.model.Board;
 import com.riskgame.model.Card;
 import com.riskgame.model.Continent;
+import com.riskgame.model.GameLogs;
 import com.riskgame.model.Player;
 import com.riskgame.model.ScoreConfiguration;
 import com.riskgame.model.Territory;
@@ -39,6 +40,7 @@ public class GameController implements ActionListener {
 	private TurnManager turnManager;
 	private PlayerType playerType;
 	private ArrayList<Player> playerList = new ArrayList<>();
+	private GameLogs gameLogs = GameLogs.getInstance();
 
 	/**
 	 * This constructor creates a GameController Object to set the turnPhase as
@@ -157,8 +159,9 @@ public class GameController implements ActionListener {
 	public void assignArmiesToPlayer(ArrayList<Player> playerList) throws Exception {
 		if (playerList != null && !playerList.isEmpty()) {
 			int numberOfArmies = gameUtility.getNumberOfArmiesForEachPlayer(playerList.size());
-
+			gameLogs.log("[Pre setup phase] Assigning "+numberOfArmies+" armies to each player ");
 			for (Player player : playerList) {
+				gameLogs.log(player.getName()+" got "+numberOfArmies+" armies");
 				player.setArmiesToplayer(numberOfArmies);
 			}
 		}
@@ -171,7 +174,7 @@ public class GameController implements ActionListener {
 	 * assigned to the player
 	 */
 	public void distributeTerritories(List<Player> playerList, World world) throws Exception {
-
+		gameLogs.log("[Pre setup phase] Distributing each territories equally among players ");
 		int playersCount = 0;
 		if (world != null) {
 			HashSet<Territory> territorySet = world.getTerritories();
@@ -195,6 +198,7 @@ public class GameController implements ActionListener {
 					int oldArmiesCount = playerList.get(playersCount).getArmiesHeld();
 
 					playerList.get(playersCount).setArmiesHeld(oldArmiesCount - 1);
+					gameLogs.log("[Pre setup phase] Territory "+territory.getCountryName()+" allocated to "+playerList.get(playersCount).getPlayerName());
 					playersCount++;
 				}
 			}

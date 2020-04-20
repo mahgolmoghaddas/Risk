@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import com.riskgame.model.Board;
+import com.riskgame.model.GameLogs;
 import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
 import com.riskgame.utility.GameUtility;
@@ -12,6 +13,7 @@ public abstract class PlayerStrategy {
 
 	private GameUtility gameUtility = new GameUtility();
 	Board board = Board.getInstance();
+	GameLogs gameLogs = GameLogs.getInstance();
 
 	public void runSetupPhase(Player activePlayer) {
 		int tempReinforcementCount = 0;
@@ -26,6 +28,8 @@ public abstract class PlayerStrategy {
 					if (tempReinforcementCount < 3 && activePlayer.getArmiesHeld() > 0) {
 						Territory targetTerritory = playersTerritoryIterator.next();
 						System.out.println("*****" + activePlayer.getName() + " places army in "
+								+ targetTerritory.getCountryName() + "*****");
+						gameLogs.log("*****" + activePlayer.getName() + " places army in "
 								+ targetTerritory.getCountryName() + "*****");
 						int oldTerritoryArmyCount = targetTerritory.getArmyCount();
 						targetTerritory.setArmyCount(oldTerritoryArmyCount + 1);
@@ -49,9 +53,9 @@ public abstract class PlayerStrategy {
 		}
 	}
 
-	
 	public void runFortifyPhase(Player activePlayer) {
 		System.out.println("***[START] Auto Fortify phase for Player " + activePlayer.getPlayerName() + " *****");
+		gameLogs.log("***[START] Auto Fortify phase for Player " + activePlayer.getPlayerName() + " *****");
 		boolean hasMoved = false;
 		try {
 			// Get source territory with highest armies
@@ -80,6 +84,8 @@ public abstract class PlayerStrategy {
 								destinationTerritory.setArmyCount(destArmyCnt + 1);
 								System.out.println("****Auto Moved 1 army from " + sourceTerritory.getCountryName()
 										+ " to " + destinationTerritory.getCountryName() + "***");
+								gameLogs.log("****Auto Moved 1 army from " + sourceTerritory.getCountryName()
+										+ " to " + destinationTerritory.getCountryName() + "***");
 								hasMoved = true;
 								break;
 							}
@@ -91,9 +97,10 @@ public abstract class PlayerStrategy {
 			e.printStackTrace();
 		}
 		System.out.println("***[END] Auto Fortify phase for Player " + activePlayer.getPlayerName() + " *****");
+		gameLogs.log("***[END] Auto Fortify phase for Player " + activePlayer.getPlayerName() + " *****");
 
 	}
-	
+
 	public abstract void runReinforcePhase(Player player);
 
 	public abstract void runAttackPhase(Player attacker);

@@ -2,6 +2,10 @@ package com.riskgame.view;
 
 import java.awt.FlowLayout;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -13,6 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.riskgame.controller.TournamentController;
+import com.riskgame.model.Player;
+import com.riskgame.model.TournamentModel;
+import com.riskgame.model.World;
 import com.riskgame.utility.MapReader;
 import com.riskgame.utility.ViewUtility;
 
@@ -35,6 +42,7 @@ public class TournamentView {
 	int noOfPlayer = 0;
 	int noOfGame = 0;
 	int totalTurns = 0;
+	private List<World> worldList = new LinkedList<World>();
 
 	public TournamentView() {
 
@@ -118,7 +126,9 @@ public class TournamentView {
 				if (selection != JFileChooser.CANCEL_OPTION) {
 					File mapFile = chooser.getSelectedFile();
 					if (mapReader.isValidMap(mapFile)) {
-						// TODO'
+						World worldMap = mapReader.createWorldMap();
+						worldList.add(worldMap);
+
 						System.out.println("VALID MAP " + i);
 					} else {
 						JOptionPane.showMessageDialog(tournamentFrame.getContentPane(), "Unsupported Map File",
@@ -209,7 +219,11 @@ public class TournamentView {
 		JPanel jpanel = new JPanel();
 
 		JButton startButton = new JButton("Start Tournament");
-		startButton.addActionListener(new TournamentController(true));
+		startButton.addActionListener(e -> {
+			TournamentController tournamentController = new TournamentController();
+			TournamentModel tournamentModel = new TournamentModel(worldList, playerPanel.getPlayerList(), noOfGame, totalTurns);
+			tournamentController.startTournament(tournamentModel);
+		});
 
 		JButton cancelButton = new JButton("Cancel");
 

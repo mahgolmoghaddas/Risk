@@ -105,15 +105,16 @@ public class MainWindowView extends JFrame {
 		gameMenuItem.setCursor(cursor);
 		gameMenuItem.addActionListener(GameController.getInstance());
 
-		
 		JMenuItem tournamentItem = new JMenuItem("Tournament Mode");
 		tournamentItem.setCursor(cursor);
-		tournamentItem.addActionListener(new TournamentController(false));
+		tournamentItem.addActionListener(e -> {
+			TournamentController tournamentController = new TournamentController();
+			tournamentController.displayTournamentOptions();
+		});
 
-		
 		JMenuItem exitMenuItem = new JMenuItem("Exit");
 		exitMenuItem.setCursor(cursor);
-		exitMenuItem.addActionListener(actionEvent ->{
+		exitMenuItem.addActionListener(actionEvent -> {
 			this.dispose();
 		});
 		openMenu.add(gameMenuItem);

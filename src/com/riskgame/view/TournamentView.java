@@ -1,8 +1,8 @@
 package com.riskgame.view;
 
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,7 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.riskgame.controller.TournamentController;
-import com.riskgame.model.Player;
 import com.riskgame.model.TournamentModel;
 import com.riskgame.model.World;
 import com.riskgame.utility.MapReader;
@@ -36,6 +35,7 @@ public class TournamentView {
 	JPanel tournamentParentPanel;
 	JPanel mapSelectorPanel;
 	PlayerSelectionView playerPanel;
+	JLabel erroLabel;
 	ViewUtility viewUtility = new ViewUtility();
 	private MapReader mapReader = new MapReader();
 	int noOfMap = 0;
@@ -78,22 +78,25 @@ public class TournamentView {
 	private JPanel createMapPanel() {
 		JPanel mapParentPanel = new JPanel();
 		JLabel noOfMapsLabel = new JLabel("Select number of Map:");
-		JComboBox<Integer> noOfMapsCombo = new JComboBox<>();
+		JComboBox noOfMapsCombo = new JComboBox();
+		noOfMapsCombo.addItem("SELECT");
 		for (int i = 1; i <= 5; i++) {
 			noOfMapsCombo.addItem(i);
 		}
 		noOfMapsCombo.addItemListener(listener -> {
-			noOfMap = Integer.parseInt(noOfMapsCombo.getSelectedItem().toString());
-			// Creating map loader
-			if (mapSelectorPanel != null) {
-				mapParentPanel.remove(mapSelectorPanel);
+			if (!noOfMapsCombo.getSelectedItem().toString().equals("SELECT")) {
+				noOfMap = Integer.parseInt(noOfMapsCombo.getSelectedItem().toString());
+				// Creating map loader
+				if (mapSelectorPanel != null) {
+					mapParentPanel.remove(mapSelectorPanel);
+				}
+				mapSelectorPanel = new JPanel();
+				for (int j = 1; j <= noOfMap; j++) {
+					mapSelectorPanel.add(createLoadMapButton(j));
+				}
+				mapParentPanel.add(mapSelectorPanel);
+				mapParentPanel.revalidate();
 			}
-			mapSelectorPanel = new JPanel();
-			for (int j = 1; j <= noOfMap; j++) {
-				mapSelectorPanel.add(createLoadMapButton(j));
-			}
-			mapParentPanel.add(mapSelectorPanel);
-			mapParentPanel.revalidate();
 		});
 
 		mapParentPanel.add(noOfMapsLabel);
@@ -153,19 +156,21 @@ public class TournamentView {
 		playerParentPanel.setLayout(new FlowLayout());
 
 		JLabel noOfPlayersLabel = new JLabel("Select number of Players:");
-		JComboBox<Integer> noOfPlayersCombo = new JComboBox<>();
+		JComboBox noOfPlayersCombo = new JComboBox();
+		noOfPlayersCombo.addItem("SELECT");
 		for (int i = 2; i <= 4; i++) {
 			noOfPlayersCombo.addItem(i);
 		}
 		noOfPlayersCombo.addItemListener(listener -> {
-			noOfPlayer = Integer.parseInt(noOfPlayersCombo.getSelectedItem().toString());
-			if (playerPanel != null) {
-				playerParentPanel.remove(playerPanel);
+			if (!noOfPlayersCombo.getSelectedItem().toString().equals("SELECT")) {
+				noOfPlayer = Integer.parseInt(noOfPlayersCombo.getSelectedItem().toString());
+				if (playerPanel != null) {
+					playerParentPanel.remove(playerPanel);
+				}
+				playerPanel = new PlayerSelectionView(noOfPlayer, true);
+				playerParentPanel.add(playerPanel);
+				playerParentPanel.revalidate();
 			}
-			playerPanel = new PlayerSelectionView(noOfPlayer, true);
-			playerParentPanel.add(playerPanel);
-			playerParentPanel.revalidate();
-
 		});
 		playerParentPanel.add(noOfPlayersLabel);
 		playerParentPanel.add(noOfPlayersCombo);
@@ -183,23 +188,28 @@ public class TournamentView {
 		JPanel jpanel = new JPanel();
 
 		JLabel noOfGameLabel = new JLabel("Select number of Game:");
-		JComboBox<Integer> noOfGameCombo = new JComboBox<>();
+		JComboBox noOfGameCombo = new JComboBox<>();
+		noOfGameCombo.addItem("SELECT");
 		for (int i = 1; i <= 5; i++) {
 			noOfGameCombo.addItem(i);
 		}
 		noOfGameCombo.addItemListener(listener -> {
-			noOfGame = Integer.parseInt(noOfGameCombo.getSelectedItem().toString());
-
+			if (!noOfGameCombo.getSelectedItem().toString().equals("SELECT")) {
+				noOfGame = Integer.parseInt(noOfGameCombo.getSelectedItem().toString());
+			}
 		});
 
 		JLabel turnsLabel = new JLabel("Select maximum turns:");
-		JComboBox<Integer> noOfTurnsCombo = new JComboBox<>();
+		JComboBox noOfTurnsCombo = new JComboBox<>();
+		noOfTurnsCombo.addItem("SELECT");
 		for (int i = 10; i <= 50; i++) {
 			noOfTurnsCombo.addItem(i);
 		}
 		noOfTurnsCombo.addItemListener(listener -> {
-			totalTurns = Integer.parseInt(noOfTurnsCombo.getSelectedItem().toString());
+			if (!noOfTurnsCombo.getSelectedItem().toString().equals("SELECT")) {
 
+				totalTurns = Integer.parseInt(noOfTurnsCombo.getSelectedItem().toString());
+			}
 		});
 		jpanel.add(noOfGameLabel);
 		jpanel.add(noOfGameCombo);
@@ -221,8 +231,16 @@ public class TournamentView {
 		JButton startButton = new JButton("Start Tournament");
 		startButton.addActionListener(e -> {
 			TournamentController tournamentController = new TournamentController();
-			TournamentModel tournamentModel = new TournamentModel(worldList, playerPanel.getPlayerList(), noOfGame, totalTurns);
-			tournamentController.startTournament(tournamentModel);
+			if(erroLabel!= null) {
+				tournamentFrame.remove(erroLabel);
+			}
+			if (validateTournamentInputs()) {
+				System.out.println("SHOW OUTPUT");
+				TournamentModel tournamentModel = new TournamentModel(worldList, playerPanel.getPlayerList(), noOfGame,
+						totalTurns);
+				tournamentController.startTournament(tournamentModel);
+
+			}
 		});
 
 		JButton cancelButton = new JButton("Cancel");
@@ -234,7 +252,44 @@ public class TournamentView {
 		jpanel.add(startButton);
 		jpanel.add(cancelButton);
 		return jpanel;
-
 	}
 
+	public boolean validateTournamentInputs() {
+		erroLabel = new JLabel();
+		erroLabel.setForeground(Color.RED);
+
+		if (noOfMap < 1) {
+			erroLabel.setText("Map count should be 1 to 5");
+			tournamentFrame.add(erroLabel);
+			tournamentFrame.revalidate();
+			return false;
+		}
+		if (noOfMap != worldList.size()) {
+			erroLabel.setText("Please select .map file as per the map count");
+			tournamentFrame.add(erroLabel);
+			tournamentFrame.revalidate();
+			return false;
+		}
+
+		if (playerPanel == null || playerPanel.getPlayerList().size() < 2) {
+			erroLabel.setText("Please select player details with different strategies");
+			tournamentFrame.add(erroLabel);
+			tournamentFrame.revalidate();
+			return false;
+		}
+
+		if (noOfGame < 1) {
+			erroLabel.setText("Please select Number of game to be played in Map");
+			tournamentFrame.add(erroLabel);
+			tournamentFrame.revalidate();
+			return false;
+		}
+		if (totalTurns < 10) {
+			erroLabel.setText("Please select Number of maximum turns allowed for each game");
+			tournamentFrame.add(erroLabel);
+			tournamentFrame.revalidate();
+			return false;
+		}
+		return true;
+	}
 }

@@ -14,10 +14,11 @@ import com.riskgame.utility.GameUtility;
 
 public class AggressivePlayerStrategy extends PlayerStrategy {
 
-	private GameUtility gameUtility = new GameUtility();
-	private DiceUtility diceUtility = new DiceUtility();
+	private static final long serialVersionUID = 3200131977682089249L;
+	private transient GameUtility gameUtility = new GameUtility();
+	private transient DiceUtility diceUtility = new DiceUtility();
 	Board board = Board.getInstance();
-	GameLogs gameLogs = GameLogs.getInstance();
+	transient GameLogs gameLogs = GameLogs.getInstance();
 
 	@Override
 	public void runReinforcePhase(Player activePlayer) {
@@ -88,9 +89,9 @@ public class AggressivePlayerStrategy extends PlayerStrategy {
 								NavigableSet<Integer> attackerDiceRoll = diceUtility.autoRollDice(3);
 								NavigableSet<Integer> defenderDiceRoll = diceUtility.autoRollDice(2);
 
-								String attackResult= attackController.decideAttackWinner(attacker, attackerDiceRoll, defender,
-										defenderDiceRoll);
-								gameLogs.log("Attack Result::"+attackResult);
+								String attackResult = attackController.decideAttackWinner(attacker, attackerDiceRoll,
+										defender, defenderDiceRoll);
+								gameLogs.log("Attack Result::" + attackResult);
 							} else {
 								break;
 							}

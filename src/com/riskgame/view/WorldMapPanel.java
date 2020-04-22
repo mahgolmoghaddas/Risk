@@ -156,7 +156,7 @@ public class WorldMapPanel extends JPanel implements Observer {
 
 		Territory targetTerritory = territoryMap.get(targetTerritoryField.getName());
 
-		if (targetTerritory.getOwner().equals(activePlayer) && activePlayer.getArmiesHeld() > 0) {
+		if (targetTerritory.getOwner().getId() == activePlayer.getId() && activePlayer.getArmiesHeld() > 0) {
 			activePlayer.getCountriesOwned().add(targetTerritory);
 			int oldTerritoryArmyCount = targetTerritory.getArmyCount();
 			targetTerritory.setArmyCount(oldTerritoryArmyCount + 1);
@@ -171,7 +171,7 @@ public class WorldMapPanel extends JPanel implements Observer {
 
 		Territory targetTerritory = territoryMap.get(targetTerritoryField.getName());
 
-		if (targetTerritory.getOwner().equals(activePlayer) && activePlayer.getArmiesHeld() > 0) {
+		if (targetTerritory.getOwner().getId() == activePlayer.getId() && activePlayer.getArmiesHeld() > 0) {
 
 			activePlayer.getCountriesOwned().add(targetTerritory);
 			int oldTerritoryArmyCount = targetTerritory.getArmyCount();

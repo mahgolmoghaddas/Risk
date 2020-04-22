@@ -1,6 +1,7 @@
 
 package com.riskgame.model;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -8,7 +9,10 @@ import java.util.*;
  *
  */
 
-public class Territory {
+public class Territory implements Serializable{
+
+	
+	private static final long serialVersionUID = -5609566764565009289L;
 	private String countryName;
 	private HashSet<String> neighborsTerritory=new HashSet<String>();
 	private Coordinates territoryPosition;

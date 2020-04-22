@@ -1,5 +1,6 @@
 package com.riskgame.strategy;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -9,11 +10,12 @@ import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
 import com.riskgame.utility.GameUtility;
 
-public abstract class PlayerStrategy {
+public abstract class PlayerStrategy implements Serializable {
 
-	private GameUtility gameUtility = new GameUtility();
+	private static final long serialVersionUID = -7011407573519619426L;
+	private transient GameUtility gameUtility = new GameUtility();
 	Board board = Board.getInstance();
-	GameLogs gameLogs = GameLogs.getInstance();
+	transient GameLogs gameLogs = GameLogs.getInstance();
 
 	public void runSetupPhase(Player activePlayer) {
 		int tempReinforcementCount = 0;
@@ -84,8 +86,8 @@ public abstract class PlayerStrategy {
 								destinationTerritory.setArmyCount(destArmyCnt + 1);
 								System.out.println("****Auto Moved 1 army from " + sourceTerritory.getCountryName()
 										+ " to " + destinationTerritory.getCountryName() + "***");
-								gameLogs.log("****Auto Moved 1 army from " + sourceTerritory.getCountryName()
-										+ " to " + destinationTerritory.getCountryName() + "***");
+								gameLogs.log("****Auto Moved 1 army from " + sourceTerritory.getCountryName() + " to "
+										+ destinationTerritory.getCountryName() + "***");
 								hasMoved = true;
 								break;
 							}

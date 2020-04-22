@@ -1,5 +1,6 @@
 package com.riskgame.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -9,7 +10,9 @@ import java.util.Set;
  * @author gauta
  *
  */
-public class ScoreConfiguration {
+public class ScoreConfiguration implements Serializable{
+
+	private static final long serialVersionUID = 4655217509828827732L;
 
 	private static HashMap<String, Integer> territoryReinforcementMap;
 	

@@ -1,28 +1,33 @@
 package com.riskgame.model;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.*;
 import com.riskgame.utility.*;
 
 /**
- * This class maintains the data throught the game such as the world map details, player details
+ * This class maintains the data throught the game such as the world map
+ * details, player details
  * 
  * @author pushpa
  *
  */
-public class Board extends Observable implements Observer {
-	private World world;
-	private List<Player> playerList;
-	private List<Card> cardDeck;
+public class Board extends Observable implements Observer, Externalizable {
+	World world;
+	List<Player> playerList;
+	List<Card> cardDeck;
 	private static Board board;
-	private Player nextPlayer;
-	private Player activePlayer;
-	private GamePhase gamePhase;
-	private TurnManager turnManager;
+	Player nextPlayer;
+	Player activePlayer;
+	GamePhase gamePhase;
+	TurnManager turnManager;
 
 	/**
 	 * Single instance for the board is maintained throughout the game phases.
 	 */
-	private Board() {
+	public Board() {
 	}
 
 	public static Board getInstance() {
@@ -83,7 +88,7 @@ public class Board extends Observable implements Observer {
 			}
 			this.nextPlayer = turnManager.getNextPlayer();
 			if (this.activePlayer != null) {
-				this.activePlayer=this.nextPlayer;
+				this.activePlayer = this.nextPlayer;
 				boardDataChanged();
 			}
 
@@ -137,4 +142,24 @@ public class Board extends Observable implements Observer {
 		notifyObservers();
 	}
 
+	@Override
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeObject(world);
+		out.writeObject(playerList);
+		out.writeObject(cardDeck);
+		out.writeObject(activePlayer);
+		out.writeObject(gamePhase);
+		out.writeObject(turnManager);
+
+	}
+
+	@Override
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		world = (World) in.readObject();
+		playerList = (List<Player>) in.readObject();
+		cardDeck = (List<Card>) in.readObject();
+		activePlayer = (Player) in.readObject();
+		gamePhase = (GamePhase) in.readObject();
+		turnManager = (TurnManager) in.readObject();
+	}
 }

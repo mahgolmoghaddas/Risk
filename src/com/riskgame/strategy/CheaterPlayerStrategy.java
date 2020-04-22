@@ -15,10 +15,11 @@ import com.riskgame.utility.GameUtility;
 
 public class CheaterPlayerStrategy extends PlayerStrategy {
 
-	private GameUtility gameUtility = new GameUtility();
-	private DiceUtility diceUtility = new DiceUtility();
+	private static final long serialVersionUID = -5580486020125467527L;
+	private transient GameUtility gameUtility = new GameUtility();
+	private transient DiceUtility diceUtility = new DiceUtility();
 	Board board = Board.getInstance();
-	GameLogs gameLogs = GameLogs.getInstance();
+	transient GameLogs gameLogs = GameLogs.getInstance();
 
 	@Override
 	public void runReinforcePhase(Player activePlayer) {
@@ -97,7 +98,7 @@ public class CheaterPlayerStrategy extends PlayerStrategy {
 
 								attackController.decideAttackWinner(attacker, attackerDiceRoll, defender,
 										defenderDiceRoll);
-								attackedOnce =true;
+								attackedOnce = true;
 							}
 						}
 					}

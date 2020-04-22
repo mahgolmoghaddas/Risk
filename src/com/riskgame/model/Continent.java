@@ -1,11 +1,14 @@
 package com.riskgame.model;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Creation of new Continent and defining features and properties.
  */
-public class Continent {
+public class Continent implements Serializable{
+	
+	private static final long serialVersionUID = 4947900478784864483L;
 	private String continentName;
 	private HashSet<Territory> territoryList;
 	private double bonusPoint;

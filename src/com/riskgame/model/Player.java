@@ -1,6 +1,7 @@
 package com.riskgame.model;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.*;
 
 import com.riskgame.strategy.AggressivePlayerStrategy;
@@ -18,8 +19,9 @@ import com.riskgame.utility.PlayerType;
  * @author Himani
  * @version 1.0.0.0
  */
-public class Player extends Observable {
-
+public class Player extends Observable implements Serializable {
+	
+	private static final long serialVersionUID = -2061369666732092915L;
 	private int playerId;
 	private String playerName;
 	private Color color;

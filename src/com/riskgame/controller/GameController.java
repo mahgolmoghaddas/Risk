@@ -41,6 +41,7 @@ public class GameController implements ActionListener {
 	private PlayerType playerType;
 	private ArrayList<Player> playerList = new ArrayList<>();
 	private GameLogs gameLogs = GameLogs.getInstance();
+	private boolean isSavedGame = false;
 
 	/**
 	 * This constructor creates a GameController Object to set the turnPhase as
@@ -88,15 +89,15 @@ public class GameController implements ActionListener {
 				NewGameView newGameView = new NewGameView();
 				newGameView.launchNewGameFrame();
 			} else if (GamePhase.SETUP.equals(this.gamePhase)) {
-				
+
 				System.out.println("************SETUP PHASE**************");
 				initiateBoardAndPlayGame();
-				
+
 			} else if (GamePhase.REINFORCE.equals(this.gamePhase)) {
-				
+
 				System.out.println("************REINFORCE PHASE**************");
+				board.setGamePhase(GamePhase.REINFORCE);
 				Player activePlayer = board.getActivePlayer();
-				
 				if (PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
 					gameUtility.calculateReinforcementForPlayers(activePlayer);
 				} else {
@@ -104,20 +105,12 @@ public class GameController implements ActionListener {
 				}
 
 			} else if (GamePhase.ATTACK.equals(this.gamePhase)) {
-				
 				System.out.println("************ATTACK PHASE**************");
-				Player activePlayer = board.getActivePlayer();
-				if (PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
-					board.setGamePhase(GamePhase.ATTACK);
-				}
-				
+				board.setGamePhase(GamePhase.ATTACK);
+
 			} else if (GamePhase.FORTIFY.equals(this.gamePhase)) {
 				System.out.println("************FORTIFY PHASE**************");
-				
-				Player activePlayer = board.getActivePlayer();
-				if (PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
-					board.setGamePhase(GamePhase.FORTIFY);
-				}
+				board.setGamePhase(GamePhase.FORTIFY);
 			}
 
 		} catch (Exception e) {
@@ -140,7 +133,7 @@ public class GameController implements ActionListener {
 
 			// initialize the Board Data
 			board.initializeGame(world, playerList, cardDeck);
-
+			board.setGamePhase(GamePhase.SETUP);
 			// Distribute 42 armies equally to the players
 			distributeTerritories(playerList, world);
 
@@ -159,9 +152,9 @@ public class GameController implements ActionListener {
 	public void assignArmiesToPlayer(ArrayList<Player> playerList) throws Exception {
 		if (playerList != null && !playerList.isEmpty()) {
 			int numberOfArmies = gameUtility.getNumberOfArmiesForEachPlayer(playerList.size());
-			gameLogs.log("[Pre setup phase] Assigning "+numberOfArmies+" armies to each player ");
+			gameLogs.log("[Pre setup phase] Assigning " + numberOfArmies + " armies to each player ");
 			for (Player player : playerList) {
-				gameLogs.log(player.getName()+" got "+numberOfArmies+" armies");
+				gameLogs.log(player.getName() + " got " + numberOfArmies + " armies");
 				player.setArmiesToplayer(numberOfArmies);
 			}
 		}
@@ -198,7 +191,8 @@ public class GameController implements ActionListener {
 					int oldArmiesCount = playerList.get(playersCount).getArmiesHeld();
 
 					playerList.get(playersCount).setArmiesHeld(oldArmiesCount - 1);
-					gameLogs.log("[Pre setup phase] Territory "+territory.getCountryName()+" allocated to "+playerList.get(playersCount).getPlayerName());
+					gameLogs.log("[Pre setup phase] Territory " + territory.getCountryName() + " allocated to "
+							+ playerList.get(playersCount).getPlayerName());
 					playersCount++;
 				}
 			}
@@ -216,7 +210,7 @@ public class GameController implements ActionListener {
 	public void autoRunReinforceToFortify(Player activePlayer) {
 		try {
 			PlayerStrategy playerStrategy = activePlayer.getPlayerStrategy();
-			
+
 			playerStrategy.runReinforcePhase(activePlayer);
 			playerStrategy.runAttackPhase(activePlayer);
 			playerStrategy.runFortifyPhase(activePlayer);
@@ -225,6 +219,25 @@ public class GameController implements ActionListener {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
 
+	public void resumeGame(Board board) {
+		this.board = board;
+		isSavedGame = true;
+		this.gamePhase = board.getGamePhase();
+		if (this.board.getPlayerList() != null) {
+			List<Player> playerList = this.board.getPlayerList();
+			if (playerList != null && !playerList.isEmpty()) {
+				for (int i = 0; i < playerList.size(); i++) {
+					Player player = playerList.get(i);
+					player.addObserver(this.board);
+				}
+			}
+		}
+		this.boardView = new BoardView(this.board);
+	}
+
+	public boolean isSavedGame() {
+		return isSavedGame;
 	}
 }

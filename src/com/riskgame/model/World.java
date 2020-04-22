@@ -1,5 +1,6 @@
 package com.riskgame.model;
 
+import java.io.Serializable;
 import java.util.*;
 
 import com.riskgame.utility.CardType;
@@ -8,8 +9,9 @@ import com.riskgame.utility.CardType;
  * The class help to build the world and defines the properties to define the
  * world map.
  */
-public class World {
+public class World implements Serializable{
 
+	private static final long serialVersionUID = 5938160142339842530L;
 	private HashSet<Continent> continents;
 	private String author;
 	private String image;

@@ -13,6 +13,12 @@ import com.riskgame.model.Board;
 import com.riskgame.utility.GamePhase;
 import com.riskgame.view.MainWindowView;
 
+/**
+ * This class handles the actions that Load the Game and do the corresponding actions
+ * 
+ * @author himani
+ *
+ */
 public class LoadGameController implements ActionListener {
 
 	@Override

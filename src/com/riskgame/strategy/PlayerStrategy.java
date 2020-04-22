@@ -4,23 +4,27 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import com.riskgame.controller.GameController;
 import com.riskgame.model.Board;
 import com.riskgame.model.GameLogs;
 import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
+import com.riskgame.utility.DiceUtility;
 import com.riskgame.utility.GameUtility;
 
 public abstract class PlayerStrategy implements Serializable {
 
 	private static final long serialVersionUID = -7011407573519619426L;
 	private transient GameUtility gameUtility = new GameUtility();
-	Board board = Board.getInstance();
 	transient GameLogs gameLogs = GameLogs.getInstance();
 
-	public void runSetupPhase(Player activePlayer) {
+	public void runSetupPhase(Player activePlayer,Board board) {
 		int tempReinforcementCount = 0;
 		try {
 			// Sort the activePlayers territory
+			if (GameController.getInstance().isSavedGame()) {
+				initializeTransientVariable();
+			}
 			HashSet<Territory> playersTerritorySet = activePlayer.getCountriesOwned();
 			playersTerritorySet = gameUtility.sortTerritoryByArmiesASC(playersTerritorySet);
 
@@ -40,7 +44,7 @@ public abstract class PlayerStrategy implements Serializable {
 						tempReinforcementCount = tempReinforcementCount + 1;
 
 						if ((activePlayer.getArmiesHeld() <= 0 || tempReinforcementCount >= 3)
-								&& gameUtility.playersHaveArmies()) {
+								&& gameUtility.playersHaveArmies(board)) {
 							tempReinforcementCount = 0;
 							activePlayer = board.getNextPlayer();
 							break;
@@ -55,8 +59,11 @@ public abstract class PlayerStrategy implements Serializable {
 		}
 	}
 
-	public void runFortifyPhase(Player activePlayer) {
+	public void runFortifyPhase(Player activePlayer,Board board) {
 		System.out.println("***[START] Auto Fortify phase for Player " + activePlayer.getPlayerName() + " *****");
+		if (GameController.getInstance().isSavedGame()) {
+			initializeTransientVariable();
+		}
 		gameLogs.log("***[START] Auto Fortify phase for Player " + activePlayer.getPlayerName() + " *****");
 		boolean hasMoved = false;
 		try {
@@ -71,7 +78,7 @@ public abstract class PlayerStrategy implements Serializable {
 					if (sourceTerritory.getArmyCount() > 1) {
 						// Get destination territory with least armies
 						HashSet<Territory> destinationTerritories = gameUtility
-								.getDestinationTerritories(sourceTerritory);
+								.getDestinationTerritories(sourceTerritory, board);
 						destinationTerritories = gameUtility.sortTerritoryByArmiesASC(destinationTerritories);
 
 						Iterator<Territory> destinatinTerrIter = destinationTerritories.iterator();
@@ -103,8 +110,13 @@ public abstract class PlayerStrategy implements Serializable {
 
 	}
 
-	public abstract void runReinforcePhase(Player player);
+	public abstract void runReinforcePhase(Player player,Board board);
 
-	public abstract void runAttackPhase(Player attacker);
+	public abstract void runAttackPhase(Player attacker,Board board);
+
+	private void initializeTransientVariable() {
+		gameUtility = new GameUtility();
+		gameLogs = GameLogs.getInstance();
+	}
 
 }

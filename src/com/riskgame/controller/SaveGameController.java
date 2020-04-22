@@ -26,8 +26,8 @@ public class SaveGameController implements ActionListener {
 		if (userSelection == JFileChooser.APPROVE_OPTION) {
 			File fileToSave = fileChooser.getSelectedFile();
 			System.out.println("Save as file: " + fileToSave.getAbsolutePath());
-			saveFile(Board.getInstance(), fileToSave);
-			System.out.println(Board.getInstance().getCardDeck() + " "+Board.getInstance().getWorld());
+			saveFile(GameController.getInstance().getBoard(), fileToSave);
+			System.out.println("File saved successfully in "+fileToSave.getAbsolutePath());
 		}
 	}
 

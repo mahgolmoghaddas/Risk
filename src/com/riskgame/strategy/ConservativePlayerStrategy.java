@@ -3,6 +3,7 @@ package com.riskgame.strategy;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import com.riskgame.controller.GameController;
 import com.riskgame.model.Board;
 import com.riskgame.model.GameLogs;
 import com.riskgame.model.Player;
@@ -10,17 +11,20 @@ import com.riskgame.model.Territory;
 import com.riskgame.utility.GameUtility;
 
 public class ConservativePlayerStrategy extends PlayerStrategy {
+
 	private static final long serialVersionUID = 6297428007418162704L;
 	private transient GameUtility gameUtility = new GameUtility();
-	Board board = Board.getInstance();
 	transient GameLogs gameLogs = GameLogs.getInstance();
-
+	
 	@Override
-	public void runReinforcePhase(Player activePlayer) {
+	public void runReinforcePhase(Player activePlayer,Board board) {
 		System.out.println("***[START] Auto Reinforcement phase for Player " + activePlayer.getPlayerName() + " *****");
+		if(GameController.getInstance().isSavedGame()) {
+			initializeTransientVariable();
+		}
 		gameLogs.log("***[START] Auto Reinforcement phase for Player " + activePlayer.getPlayerName() + " *****");
 		try {
-			gameUtility.calculateReinforcementForPlayers(activePlayer);
+			gameUtility.calculateReinforcementForPlayers(activePlayer,board);
 			// Sort the activePlayers territory
 			HashSet<Territory> playersTerritorySet = activePlayer.getCountriesOwned();
 			playersTerritorySet = gameUtility.sortTerritoryByArmiesASC(playersTerritorySet);
@@ -51,7 +55,10 @@ public class ConservativePlayerStrategy extends PlayerStrategy {
 	}
 
 	@Override
-	public void runAttackPhase(Player activePlayer) {
+	public void runAttackPhase(Player activePlayer,Board board) {
+		if(GameController.getInstance().isSavedGame()) {
+			initializeTransientVariable();
+		}
 		System.out.println("***[Start] Auto Attack phase for Player " + activePlayer.getPlayerName() + " *****");
 		System.out.println("Player " + activePlayer.getPlayerName() + " CHOOSE NOT TO ATTACK***");
 		System.out.println("***[END] Auto Attack phase for Player " + activePlayer.getPlayerName() + " *****");
@@ -59,6 +66,11 @@ public class ConservativePlayerStrategy extends PlayerStrategy {
 		gameLogs.log("Player " + activePlayer.getPlayerName() + " CHOOSE NOT TO ATTACK***");
 		gameLogs.log("***[END] Auto Attack phase for Player " + activePlayer.getPlayerName() + " *****");
 
+	}
+	
+	private void initializeTransientVariable() {
+		gameUtility = new GameUtility();
+		gameLogs = GameLogs.getInstance();
 	}
 
 }

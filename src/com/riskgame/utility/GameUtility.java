@@ -27,7 +27,6 @@ import com.riskgame.model.World;
 public class GameUtility {
 
 	ScoreConfiguration scoreConfig = new ScoreConfiguration();
-	Board board = Board.getInstance();
 	GameLogs gameLogs = GameLogs.getInstance();
 
 	/**
@@ -172,7 +171,7 @@ public class GameUtility {
 		}
 	}
 
-	public int calculateBonusFromContinent(Player player) {
+	public int calculateBonusFromContinent(Player player,Board board) {
 		int reinforcement = 0;
 		World world = board.getWorld();
 		if (world != null) {
@@ -205,7 +204,7 @@ public class GameUtility {
 		return reinforcement;
 	}
 
-	public boolean playersHaveArmies() {
+	public boolean playersHaveArmies(Board board) {
 		boolean playersHaveArmies = false;
 		if (board != null && board.getPlayerList() != null) {
 			for (Player player : board.getPlayerList()) {
@@ -218,11 +217,11 @@ public class GameUtility {
 		return playersHaveArmies;
 	}
 
-	public void calculateReinforcementForPlayers(Player player) {
+	public void calculateReinforcementForPlayers(Player player,Board board) {
 		try {
 			int reinforcement = 0;
 			reinforcement = calculateBonusFromOccupiedTerritories(player);
-			reinforcement += calculateBonusFromContinent(player);
+			reinforcement += calculateBonusFromContinent(player,board);
 			player.setArmiesHeld(reinforcement);
 			System.out.println("Reinforcement received by player " + player.getName() + "::" + reinforcement);
 		} catch (
@@ -249,7 +248,7 @@ public class GameUtility {
 		return sortedTerritorySet;
 	}
 
-	public HashSet<Territory> getDefenderTerritories(Territory attackerTerritory) {
+	public HashSet<Territory> getDefenderTerritories(Territory attackerTerritory,Board board) {
 		HashSet<Territory> defenderTerritories = new HashSet<>();
 		try {
 			HashSet<String> neighboursTerr = attackerTerritory.getNeighborsTerritory();
@@ -257,7 +256,7 @@ public class GameUtility {
 			Iterator<String> neighTerrIterator = neighboursTerr.iterator();
 
 			while (neighTerrIterator.hasNext()) {
-				World world = Board.getInstance().getWorld();
+				World world = board.getWorld();
 				Territory territory = world.getTerritoryByName(neighTerrIterator.next());
 				if (territory != null && territory.getOwner().getId() != attackerTerritory.getOwner().getId()) {
 					defenderTerritories.add(territory);
@@ -269,7 +268,7 @@ public class GameUtility {
 		return defenderTerritories;
 	}
 
-	public HashSet<Territory> getDestinationTerritories(Territory sourceTerritory) {
+	public HashSet<Territory> getDestinationTerritories(Territory sourceTerritory,Board board) {
 		HashSet<Territory> destinationTerritories = new HashSet<>();
 		try {
 			HashSet<String> neighboursTerr = sourceTerritory.getNeighborsTerritory();
@@ -277,7 +276,7 @@ public class GameUtility {
 			Iterator<String> neighTerrIterator = neighboursTerr.iterator();
 
 			while (neighTerrIterator.hasNext()) {
-				World world = Board.getInstance().getWorld();
+				World world = board.getWorld();
 				Territory territory = world.getTerritoryByName(neighTerrIterator.next());
 				if (territory != null && territory.getOwner().getId() == sourceTerritory.getOwner().getId()) {
 					destinationTerritories.add(territory);

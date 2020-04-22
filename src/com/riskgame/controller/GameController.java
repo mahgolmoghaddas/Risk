@@ -33,7 +33,7 @@ public class GameController implements ActionListener {
 
 	private World world;
 	private BoardView boardView;
-	private Board board;
+	private Board board = new Board();
 	private GameUtility gameUtility = new GameUtility();
 	public static GamePhase gamePhase;
 	private static GameController gameController;
@@ -49,7 +49,6 @@ public class GameController implements ActionListener {
 	 */
 	private GameController() {
 		this.gamePhase = GamePhase.PREGAME;
-		board = Board.getInstance();
 	}
 
 	/**
@@ -99,7 +98,7 @@ public class GameController implements ActionListener {
 				board.setGamePhase(GamePhase.REINFORCE);
 				Player activePlayer = board.getActivePlayer();
 				if (PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
-					gameUtility.calculateReinforcementForPlayers(activePlayer);
+					gameUtility.calculateReinforcementForPlayers(activePlayer,board);
 				} else {
 					autoRunReinforceToFortify(activePlayer);
 				}
@@ -211,9 +210,9 @@ public class GameController implements ActionListener {
 		try {
 			PlayerStrategy playerStrategy = activePlayer.getPlayerStrategy();
 
-			playerStrategy.runReinforcePhase(activePlayer);
-			playerStrategy.runAttackPhase(activePlayer);
-			playerStrategy.runFortifyPhase(activePlayer);
+			playerStrategy.runReinforcePhase(activePlayer,board);
+			playerStrategy.runAttackPhase(activePlayer,board);
+			playerStrategy.runFortifyPhase(activePlayer,board);
 			this.gamePhase = GamePhase.SETUP;
 			board.getNextPlayer();
 		} catch (Exception e) {
@@ -225,6 +224,7 @@ public class GameController implements ActionListener {
 		this.board = board;
 		isSavedGame = true;
 		this.gamePhase = board.getGamePhase();
+//		board.setBoard(board);
 		if (this.board.getPlayerList() != null) {
 			List<Player> playerList = this.board.getPlayerList();
 			if (playerList != null && !playerList.isEmpty()) {
@@ -239,5 +239,8 @@ public class GameController implements ActionListener {
 
 	public boolean isSavedGame() {
 		return isSavedGame;
+	}
+	public Board getBoard() {
+		return this.board;
 	}
 }

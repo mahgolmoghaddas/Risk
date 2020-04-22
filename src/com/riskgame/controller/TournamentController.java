@@ -23,7 +23,7 @@ public class TournamentController {
 	private GameUtility gameUtility = new GameUtility();
 	private HashMap<String, HashMap<String, String>> tournamentResult = new HashMap<>();
 	DiceUtility diceUtility = new DiceUtility();
-
+	Board board =  new Board();
 	public void displayTournamentOptions() {
 		new TournamentView();
 	}
@@ -78,7 +78,7 @@ public class TournamentController {
 			
 			gameLogs.log(" [ACTUAL GAME PLAY PHASE START] ");
 			while (turnCount <= maxAllowedTurn) {// Need to add 1 more case here
-				Player activePlayer = Board.getInstance().getActivePlayer();
+				Player activePlayer = board.getActivePlayer();
 				gameLogs.log("############CURRENT PLAYER IS " + activePlayer.getName() + "############");
 				autoRunReinforceToFortify(activePlayer);
 				turnCount++;
@@ -99,7 +99,6 @@ public class TournamentController {
 	}
 
 	private void executePreSetup(ArrayList<Player> playerList, World world) {
-		Board board = Board.getInstance();
 		try {
 			ArrayList<Card> cardDeck = gameUtility.buildCardDeck(world);
 			board.initializeGame(world, playerList, cardDeck);
@@ -137,10 +136,10 @@ public class TournamentController {
 	}
 
 	private void autoRunSetupPhase() {
-		while (gameUtility.playersHaveArmies()) {
-			Player activePlayer = Board.getInstance().getActivePlayer();
+		while (gameUtility.playersHaveArmies(board)) {
+			Player activePlayer = board.getActivePlayer();
 			PlayerStrategy playerStrategy = activePlayer.getPlayerStrategy();
-			playerStrategy.runSetupPhase(activePlayer);
+			playerStrategy.runSetupPhase(activePlayer,board);
 		}
 	}
 
@@ -148,10 +147,10 @@ public class TournamentController {
 		try {
 			PlayerStrategy playerStrategy = activePlayer.getPlayerStrategy();
 
-			playerStrategy.runReinforcePhase(activePlayer);
-			playerStrategy.runAttackPhase(activePlayer);
-			playerStrategy.runFortifyPhase(activePlayer);
-			Board.getInstance().getNextPlayer();
+			playerStrategy.runReinforcePhase(activePlayer,board);
+			playerStrategy.runAttackPhase(activePlayer,board);
+			playerStrategy.runFortifyPhase(activePlayer,board);
+			board.getNextPlayer();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

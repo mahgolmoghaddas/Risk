@@ -6,6 +6,7 @@ import java.util.NavigableSet;
 import java.util.TreeSet;
 
 import com.riskgame.controller.AttackController;
+import com.riskgame.controller.GameController;
 import com.riskgame.model.Board;
 import com.riskgame.model.GameLogs;
 import com.riskgame.model.Player;
@@ -18,17 +19,20 @@ public class CheaterPlayerStrategy extends PlayerStrategy {
 	private static final long serialVersionUID = -5580486020125467527L;
 	private transient GameUtility gameUtility = new GameUtility();
 	private transient DiceUtility diceUtility = new DiceUtility();
-	Board board = Board.getInstance();
 	transient GameLogs gameLogs = GameLogs.getInstance();
 
 	@Override
-	public void runReinforcePhase(Player activePlayer) {
+	public void runReinforcePhase(Player activePlayer,Board board) {
 		System.out.println("***[START] Auto Reinforcement phase for Player " + activePlayer.getPlayerName() + " *****");
 		System.out.println("*** RUNNING REINFORCE IN CHEATER MODE*****");
+		if(GameController.getInstance().isSavedGame()) {
+			initializeTransientVariable();
+		}
+		
 		gameLogs.log("***[START] Auto Reinforcement phase for Player " + activePlayer.getPlayerName() + " *****");
 		gameLogs.log("*** RUNNING REINFORCE IN CHEATER MODE*****");
 		try {
-			gameUtility.calculateReinforcementForPlayers(activePlayer);
+			gameUtility.calculateReinforcementForPlayers(activePlayer,board);
 			// Sort the activePlayers territory
 			int armiesHeld = activePlayer.getArmiesHeld();
 			System.out.println("*******Doubled The allocated Reinforced Armies****** ");
@@ -62,9 +66,14 @@ public class CheaterPlayerStrategy extends PlayerStrategy {
 	}
 
 	@Override
-	public void runAttackPhase(Player activePlayer) {
+	public void runAttackPhase(Player activePlayer,Board board) {
 		System.out.println("***[START] Auto Attack phase for Player " + activePlayer.getPlayerName() + " *****");
 		System.out.println("*** RUNNING ATTACK IN CHEATER MODE*****");
+		
+		if(GameController.getInstance().isSavedGame()) {
+			initializeTransientVariable();
+		}
+		
 		gameLogs.log("***[START] Auto Attack phase for Player " + activePlayer.getPlayerName() + " *****");
 		gameLogs.log("*** RUNNING ATTACK IN CHEATER MODE*****");
 		AttackController attackController = new AttackController();
@@ -81,7 +90,7 @@ public class CheaterPlayerStrategy extends PlayerStrategy {
 					Territory attacker = attackerTerrIterator.next();
 					if (attacker.getArmyCount() > 1) {
 						// Get Defender territory with least armies
-						HashSet<Territory> defenderTerritories = gameUtility.getDefenderTerritories(attacker);
+						HashSet<Territory> defenderTerritories = gameUtility.getDefenderTerritories(attacker,board);
 						defenderTerritories = gameUtility.sortTerritoryByArmiesASC(defenderTerritories);
 						Iterator<Territory> defenderTerrIter = defenderTerritories.iterator();
 						if (defenderTerrIter.hasNext()) {
@@ -113,4 +122,11 @@ public class CheaterPlayerStrategy extends PlayerStrategy {
 
 	}
 
+
+	private void initializeTransientVariable() {
+		gameUtility = new GameUtility();
+		diceUtility = new DiceUtility();
+		gameLogs = GameLogs.getInstance();
+
+	}
 }

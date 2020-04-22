@@ -112,7 +112,9 @@ public class BoardView implements Observer {
 		if (o instanceof Board) {
 			board = (Board) o;
 			if (GamePhase.SETUP.equals(GameController.getInstance().getGamePhase())) {
-				saveGameButton.setVisible(false);
+				if (saveGameButton != null) {
+					saveGameButton.setVisible(false);
+				}
 			} else {
 
 				if (saveGameButton != null) {

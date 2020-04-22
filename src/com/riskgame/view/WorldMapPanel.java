@@ -86,11 +86,11 @@ public class WorldMapPanel extends JPanel implements Observer {
 						public void mouseReleased(java.awt.event.MouseEvent e) {
 							if (tempReinforcementCount == 2 || tempReinforcementCount == 0) {
 								if (GameController.getInstance().getGamePhase().equals(GamePhase.SETUP)) {
-									Player activePlayer = Board.getInstance().getActivePlayer();
+									Player activePlayer = board.getActivePlayer();
 									if (!PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
 										System.out.println("********AUTO ARMIES PLACEMENT***********");
 										PlayerStrategy strategy = activePlayer.getPlayerStrategy();
-										strategy.runSetupPhase(activePlayer);
+										strategy.runSetupPhase(activePlayer,board);
 									}
 								}
 							}
@@ -112,7 +112,7 @@ public class WorldMapPanel extends JPanel implements Observer {
 						public void mouseClicked(java.awt.event.MouseEvent e) {
 							JTextField targetTerritoryField = (JTextField) e.getComponent();
 							if (GameController.getInstance().getGamePhase().equals(GamePhase.SETUP)) {
-								Player activePlayer = Board.getInstance().getActivePlayer();
+								Player activePlayer = board.getActivePlayer();
 								if (PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
 									handleSetUpPhase(targetTerritoryField);
 								}
@@ -183,7 +183,7 @@ public class WorldMapPanel extends JPanel implements Observer {
 			tempReinforcementCount = tempReinforcementCount + 1;
 
 			// pick up next player
-			if ((activePlayer.getArmiesHeld() <= 0 || tempReinforcementCount >= 3) && gameUtility.playersHaveArmies()) {
+			if ((activePlayer.getArmiesHeld() <= 0 || tempReinforcementCount >= 3) && gameUtility.playersHaveArmies(board)) {
 				tempReinforcementCount = 0;
 				activePlayer = board.getNextPlayer();
 			}

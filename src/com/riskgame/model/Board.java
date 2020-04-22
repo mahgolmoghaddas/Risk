@@ -4,6 +4,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.Serializable;
 import java.util.*;
 import com.riskgame.utility.*;
 
@@ -18,29 +19,19 @@ public class Board extends Observable implements Observer, Externalizable {
 	World world;
 	List<Player> playerList;
 	List<Card> cardDeck;
-	private static Board board;
 	Player nextPlayer;
 	Player activePlayer;
 	GamePhase gamePhase;
 	TurnManager turnManager;
 
-	/**
-	 * Single instance for the board is maintained throughout the game phases.
-	 */
-	public Board() {
+	
+	public  Board() {
 	}
-
-	public static Board getInstance() {
-		if (board == null) {
-			board = new Board();
-		}
-		return board;
-	}
-
+	
 	public List<Player> getPlayerList() {
 		return playerList;
 	}
-
+	
 	/**
 	 * Return the available Cards in the board. If cards are distributed among
 	 * players, the updated cards will be displayed
@@ -84,7 +75,7 @@ public class Board extends Observable implements Observer, Externalizable {
 	public Player getNextPlayer() {
 		try {
 			if (turnManager == null) {
-				turnManager = new TurnManager(board.getPlayerList());
+				turnManager = new TurnManager(playerList);
 			}
 			this.nextPlayer = turnManager.getNextPlayer();
 			if (this.activePlayer != null) {

@@ -2,23 +2,26 @@ package com.riskgame.strategy;
 
 import java.util.Random;
 
+import com.riskgame.controller.GameController;
+import com.riskgame.model.Board;
 import com.riskgame.model.GameLogs;
 import com.riskgame.model.Player;
 
 public class RandomPlayerStrategy extends PlayerStrategy {
+
 	private static final long serialVersionUID = -8411243203693203201L;
 	transient GameLogs gameLogs = GameLogs.getInstance();
 
 	@Override
-	public void runReinforcePhase(Player player) {
+	public void runReinforcePhase(Player player,Board board) {
 		PlayerStrategy playerStrategy = generateRandomPlayerStrategy(player);
-		playerStrategy.runReinforcePhase(player);
+		playerStrategy.runReinforcePhase(player,board);
 	}
 
 	@Override
-	public void runAttackPhase(Player player) {
+	public void runAttackPhase(Player player,Board board) {
 		PlayerStrategy playerStrategy = generateRandomPlayerStrategy(player);
-		playerStrategy.runAttackPhase(player);
+		playerStrategy.runAttackPhase(player,board);
 	}
 
 	/**
@@ -31,6 +34,10 @@ public class RandomPlayerStrategy extends PlayerStrategy {
 	public PlayerStrategy generateRandomPlayerStrategy(Player player) {
 		PlayerStrategy playerStrategy = null;
 		try {
+
+			if (GameController.getInstance().isSavedGame()) {
+				gameLogs = GameLogs.getInstance();
+			}
 			Random rd = new Random();
 			boolean isGreedy = rd.nextBoolean();
 			if (isGreedy) {

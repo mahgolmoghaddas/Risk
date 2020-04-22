@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.NavigableSet;
 
 import com.riskgame.controller.AttackController;
+import com.riskgame.controller.GameController;
 import com.riskgame.model.Board;
 import com.riskgame.model.GameLogs;
 import com.riskgame.model.Player;
@@ -17,17 +18,22 @@ public class AggressivePlayerStrategy extends PlayerStrategy {
 	private static final long serialVersionUID = 3200131977682089249L;
 	private transient GameUtility gameUtility = new GameUtility();
 	private transient DiceUtility diceUtility = new DiceUtility();
-	Board board = Board.getInstance();
 	transient GameLogs gameLogs = GameLogs.getInstance();
 
+		
 	@Override
-	public void runReinforcePhase(Player activePlayer) {
+	public void runReinforcePhase(Player activePlayer,Board board) {
 		System.out.println("***[START] Auto Reinforcement phase for Player " + activePlayer.getPlayerName() + " *****");
 		System.out.println("*** RUNNING REINFORCE IN AGGRESIVE MODE*****");
+		
+		if(GameController.getInstance().isSavedGame()) {
+			initializeTransientVariable();
+		}
+		
 		gameLogs.log("***[START] Auto Reinforcement phase for Player " + activePlayer.getPlayerName() + " *****");
 		gameLogs.log("*** RUNNING REINFORCE IN AGGRESIVE MODE*****");
 		try {
-			gameUtility.calculateReinforcementForPlayers(activePlayer);
+			gameUtility.calculateReinforcementForPlayers(activePlayer,board);
 			// Sort the activePlayers territory
 			HashSet<Territory> playersTerritorySet = activePlayer.getCountriesOwned();
 			playersTerritorySet = gameUtility.sortTerritoryByArmiesASC(playersTerritorySet);
@@ -58,9 +64,12 @@ public class AggressivePlayerStrategy extends PlayerStrategy {
 	}
 
 	@Override
-	public void runAttackPhase(Player activePlayer) {
+	public void runAttackPhase(Player activePlayer,Board board) {
 		System.out.println("***[START] Auto Attack phase for Player " + activePlayer.getPlayerName() + " *****");
 		System.out.println("*** RUNNING REINFORCE IN AGGRESIVE MODE*****");
+		if(GameController.getInstance().isSavedGame()) {
+			initializeTransientVariable();
+		}
 		gameLogs.log("***[START] Auto Attack phase for Player " + activePlayer.getPlayerName() + " *****");
 		gameLogs.log("*** RUNNING REINFORCE IN AGGRESIVE MODE*****");
 		AttackController attackController = new AttackController();
@@ -76,7 +85,7 @@ public class AggressivePlayerStrategy extends PlayerStrategy {
 					Territory attacker = attackerTerrIterator.next();
 					if (attacker.getArmyCount() > 1) {
 						// Get Defender territory with least armies
-						HashSet<Territory> defenderTerritories = gameUtility.getDefenderTerritories(attacker);
+						HashSet<Territory> defenderTerritories = gameUtility.getDefenderTerritories(attacker,board);
 						defenderTerritories = gameUtility.sortTerritoryByArmiesASC(defenderTerritories);
 
 						Iterator<Territory> defenderTerrIter = defenderTerritories.iterator();
@@ -107,4 +116,10 @@ public class AggressivePlayerStrategy extends PlayerStrategy {
 		gameLogs.log("***[END] Auto Attack phase for Player " + activePlayer.getPlayerName() + " *****");
 	}
 
+	private void initializeTransientVariable() {
+		gameUtility = new GameUtility();
+		diceUtility = new DiceUtility();
+		gameLogs = GameLogs.getInstance();
+
+	}
 }

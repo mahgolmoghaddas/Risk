@@ -16,6 +16,12 @@ import com.riskgame.utility.GameUtility;
 import com.riskgame.view.TournamentPhaseView;
 import com.riskgame.view.TournamentView;
 
+/**
+ * This class handles the Tournament mode Implementation for the Game 
+ * 
+ * @author Himani
+ *
+ */
 public class TournamentController {
 
 	private GameLogs gameLogs = GameLogs.getInstance();

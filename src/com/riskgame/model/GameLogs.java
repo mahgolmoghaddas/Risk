@@ -2,6 +2,10 @@ package com.riskgame.model;
 
 import java.util.Observable;
 
+/**
+ * This class gives information about the Logs of the game using Singleton Pattern
+ *
+ */
 public class GameLogs extends Observable {
 
 	private String logs;

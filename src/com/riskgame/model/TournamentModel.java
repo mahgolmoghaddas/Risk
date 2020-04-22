@@ -3,6 +3,11 @@ package com.riskgame.model;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * This class gives information about the Tournament Model and methods to set and get its properties
+ *
+ */
 public class TournamentModel {
 
 	private int noOfGame;

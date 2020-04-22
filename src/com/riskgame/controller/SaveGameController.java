@@ -13,6 +13,12 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import com.riskgame.model.Board;
 import com.riskgame.view.BoardView;
 
+/**
+ * This class handles the actions that saves the Game and do the corresponding actions
+ * 
+ * @author Himani
+ *
+ */
 public class SaveGameController implements ActionListener {
 
 	@Override

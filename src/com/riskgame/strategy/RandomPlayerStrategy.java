@@ -6,7 +6,12 @@ import com.riskgame.controller.GameController;
 import com.riskgame.model.Board;
 import com.riskgame.model.GameLogs;
 import com.riskgame.model.Player;
-
+/**
+ * This class gives concrete implementation of Random Player's Strategy
+ *
+ * @author Himani
+ * 
+ */
 public class RandomPlayerStrategy extends PlayerStrategy {
 
 	private static final long serialVersionUID = -8411243203693203201L;

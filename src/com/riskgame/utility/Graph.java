@@ -4,8 +4,11 @@ import java.util.*;
 
 /**
  * the class for creating the graph of connectivity from the map file
+ * 
+ * @author Pushpa
+ * 
  */
-    class Graph {
+  class Graph {
         private int Value;
         private ArrayList<Integer> adj[];
 
@@ -23,7 +26,6 @@ import java.util.*;
             }
         }
 
-
         /**
          * Adds the edge.
          *
@@ -33,11 +35,5 @@ import java.util.*;
         void addEdge(int edge1, int edge2) {
             adj[edge1].add(edge2);
         }
-
-
-
-
-
-
 
 }

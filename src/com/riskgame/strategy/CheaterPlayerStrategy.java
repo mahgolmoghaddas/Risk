@@ -13,7 +13,12 @@ import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
 import com.riskgame.utility.DiceUtility;
 import com.riskgame.utility.GameUtility;
-
+/**
+ * This class gives concrete implementation of Cheater Player's Strategy
+ *
+ * @author Himani
+ * 
+ */
 public class CheaterPlayerStrategy extends PlayerStrategy {
 
 	private static final long serialVersionUID = -5580486020125467527L;

@@ -54,12 +54,12 @@ public class TournamentView {
 	}
 
 	private void addComponents() {
-		createtournamentParentPanel();
+		createTournamentParentPanel();
 		tournamentFrame.add(tournamentParentPanel);
 		tournamentFrame.revalidate();
 	}
 
-	private void createtournamentParentPanel() {
+	private void createTournamentParentPanel() {
 		tournamentParentPanel = new JPanel();
 		tournamentParentPanel.setLayout(new BoxLayout(tournamentParentPanel, BoxLayout.Y_AXIS));
 		tournamentParentPanel.add(createMapPanel());

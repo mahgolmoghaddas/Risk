@@ -12,6 +12,12 @@ import com.riskgame.model.Territory;
 import com.riskgame.utility.DiceUtility;
 import com.riskgame.utility.GameUtility;
 
+/**
+ * This class gives Player's Strategy details
+ *
+ * @author Jasmeet
+ * 
+ */
 public abstract class PlayerStrategy implements Serializable {
 
 	private static final long serialVersionUID = -7011407573519619426L;

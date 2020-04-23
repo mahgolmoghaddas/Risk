@@ -9,7 +9,12 @@ import com.riskgame.model.GameLogs;
 import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
 import com.riskgame.utility.GameUtility;
-
+/**
+ * This class gives concrete implementation of Conservative Player's Strategy
+ *
+ * @author Himani
+ * 
+ */
 public class ConservativePlayerStrategy extends PlayerStrategy {
 
 	private static final long serialVersionUID = 6297428007418162704L;

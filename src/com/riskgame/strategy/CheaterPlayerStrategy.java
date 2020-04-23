@@ -14,7 +14,7 @@ import com.riskgame.model.Territory;
 import com.riskgame.utility.DiceUtility;
 import com.riskgame.utility.GameUtility;
 /**
- * This class gives concrete implementation of Cheater Player's Strategy
+ * This class gives concrete implementation of Cheater Player's Strategy.
  *
  * @author Himani
  * 

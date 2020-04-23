@@ -1,7 +1,16 @@
 package com.riskgame.model;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.*;
+
+import com.riskgame.strategy.AggressivePlayerStrategy;
+import com.riskgame.strategy.CheaterPlayerStrategy;
+import com.riskgame.strategy.ConservativePlayerStrategy;
+import com.riskgame.strategy.PlayerStrategy;
+import com.riskgame.strategy.RandomPlayerStrategy;
+import com.riskgame.utility.PlayerType;
+
 /**
  * This class is used for player module which contains variables for name of the
  * Player, Armies it has held etc and methods to change the status of the
@@ -10,8 +19,9 @@ import java.util.*;
  * @author Himani
  * @version 1.0.0.0
  */
-public class Player extends Observable {
-
+public class Player extends Observable implements Serializable {
+	
+	private static final long serialVersionUID = -2061369666732092915L;
 	private int playerId;
 	private String playerName;
 	private Color color;
@@ -21,6 +31,9 @@ public class Player extends Observable {
 	private HashSet<Continent> continentsOwned;
 	private List<Card> cardsHeld;
 	private int startDiceNo;
+	private PlayerType playerType;
+	private PlayerStrategy playerStrategy;
+
 	/**
 	 * The parameterized constructor takes player id and name as parameters
 	 * 
@@ -35,6 +48,44 @@ public class Player extends Observable {
 		continentsOwned = new HashSet<>();
 		cardsHeld = new ArrayList<Card>();
 		playerScore = new Score();
+	}
+
+	/**
+	 * The parameterized constructor takes player id and name as parameters
+	 * 
+	 * @param playerId   of type integer which is the Id of the player
+	 * @param playerName of type string which is the name of the player
+	 */
+	public Player(int playerId, String playerName, PlayerType playerType) {
+		this.playerId = playerId;
+		this.playerName = playerName;
+		armiesHeld = 0;
+		countriesOwned = new HashSet<>();
+		continentsOwned = new HashSet<>();
+		cardsHeld = new ArrayList<Card>();
+		playerScore = new Score();
+		this.playerType = playerType;
+		setPlayerStratery();
+	}
+
+	private void setPlayerStratery() {
+		if (PlayerType.AGGRESIVE.equals(this.playerType)) {
+			this.playerStrategy = new AggressivePlayerStrategy();
+		} else if (PlayerType.CHEATER.equals(this.playerType)) {
+			this.playerStrategy = new CheaterPlayerStrategy();
+		} else if (PlayerType.CONSERVATIVE.equals(this.playerType)) {
+			this.playerStrategy = new ConservativePlayerStrategy();
+		} else if (PlayerType.RANDOM.equals(this.playerType)) {
+			this.playerStrategy = new RandomPlayerStrategy();
+		}
+	}
+
+	public PlayerType getPlayerType() {
+		return this.playerType;
+	}
+
+	public PlayerStrategy getPlayerStrategy() {
+		return this.playerStrategy;
 	}
 
 	/**
@@ -92,7 +143,7 @@ public class Player extends Observable {
 	 */
 	public void addArmiesFromCards(int armiesFromCards) {
 		this.armiesHeld += armiesFromCards;
-		playerDataChanged();		
+		playerDataChanged();
 	}
 
 	public Integer getStartDiceNo() {
@@ -107,7 +158,6 @@ public class Player extends Observable {
 	public HashSet<Territory> getCountriesOwned() {
 		return countriesOwned;
 	}
-	
 
 	public void setCountriesOwned(HashSet<Territory> countriesOwned) {
 		this.countriesOwned = countriesOwned;
@@ -144,7 +194,7 @@ public class Player extends Observable {
 		this.continentsOwned = continentsOwned;
 		playerDataChanged();
 	}
-	
+
 	public Color getColor() {
 		return this.color;
 	}
@@ -152,12 +202,10 @@ public class Player extends Observable {
 	public void setColor(Color color) {
 		this.color = color;
 	}
-	
+
 	public void playerDataChanged() {
 		setChanged();
 		notifyObservers();
 	}
-	
-	
 
 }

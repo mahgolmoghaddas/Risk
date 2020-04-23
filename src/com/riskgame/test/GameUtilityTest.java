@@ -19,7 +19,13 @@ import com.riskgame.model.Territory;
 import com.riskgame.model.World;
 import com.riskgame.utility.GamePhase;
 import com.riskgame.utility.GameUtility;
-
+/**
+ * This class provides test cases for Game Utility class for number of armies for each player and
+ * check the next phase of the game.
+ * 
+ * @author Himani
+ *
+ */
 public class GameUtilityTest {
 
 	GameUtility gameUtility = new GameUtility();
@@ -48,16 +54,6 @@ public class GameUtilityTest {
 		
 		deck = gameUtility.buildCardDeck(world);
 
-	}
-
-	@Test
-	public void createPlayersTest() {
-		try {
-			ArrayList<Player> playerList = gameUtility.createPlayers(5);
-			org.hamcrest.MatcherAssert.assertThat(playerList.size(), is(5));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Test

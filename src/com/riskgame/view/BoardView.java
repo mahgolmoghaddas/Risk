@@ -1,5 +1,6 @@
 package com.riskgame.view;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -27,6 +28,7 @@ import javax.swing.JTextField;
 import javax.swing.plaf.basic.BasicButtonUI;
 
 import com.riskgame.controller.GameController;
+import com.riskgame.controller.SaveGameController;
 import com.riskgame.model.Board;
 import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
@@ -45,7 +47,7 @@ public class BoardView implements Observer {
 
 	private Board board;
 	private ViewUtility viewUtility = new ViewUtility();
-	static JFrame mainBoardFrame;
+	public static JFrame mainBoardFrame;
 	DicePanel diceRollPanel;
 	JPanel finishSetupPanel;
 	JButton reinforceButton;
@@ -56,6 +58,7 @@ public class BoardView implements Observer {
 	AttackPanelView attackPanel;
 	FortifyPanelView fortifyPanel;
 	JButton endAttackButton;
+	JButton saveGameButton;
 
 	Map<Integer, JTextField> armiesField = new HashMap<>();
 	Map<Integer, JLabel> diceList = new HashMap<>();
@@ -63,23 +66,64 @@ public class BoardView implements Observer {
 	public BoardView(Board board) {
 		this.board = board;
 		board.addObserver(this);
-		showGameBoard(board);
+		if (GameController.getInstance().isSavedGame()) {
+			System.out.println("RUNNIG SAVED GAME");
+			initializeBoardViewForSavedGame(board);
+			messagePanel = createMessagePanel(updateActivePlayerLabel(board.getActivePlayer()));
+			mainBoardFrame.add(messagePanel);
+			executeByPhase(board);
+		} else {
+			System.out.println("RUNNING NEW GAME");
+			showGameBoard(board);
+		}
+	}
+
+	public void initializeBoardViewForSavedGame(Board board) {
+		try {
+			mainBoardFrame = viewUtility.createMainFrame("Play Game", false);
+			mainBoardFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			worldMapPanel = drawMap(board);
+			PlayerPanelView playerPanel = new PlayerPanelView(board);
+			playerPanel.setPreferredSize(getPreferredSizeForBoardPanel());
+			mainBoardFrame.getContentPane().add(worldMapPanel, "Center");
+			mainBoardFrame.getContentPane().add(playerPanel);
+//			mainBoardFrame.add(createSaveGameButton(), BorderLayout.WEST);
+			mainBoardFrame.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void executeByPhase(Board board) {
+		System.out.println("GAME PHASE " + board.getGamePhase());
+		if (GamePhase.SETUP.equals(GameController.getInstance().getGamePhase())) {
+			showSetupBoard(board);
+		} else if (GamePhase.REINFORCE.equals(GameController.getInstance().getGamePhase())) {
+			showReinforceBoard(board);
+		} else if (GamePhase.ATTACK.equals(GameController.getInstance().getGamePhase())) {
+			showAttackBoard(board);
+		} else if (GamePhase.FORTIFY.equals(GameController.getInstance().getGamePhase())) {
+			showFortifyBoard(board);
+		}
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
-		System.out.println("Updated..BOARD DATA## PHASE::" + GameController.getInstance().getGamePhase());
 		if (o instanceof Board) {
 			board = (Board) o;
 			if (GamePhase.SETUP.equals(GameController.getInstance().getGamePhase())) {
-				showSetupBoard(board);
-			} else if (GamePhase.REINFORCE.equals(GameController.getInstance().getGamePhase())) {
-				showReinforceBoard(board);
-			} else if (GamePhase.ATTACK.equals(GameController.getInstance().getGamePhase())) {
-				showAttackBoard(board);
-			} else if (GamePhase.FORTIFY.equals(GameController.getInstance().getGamePhase())) {
-				showFortifyBoard(board);
+				if (saveGameButton != null) {
+					saveGameButton.setVisible(false);
+				}
+			} else {
+
+				if (saveGameButton != null) {
+					saveGameButton.setVisible(true);
+				}
 			}
+			mainBoardFrame.revalidate();
+			executeByPhase(board);
+
 		}
 	}
 
@@ -101,7 +145,9 @@ public class BoardView implements Observer {
 			mainBoardFrame.getContentPane().add(worldMapPanel, "Center");
 			mainBoardFrame.getContentPane().add(turnDicePanel, "Center");
 			mainBoardFrame.getContentPane().add(playerPanel);
-
+			saveGameButton = createSaveGameButton();
+			saveGameButton.setVisible(false);
+			mainBoardFrame.add(saveGameButton, BorderLayout.WEST);
 			mainBoardFrame.setVisible(true);
 			JOptionPane.showMessageDialog(mainBoardFrame, "Roll dice to decide the player turn");
 
@@ -119,10 +165,10 @@ public class BoardView implements Observer {
 		try {
 			if (isStartDiceAllocatedToAll(board)) {
 				Player currentPlayer = board.getActivePlayer();
-
-				mainBoardFrame.remove(diceRollPanel);
+				if (diceRollPanel != null) {
+					mainBoardFrame.remove(diceRollPanel);
+				}
 				if (messagePanel != null) {
-					System.out.println("REMOVED");
 					mainBoardFrame.remove(messagePanel);
 				}
 				messagePanel = createMessagePanel(updateActivePlayerLabel(currentPlayer));
@@ -162,7 +208,6 @@ public class BoardView implements Observer {
 				}
 			}
 		}
-		System.out.println("isStartDiceAllocated " + isStartDiceAllocated);
 		return isStartDiceAllocated;
 	}
 
@@ -275,7 +320,7 @@ public class BoardView implements Observer {
 		if (endAttackButton != null) {
 			mainBoardFrame.remove(endAttackButton);
 		}
-		if(fortifyPanel!=null) {
+		if (fortifyPanel != null) {
 			mainBoardFrame.remove(fortifyPanel);
 		}
 
@@ -408,5 +453,16 @@ public class BoardView implements Observer {
 		dimension.setSize(mainBoardFrame.getWidth() - 350, 40);
 		messagePanel.setPreferredSize(dimension);
 		return messagePanel;
+	}
+
+	private JButton createSaveGameButton() {
+		JButton saveButton = new JButton("Save Game");
+		try {
+			Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
+			saveButton.addActionListener(new SaveGameController());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return saveButton;
 	}
 }

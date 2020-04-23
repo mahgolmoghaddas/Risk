@@ -10,13 +10,16 @@ import java.util.List;
 import com.riskgame.model.Board;
 import com.riskgame.model.Card;
 import com.riskgame.model.Continent;
+import com.riskgame.model.GameLogs;
 import com.riskgame.model.Player;
 import com.riskgame.model.ScoreConfiguration;
 import com.riskgame.model.Territory;
 import com.riskgame.model.TurnManager;
 import com.riskgame.model.World;
+import com.riskgame.strategy.PlayerStrategy;
 import com.riskgame.utility.GamePhase;
 import com.riskgame.utility.GameUtility;
+import com.riskgame.utility.PlayerType;
 import com.riskgame.view.BoardView;
 import com.riskgame.view.NewGameView;
 
@@ -29,14 +32,16 @@ import com.riskgame.view.NewGameView;
 public class GameController implements ActionListener {
 
 	private World world;
-	private int numberOfPlayers;
 	private BoardView boardView;
-	private Board board;
+	private Board board = new Board();
 	private GameUtility gameUtility = new GameUtility();
-	ScoreConfiguration scoreConfig = new ScoreConfiguration();
 	public static GamePhase gamePhase;
 	private static GameController gameController;
 	private TurnManager turnManager;
+	private PlayerType playerType;
+	private ArrayList<Player> playerList = new ArrayList<>();
+	private GameLogs gameLogs = GameLogs.getInstance();
+	private boolean isSavedGame = false;
 
 	/**
 	 * This constructor creates a GameController Object to set the turnPhase as
@@ -44,7 +49,6 @@ public class GameController implements ActionListener {
 	 */
 	private GameController() {
 		this.gamePhase = GamePhase.PREGAME;
-		board = Board.getInstance();
 	}
 
 	/**
@@ -60,14 +64,15 @@ public class GameController implements ActionListener {
 	}
 
 	/**
-	 * This method sets the world data, number of players and the phase of the turn
+	 * This method sets the world data, playerList with the details of player in the
+	 * game
 	 * 
 	 * @param world
-	 * @param numberOfPlayers
+	 * @param playerList
 	 */
-	public void setGameParameters(World world, int numberOfPlayers) {
+	public void setGameParameters(World world, ArrayList<Player> playerList) {
 		this.world = world;
-		this.numberOfPlayers = numberOfPlayers;
+		this.playerList = playerList;
 	}
 
 	/**
@@ -83,19 +88,28 @@ public class GameController implements ActionListener {
 				NewGameView newGameView = new NewGameView();
 				newGameView.launchNewGameFrame();
 			} else if (GamePhase.SETUP.equals(this.gamePhase)) {
+
 				System.out.println("************SETUP PHASE**************");
 				initiateBoardAndPlayGame();
+
 			} else if (GamePhase.REINFORCE.equals(this.gamePhase)) {
+
 				System.out.println("************REINFORCE PHASE**************");
 				board.setGamePhase(GamePhase.REINFORCE);
-				calculateReinforcementForPlayers();
+				Player activePlayer = board.getActivePlayer();
+				if (PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
+					gameUtility.calculateReinforcementForPlayers(activePlayer,board);
+				} else {
+					autoRunReinforceToFortify(activePlayer);
+				}
 
 			} else if (GamePhase.ATTACK.equals(this.gamePhase)) {
-				board.setGamePhase(GamePhase.ATTACK);
 				System.out.println("************ATTACK PHASE**************");
+				board.setGamePhase(GamePhase.ATTACK);
+
 			} else if (GamePhase.FORTIFY.equals(this.gamePhase)) {
-				board.setGamePhase(GamePhase.FORTIFY);
 				System.out.println("************FORTIFY PHASE**************");
+				board.setGamePhase(GamePhase.FORTIFY);
 			}
 
 		} catch (Exception e) {
@@ -110,17 +124,15 @@ public class GameController implements ActionListener {
 	 */
 	public void initiateBoardAndPlayGame() {
 		try {
-
-			ArrayList<Player> playerList = gameUtility.createPlayers(numberOfPlayers);
 			ArrayList<Card> cardDeck = gameUtility.buildCardDeck(world);
-			System.out.println("Card Deck "+cardDeck.toString());
+			System.out.println("Card Deck " + cardDeck.toString());
 
 			// Assign armies for each player
 			assignArmiesToPlayer(playerList);
 
 			// initialize the Board Data
 			board.initializeGame(world, playerList, cardDeck);
-
+			board.setGamePhase(GamePhase.SETUP);
 			// Distribute 42 armies equally to the players
 			distributeTerritories(playerList, world);
 
@@ -139,8 +151,9 @@ public class GameController implements ActionListener {
 	public void assignArmiesToPlayer(ArrayList<Player> playerList) throws Exception {
 		if (playerList != null && !playerList.isEmpty()) {
 			int numberOfArmies = gameUtility.getNumberOfArmiesForEachPlayer(playerList.size());
-
+			gameLogs.log("[Pre setup phase] Assigning " + numberOfArmies + " armies to each player ");
 			for (Player player : playerList) {
+				gameLogs.log(player.getName() + " got " + numberOfArmies + " armies");
 				player.setArmiesToplayer(numberOfArmies);
 			}
 		}
@@ -153,7 +166,7 @@ public class GameController implements ActionListener {
 	 * assigned to the player
 	 */
 	public void distributeTerritories(List<Player> playerList, World world) throws Exception {
-
+		gameLogs.log("[Pre setup phase] Distributing each territories equally among players ");
 		int playersCount = 0;
 		if (world != null) {
 			HashSet<Territory> territorySet = world.getTerritories();
@@ -177,6 +190,8 @@ public class GameController implements ActionListener {
 					int oldArmiesCount = playerList.get(playersCount).getArmiesHeld();
 
 					playerList.get(playersCount).setArmiesHeld(oldArmiesCount - 1);
+					gameLogs.log("[Pre setup phase] Territory " + territory.getCountryName() + " allocated to "
+							+ playerList.get(playersCount).getPlayerName());
 					playersCount++;
 				}
 			}
@@ -187,58 +202,45 @@ public class GameController implements ActionListener {
 		return this.gamePhase;
 	}
 
-	public void calculateReinforcementForPlayers() {
-		try {
-			int reinforcement = 0;
-			Board board = Board.getInstance();
-			if (board != null && board.getPlayerList() != null) {
+	public BoardView getBoardView() {
+		return this.boardView;
+	}
 
-				for (int i = 0; i < board.getPlayerList().size(); i++) {
-					Player player = board.getPlayerList().get(i);
-					reinforcement = calculateBonusFromOccupiedTerritories(player);
-					reinforcement += calculateBonusFromContinent(player);
-					player.setArmiesHeld(reinforcement);
-				}
-			}
+	public void autoRunReinforceToFortify(Player activePlayer) {
+		try {
+			PlayerStrategy playerStrategy = activePlayer.getPlayerStrategy();
+
+			playerStrategy.runReinforcePhase(activePlayer,board);
+			playerStrategy.runAttackPhase(activePlayer,board);
+			playerStrategy.runFortifyPhase(activePlayer,board);
+			this.gamePhase = GamePhase.SETUP;
+			board.getNextPlayer();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public int calculateBonusFromContinent(Player player) {
-		int reinforcement = 0;
-
-		if (this.world != null) {
-
-			HashSet<Continent> continents = world.getContinents();
-
-			Iterator<Continent> continentIterator = continents.iterator();
-
-			while (continentIterator.hasNext()) {
-				Continent continent = continentIterator.next();
-				HashSet<Territory> territorySet = continent.getTerritoryList();
-
-				if (player.getCountriesOwned().containsAll(territorySet)) {
-					reinforcement += continent.getBonusPoint();
-					player.getContinentsOwned().add(continent);
+	public void resumeGame(Board board) {
+		this.board = board;
+		isSavedGame = true;
+		this.gamePhase = board.getGamePhase();
+//		board.setBoard(board);
+		if (this.board.getPlayerList() != null) {
+			List<Player> playerList = this.board.getPlayerList();
+			if (playerList != null && !playerList.isEmpty()) {
+				for (int i = 0; i < playerList.size(); i++) {
+					Player player = playerList.get(i);
+					player.addObserver(this.board);
 				}
 			}
 		}
-		System.out.println("Reinforcement from Continent " + reinforcement);
-		return reinforcement;
+		this.boardView = new BoardView(this.board);
 	}
 
-	public int calculateBonusFromOccupiedTerritories(Player player) throws Exception {
-		return scoreConfig.getOccupiedTerritoryBonus(player.getCountriesOwned().size());
-
+	public boolean isSavedGame() {
+		return isSavedGame;
 	}
-
-	public int calculateBonusFromCards() {
-		int reinforcement = 0;
-		return reinforcement;
-	}
-
-	public BoardView getBoardView() {
-		return this.boardView;
+	public Board getBoard() {
+		return this.board;
 	}
 }

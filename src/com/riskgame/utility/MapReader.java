@@ -78,13 +78,6 @@ public class MapReader {
 
 	}
 
-
-
-
-
-
-
-
 	public boolean isValidMap(File mapFile) throws Exception {
 
 		boolean isValidMap = false;

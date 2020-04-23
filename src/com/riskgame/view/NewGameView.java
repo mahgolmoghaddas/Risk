@@ -2,6 +2,7 @@ package com.riskgame.view;
 
 import java.awt.FlowLayout;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.BoxLayout;
@@ -17,19 +18,20 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.riskgame.controller.GameController;
 import com.riskgame.model.Continent;
+import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
 import com.riskgame.model.World;
 import com.riskgame.utility.MapReader;
-import com.riskgame.utility.GamePhase;
 import com.riskgame.utility.ViewUtility;
 
 /**
- * This is the game window for the New Game. It provides the fields to select the number of the players in the game
- * and the map used to play the risk game.
+ * This is the game window for the New Game. It provides the fields to select
+ * the number of the players in the game and the map used to play the risk game.
+ * 
  * @author pushpa
  *
  */
-public class NewGameView extends JFrame{
+public class NewGameView extends JFrame {
 
 	private JFrame newGameFrame;
 	private JPanel gamePanel;
@@ -38,19 +40,19 @@ public class NewGameView extends JFrame{
 
 	private ViewUtility viewUtility = new ViewUtility();
 	private MapReader mapReader = new MapReader();
-
 	private World currentWorldMap;
 	private int playersCount;
-
 	private GameController gameController;
+	private JPanel loadMapPanel =new JPanel();
+	private PlayerSelectionView playerSelectView = new PlayerSelectionView();
 
 	public NewGameView() {
 		this.gameController = GameController.getInstance();
 	}
-	
+
 	/**
-	 * This launches a new window for new game. 
-	 * It displays the field to select the number of players and map file to be used in the game
+	 * This launches a new window for new game. It displays the field to select the
+	 * number of players and map file to be used in the game
 	 */
 	public void launchNewGameFrame() {
 		try {
@@ -76,13 +78,16 @@ public class NewGameView extends JFrame{
 		gamePanel.setBorder(new EmptyBorder(20, 10, 10, 10));
 
 		gamePanel.add(createPlayerComboPanel());
-		gamePanel.add(createLoadMapPanel());
+		gamePanel.add(playerSelectView);
+		gamePanel.add(loadMapPanel);
 		gamePanel.add(createPlayGamePanel());
 		return gamePanel;
 	}
 
 	/**
-	 * This method creates a Panel with the combo box to select number of players in the game
+	 * This method creates a Panel with the combo box to select number of players in
+	 * the game
+	 * 
 	 * @return JPanel
 	 */
 	public JPanel createPlayerComboPanel() {
@@ -92,6 +97,7 @@ public class NewGameView extends JFrame{
 		JLabel selectplayerlabel = new JLabel("Select Number of  Players:");
 		int maxnumberofplayers = 6;
 		JComboBox comboBoxlist = new JComboBox();
+		comboBoxlist.addItem("Select ");
 		for (int i = 2; i <= maxnumberofplayers; i++) {
 			comboBoxlist.addItem(i);
 		}
@@ -99,32 +105,49 @@ public class NewGameView extends JFrame{
 		comboBoxlist.addItemListener(itemListener -> {
 			playersCount = Integer.parseInt(comboBoxlist.getSelectedItem().toString());
 			if (playersCount < 2) {
-				System.out.println("players COUNT "+playersCount);
+				System.out.println("players COUNT " + playersCount);
 				JOptionPane.showMessageDialog(newGameFrame.getContentPane(), "Minimum Number of Players Must be : 2",
 						"MESSAGE", JOptionPane.ERROR_MESSAGE);
+			} else {
+				if (playersCount == 0) {
+					playersCount = 2;
+				}
+				if (playerSelectView != null) {
+					gamePanel.remove(playerSelectView);
+				}
+				if(loadMapPanel !=null) {
+					gamePanel.remove(loadMapPanel);
+				}
+				playerSelectView = new PlayerSelectionView(playersCount,false);
+				loadMapPanel = createLoadMapPanel();
+				gamePanel.add(playerSelectView);
+				gamePanel.add(loadMapPanel);
+				gamePanel.revalidate();
+				newGameFrame.revalidate();
 			}
 		});
 
-		if(playersCount==0) {
-			playersCount=2;
+		if (playersCount == 0) {
+			playersCount = 2;
 		}
 		panelComboBox.add(selectplayerlabel);
 		panelComboBox.add(comboBoxlist);
 		return panelComboBox;
 	}
 
-	public JPanel createLoadMapPanel() throws Exception {
+	public JPanel createLoadMapPanel(){
 		JPanel loadMapPanel = new JPanel();
 		JLabel loadMapLabel = new JLabel("Load map:");
 		loadMapPanel.add(loadMapLabel);
 		loadMapPanel.add(createLoadMapButton());
 		return loadMapPanel;
 	}
-	
-	
+
 	/**
-	 * Creates a button to load an existing world map file in the window.
-	 * It validates the map file and creates a world object and show the button to start the game if the map file is valid one.
+	 * Creates a button to load an existing world map file in the window. It
+	 * validates the map file and creates a world object and show the button to
+	 * start the game if the map file is valid one.
+	 * 
 	 * @return JButton
 	 * 
 	 */
@@ -150,7 +173,8 @@ public class NewGameView extends JFrame{
 								JOptionPane.INFORMATION_MESSAGE);
 
 						currentWorldMap = mapReader.createWorldMap();
-						gameController.setGameParameters(currentWorldMap, playersCount);
+						ArrayList<Player> playerList = playerSelectView.getPlayerList();
+						gameController.setGameParameters(currentWorldMap, playerList);
 						startGameButton.setVisible(true);
 						cancelButton.setVisible(true);
 
@@ -168,7 +192,9 @@ public class NewGameView extends JFrame{
 	}
 
 	/**
-	 * This creates a panel with the button start and cancel, that allows user to start the game or cancel it.
+	 * This creates a panel with the button start and cancel, that allows user to
+	 * start the game or cancel it.
+	 * 
 	 * @return
 	 */
 	public JPanel createPlayGamePanel() {

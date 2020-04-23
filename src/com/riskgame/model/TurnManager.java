@@ -1,5 +1,6 @@
 package com.riskgame.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,8 +17,9 @@ import com.riskgame.utility.GamePhase;
  * @author pushpa
  *
  */
-public class TurnManager {
+public class TurnManager implements Serializable{
 
+	private static final long serialVersionUID = -4806028740239694234L;
 	private Player currentPlayer;
 	private static GamePhase currentPhase;
 
@@ -30,7 +32,7 @@ public class TurnManager {
 	}
 
 	private List<Player> playerList;
-	private static List<Player> designedTurnList;
+	private List<Player> designedTurnList;
 	private List<Player> tempturnList;
 
 	public TurnManager(List<Player> playerList) {

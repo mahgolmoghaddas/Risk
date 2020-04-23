@@ -1,41 +1,37 @@
 package com.riskgame.model;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.io.Serializable;
 import java.util.*;
 import com.riskgame.utility.*;
 
 /**
- * This class maintains the data throught the game such as the world map details, player details
+ * This class maintains the data throught the game such as the world map
+ * details, player details
  * 
  * @author pushpa
  *
  */
-public class Board extends Observable implements Observer {
-	private World world;
-	private List<Player> playerList;
-	private List<Card> cardDeck;
-	private static Board board;
-	private Player nextPlayer;
-	private Player activePlayer;
-	private GamePhase gamePhase;
-	private TurnManager turnManager;
+public class Board extends Observable implements Observer, Externalizable {
+	World world;
+	List<Player> playerList;
+	List<Card> cardDeck;
+	Player nextPlayer;
+	Player activePlayer;
+	GamePhase gamePhase;
+	TurnManager turnManager;
 
-	/**
-	 * Single instance for the board is maintained throughout the game phases.
-	 */
-	private Board() {
+	
+	public  Board() {
 	}
-
-	public static Board getInstance() {
-		if (board == null) {
-			board = new Board();
-		}
-		return board;
-	}
-
+	
 	public List<Player> getPlayerList() {
 		return playerList;
 	}
-
+	
 	/**
 	 * Return the available Cards in the board. If cards are distributed among
 	 * players, the updated cards will be displayed
@@ -79,11 +75,11 @@ public class Board extends Observable implements Observer {
 	public Player getNextPlayer() {
 		try {
 			if (turnManager == null) {
-				turnManager = new TurnManager(board.getPlayerList());
+				turnManager = new TurnManager(playerList);
 			}
 			this.nextPlayer = turnManager.getNextPlayer();
 			if (this.activePlayer != null) {
-				this.activePlayer=this.nextPlayer;
+				this.activePlayer = this.nextPlayer;
 				boardDataChanged();
 			}
 
@@ -121,7 +117,6 @@ public class Board extends Observable implements Observer {
 
 					if (oldPlayer.getId() == updatedPlayer.getId()) {
 						oldPlayer = updatedPlayer;
-						System.out.println(oldPlayer.getName() + " Data has been changed");
 						boardDataChanged();// notify its observers
 					}
 				}
@@ -138,4 +133,24 @@ public class Board extends Observable implements Observer {
 		notifyObservers();
 	}
 
+	@Override
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeObject(world);
+		out.writeObject(playerList);
+		out.writeObject(cardDeck);
+		out.writeObject(activePlayer);
+		out.writeObject(gamePhase);
+		out.writeObject(turnManager);
+
+	}
+
+	@Override
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		world = (World) in.readObject();
+		playerList = (List<Player>) in.readObject();
+		cardDeck = (List<Card>) in.readObject();
+		activePlayer = (Player) in.readObject();
+		gamePhase = (GamePhase) in.readObject();
+		turnManager = (TurnManager) in.readObject();
+	}
 }

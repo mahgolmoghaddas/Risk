@@ -8,6 +8,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -15,7 +16,10 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+
 import com.riskgame.controller.GameController;
+import com.riskgame.controller.LoadGameController;
+import com.riskgame.controller.TournamentController;
 import com.riskgame.model.World;
 import com.riskgame.utility.MapReader;
 import com.riskgame.utility.ViewUtility;
@@ -30,7 +34,7 @@ import com.riskgame.utility.ViewUtility;
 public class MainWindowView extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private static MainWindowView mainWindowView;
+	public static MainWindowView mainWindowView;
 	private ViewUtility viewUtility = new ViewUtility();
 
 	private MainWindowView() {
@@ -104,12 +108,27 @@ public class MainWindowView extends JFrame {
 		gameMenuItem.setCursor(cursor);
 		gameMenuItem.addActionListener(GameController.getInstance());
 
+		JMenuItem tournamentItem = new JMenuItem("Tournament Mode");
+		tournamentItem.setCursor(cursor);
+		tournamentItem.addActionListener(e -> {
+			TournamentController tournamentController = new TournamentController();
+			tournamentController.displayTournamentOptions();
+		});
+
+		JMenuItem loadSavedGame = new JMenuItem("Load saved Game");
+		loadSavedGame.setCursor(cursor);
+		loadSavedGame.addActionListener(new LoadGameController());
+
 		JMenuItem exitMenuItem = new JMenuItem("Exit");
 		exitMenuItem.setCursor(cursor);
-//		gameMenuItem.addActionListener(new GameController());
-
+		exitMenuItem.addActionListener(actionEvent -> {
+			this.dispose();
+		});
 		openMenu.add(gameMenuItem);
+		openMenu.add(loadSavedGame);
+		openMenu.add(tournamentItem);
 		openMenu.add(exitMenuItem);
+
 		return openMenu;
 	}
 

@@ -1,64 +1,65 @@
 package com.riskgame.utility;
+
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
 
+import com.riskgame.model.Board;
 import com.riskgame.model.Card;
+import com.riskgame.model.Continent;
+import com.riskgame.model.GameLogs;
 import com.riskgame.model.Player;
+import com.riskgame.model.ScoreConfiguration;
 import com.riskgame.model.Territory;
 import com.riskgame.model.World;
 
 /**
  * 
  * This class provides the reusable method used in the Risk Game.
+ * 
  * @author pushpa
  *
  */
 public class GameUtility {
 
-	RiskUtility utility = new RiskUtility();
+	ScoreConfiguration scoreConfig = new ScoreConfiguration();
+	GameLogs gameLogs = GameLogs.getInstance();
 
 	/**
-	 * This method creates the player object specifying the name and color of the
-	 * player as per the number of the player selected for the game.
+	 * This method returns Color as per the playerID
 	 * 
 	 * @param playerCount
 	 * @return
-	 * @throws Exception
 	 */
-	public ArrayList<Player> createPlayers(int playerCount) throws Exception {
-		ArrayList<Player> playerList = new ArrayList<Player>();
-		for (int i = 1; i <= playerCount; i++) {
-
-			Player player = new Player(i, "Player" + i);
-			switch (i) {
-			case 1:
-				player.setColor(Color.decode("#03befc"));
-				break;
-			case 2:
-				player.setColor(Color.decode("#54b354"));
-				break;
-			case 3:
-				player.setColor(Color.decode("#a45eeb"));
-				break;
-			case 4:
-				player.setColor(Color.decode("#a81b8e"));
-				break;
-			case 5:
-				player.setColor(Color.decode("#fc9003"));
-				break;
-			case 6:
-				player.setColor(Color.RED);
-				break;
-			default:
-				break;
-			}
-			
-			playerList.add(player);
+	public Color getPlayerColorById(int playerId) {
+		Color color = null;
+		switch (playerId) {
+		case 1:
+			color = Color.decode("#03befc");
+			break;
+		case 2:
+			color = Color.decode("#54b354");
+			break;
+		case 3:
+			color = Color.decode("#a45eeb");
+			break;
+		case 4:
+			color = Color.decode("#a81b8e");
+			break;
+		case 5:
+			color = Color.decode("#fc9003");
+			break;
+		case 6:
+			color = Color.RED;
+			break;
+		default:
+			break;
 		}
-		return playerList;
+		return color;
 	}
 
 	/**
@@ -69,7 +70,8 @@ public class GameUtility {
 	 * @return ArrayList of card for each territory
 	 */
 	public ArrayList<Card> buildCardDeck(World world) {
-		System.out.println("***********8Building the Territory Card Deck**************");
+		System.out.println("************Building the Territory Card Deck**************");
+		gameLogs.log("***Building the Territory Card Deck****");
 		ArrayList<Card> cardDeck = new ArrayList<Card>();
 		try {
 			if (world != null) {
@@ -81,17 +83,38 @@ public class GameUtility {
 					while (territory.hasNext()) {
 						String territoryName = territory.next().getCountryName();
 
-						CardType cardType = utility.generateRandomCardType();
+						CardType cardType = generateRandomCardType();
 						Card card = new Card(territoryName, cardType);
 
 						cardDeck.add(card);
 					}
 				}
 			}
+			gameLogs.log("*** Territory Card Deck with total "+cardDeck.size()+" territory cards Built****");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return cardDeck;
+	}
+
+	/**
+	 * This method generates the random Card type.
+	 * 
+	 * @return card Type i.e. INFANTRY OR CAVALRY OR ARTILLERY
+	 */
+	public CardType generateRandomCardType() {
+
+		int min = 1;
+		int max = 3;
+		int range = max - min + 1;
+		int randomNumber = (int) (Math.random() * range) + min;
+		if (randomNumber == 1) {
+			return CardType.INFANTRY;
+		} else if (randomNumber == 2) {
+			return CardType.CAVALRY;
+		} else {
+			return CardType.ARTILLERY;
+		}
 	}
 
 	/**
@@ -122,8 +145,11 @@ public class GameUtility {
 		}
 		return numberOfArmies;
 	}
+
 	/**
-	 * This method returns the next phase of the game based on the current phase of the game
+	 * This method returns the next phase of the game based on the current phase of
+	 * the game
+	 * 
 	 * @return GamePhase
 	 */
 	public GamePhase getNextPhase(GamePhase currentPhase) {
@@ -144,4 +170,122 @@ public class GameUtility {
 			return GamePhase.START;
 		}
 	}
+
+	public int calculateBonusFromContinent(Player player,Board board) {
+		int reinforcement = 0;
+		World world = board.getWorld();
+		if (world != null) {
+
+			HashSet<Continent> continents = world.getContinents();
+
+			Iterator<Continent> continentIterator = continents.iterator();
+
+			while (continentIterator.hasNext()) {
+				Continent continent = continentIterator.next();
+				HashSet<Territory> territorySet = continent.getTerritoryList();
+
+				if (player.getCountriesOwned().containsAll(territorySet)) {
+					reinforcement += continent.getBonusPoint();
+					player.getContinentsOwned().add(continent);
+				}
+			}
+		}
+		System.out.println("Reinforcement from Continent " + reinforcement);
+		return reinforcement;
+	}
+
+	public int calculateBonusFromOccupiedTerritories(Player player) throws Exception {
+		return scoreConfig.getOccupiedTerritoryBonus(player.getCountriesOwned().size());
+
+	}
+
+	public int calculateBonusFromCards() {
+		int reinforcement = 0;
+		return reinforcement;
+	}
+
+	public boolean playersHaveArmies(Board board) {
+		boolean playersHaveArmies = false;
+		if (board != null && board.getPlayerList() != null) {
+			for (Player player : board.getPlayerList()) {
+				if (player.getArmiesHeld() > 0) {
+					playersHaveArmies = true;
+					break;
+				}
+			}
+		}
+		return playersHaveArmies;
+	}
+
+	public void calculateReinforcementForPlayers(Player player,Board board) {
+		try {
+			int reinforcement = 0;
+			reinforcement = calculateBonusFromOccupiedTerritories(player);
+			reinforcement += calculateBonusFromContinent(player,board);
+			player.setArmiesHeld(reinforcement);
+			System.out.println("Reinforcement received by player " + player.getName() + "::" + reinforcement);
+		} catch (
+
+		Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public HashSet<Territory> sortTerritoryByArmiesASC(HashSet<Territory> territorySet) {
+		List<Territory> playersTerritoryList = new ArrayList<Territory>(territorySet); // set -> list
+
+		Collections.sort(playersTerritoryList, new TerritoriesArmiesComparator());
+		HashSet sortedTerritorySet = new LinkedHashSet<Territory>(playersTerritoryList);
+		return sortedTerritorySet;
+	}
+
+	public HashSet<Territory> sortTerritoryByArmiesDESC(HashSet<Territory> territorySet) {
+		List<Territory> playersTerritoryList = new ArrayList<Territory>(territorySet); // set -> list
+
+		Collections.sort(playersTerritoryList, new TerritoriesArmiesComparator());
+		Collections.reverse(playersTerritoryList);
+		HashSet sortedTerritorySet = new LinkedHashSet<Territory>(playersTerritoryList);
+		return sortedTerritorySet;
+	}
+
+	public HashSet<Territory> getDefenderTerritories(Territory attackerTerritory,Board board) {
+		HashSet<Territory> defenderTerritories = new HashSet<>();
+		try {
+			HashSet<String> neighboursTerr = attackerTerritory.getNeighborsTerritory();
+
+			Iterator<String> neighTerrIterator = neighboursTerr.iterator();
+
+			while (neighTerrIterator.hasNext()) {
+				World world = board.getWorld();
+				Territory territory = world.getTerritoryByName(neighTerrIterator.next());
+				if (territory != null && territory.getOwner().getId() != attackerTerritory.getOwner().getId()) {
+					defenderTerritories.add(territory);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return defenderTerritories;
+	}
+
+	public HashSet<Territory> getDestinationTerritories(Territory sourceTerritory,Board board) {
+		HashSet<Territory> destinationTerritories = new HashSet<>();
+		try {
+			HashSet<String> neighboursTerr = sourceTerritory.getNeighborsTerritory();
+
+			Iterator<String> neighTerrIterator = neighboursTerr.iterator();
+
+			while (neighTerrIterator.hasNext()) {
+				World world = board.getWorld();
+				Territory territory = world.getTerritoryByName(neighTerrIterator.next());
+				if (territory != null && territory.getOwner().getId() == sourceTerritory.getOwner().getId()) {
+					destinationTerritories.add(territory);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return destinationTerritories;
+	}
+
 }

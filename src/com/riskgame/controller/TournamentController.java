@@ -17,7 +17,7 @@ import com.riskgame.view.TournamentPhaseView;
 import com.riskgame.view.TournamentView;
 
 /**
- * This class handles the Tournament mode Implementation for the Game 
+ * This class handles the Tournament mode Implementation for the Game
  * 
  * @author Himani
  *
@@ -29,7 +29,7 @@ public class TournamentController {
 	private GameUtility gameUtility = new GameUtility();
 	private HashMap<String, HashMap<String, String>> tournamentResult = new HashMap<>();
 	DiceUtility diceUtility = new DiceUtility();
-	Board board =  new Board();
+
 	public void displayTournamentOptions() {
 		new TournamentView();
 	}
@@ -70,27 +70,27 @@ public class TournamentController {
 		int turnCount = 1;
 		try {
 			gameLogs.log(" [Pre SETUP START]  ");
-			executePreSetup(playerList, world);
+			Board board = executePreSetup(playerList, world);
 			gameLogs.log(" [Pre SETUP END]  ");
-			
+
 			gameLogs.log(" [DICE ROLL FOR TURN MANAGEMENT START]  ");
 			rollDiceForTurnManagement(playerList);
 			gameLogs.log(" [DICE ROLL FOR TURN MANAGEMENT END]  ");
 
 			// run setupPhase here
 			gameLogs.log(" [SETUP PHASE START] ");
-			autoRunSetupPhase();
+			autoRunSetupPhase(board);
 			gameLogs.log(" [SETUP PHASE END]");
-			
+
 			gameLogs.log(" [ACTUAL GAME PLAY PHASE START] ");
 			while (turnCount <= maxAllowedTurn) {// Need to add 1 more case here
 				Player activePlayer = board.getActivePlayer();
 				gameLogs.log("############CURRENT PLAYER IS " + activePlayer.getName() + "############");
-				autoRunReinforceToFortify(activePlayer);
+				autoRunReinforceToFortify(activePlayer,board);
 				turnCount++;
 			}
 			gameLogs.log(" [ACTUAL GAME PLAY PHASE START] ");
-			System.out.println("Turn COUNT...."+turnCount);
+			System.out.println("Turn COUNT...." + turnCount);
 
 			if (turnCount > maxAllowedTurn) {
 				gameResult = "DRAW";
@@ -104,7 +104,8 @@ public class TournamentController {
 		return gameResult;
 	}
 
-	private void executePreSetup(ArrayList<Player> playerList, World world) {
+	private Board executePreSetup(ArrayList<Player> playerList, World world) {
+		Board board = new Board();
 		try {
 			ArrayList<Card> cardDeck = gameUtility.buildCardDeck(world);
 			board.initializeGame(world, playerList, cardDeck);
@@ -114,6 +115,7 @@ public class TournamentController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return board;
 	}
 
 	/**
@@ -141,21 +143,21 @@ public class TournamentController {
 
 	}
 
-	private void autoRunSetupPhase() {
+	private void autoRunSetupPhase(Board board) {
 		while (gameUtility.playersHaveArmies(board)) {
 			Player activePlayer = board.getActivePlayer();
 			PlayerStrategy playerStrategy = activePlayer.getPlayerStrategy();
-			playerStrategy.runSetupPhase(activePlayer,board);
+			playerStrategy.runSetupPhase(activePlayer, board);
 		}
 	}
 
-	private void autoRunReinforceToFortify(Player activePlayer) {
+	private void autoRunReinforceToFortify(Player activePlayer,Board board) {
 		try {
 			PlayerStrategy playerStrategy = activePlayer.getPlayerStrategy();
 
-			playerStrategy.runReinforcePhase(activePlayer,board);
-			playerStrategy.runAttackPhase(activePlayer,board);
-			playerStrategy.runFortifyPhase(activePlayer,board);
+			playerStrategy.runReinforcePhase(activePlayer, board);
+			playerStrategy.runAttackPhase(activePlayer, board);
+			playerStrategy.runFortifyPhase(activePlayer, board);
 			board.getNextPlayer();
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -13,6 +13,13 @@ import com.riskgame.model.Territory;
 import com.riskgame.utility.DiceUtility;
 import com.riskgame.utility.GameUtility;
 
+
+/**
+ * This class gives concrete implementation of Aggressive Player's Strategy
+ *
+ * @author Himani
+ * 
+ */
 public class AggressivePlayerStrategy extends PlayerStrategy {
 
 	private static final long serialVersionUID = 3200131977682089249L;

@@ -60,6 +60,7 @@ public class BoardView implements Observer {
 	JButton endAttackButton;
 	JButton saveGameButton;
 	JButton pickUpCardButton;
+	JButton cardTradeButton;
 
 	Map<Integer, JTextField> armiesField = new HashMap<>();
 	Map<Integer, JLabel> diceList = new HashMap<>();
@@ -223,11 +224,12 @@ public class BoardView implements Observer {
 			if (reinforceButton != null) {
 				messagePanel.remove(reinforceButton);
 			}
-//			if (fortifyPanel != null) {
-//				mainBoardFrame.remove(fortifyPanel);
-//			}
 			if (pickUpCardButton != null) {
 				mainBoardFrame.remove(pickUpCardButton);
+			}
+
+			if (cardTradeButton != null) {
+				mainBoardFrame.remove(cardTradeButton);
 			}
 			if (messagePanel != null && messagePanel.getComponents().length > 0) {
 				messagePanel.removeAll();
@@ -238,6 +240,13 @@ public class BoardView implements Observer {
 				attackButton = viewUtility.createGamePhaseButton("Attack");
 				messagePanel.add(attackButton);
 			}
+
+			cardTradeButton = new JButton("Trade Card");
+			cardTradeButton.addActionListener(actionEvent -> {
+
+			});
+
+			mainBoardFrame.add(cardTradeButton);
 			mainBoardFrame.add(messagePanel);
 			mainBoardFrame.repaint();
 			mainBoardFrame.revalidate();
@@ -265,6 +274,9 @@ public class BoardView implements Observer {
 			}
 			if (messagePanel != null) {
 				mainBoardFrame.remove(messagePanel);
+			}
+			if (cardTradeButton != null) {
+				mainBoardFrame.remove(cardTradeButton);
 			}
 
 			attackPanel = new AttackPanelView(board);

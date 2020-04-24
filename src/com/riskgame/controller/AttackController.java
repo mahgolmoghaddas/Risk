@@ -20,14 +20,12 @@ import com.riskgame.view.AttackPanelView;
  */
 public class AttackController implements ActionListener {
 
-	
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
 		try {
-			String attackDiceScore ="";
-			String defenderDiceScore="";
+			String attackDiceScore = "";
+			String defenderDiceScore = "";
 			Territory attackerTerritory = AttackPanelView.attackerTerritory;
 			Territory defenderTerritory = AttackPanelView.defenderTerritory;
 
@@ -45,7 +43,8 @@ public class AttackController implements ActionListener {
 			NavigableSet<Integer> attackerScoreSet = getAttackerDiceScore(attackDiceScore);
 			NavigableSet<Integer> defenderScoreSet = getDefenderDiceScore(defenderDiceScore);
 
-			String attackResult = decideAttackWinner(attackerTerritory,attackerScoreSet, defenderTerritory,defenderScoreSet);
+			String attackResult = decideAttackWinner(attackerTerritory, attackerScoreSet, defenderTerritory,
+					defenderScoreSet);
 			GameController.gamePhase = GamePhase.REINFORCE;
 			GameController.getInstance().getBoardView().showReAttackBoard(attackResult);
 
@@ -74,10 +73,10 @@ public class AttackController implements ActionListener {
 					if (attackerScore > defenderScore) {
 						// Attacker Win
 						++attackerWinCnt;
-						attackerWin(attackerTerritory,defenderTerritory);
+						attackerWin(attackerTerritory, defenderTerritory);
 					} else {
 						// Attacker LOSE
-						defenderWin(attackerTerritory,defenderTerritory);
+						defenderWin(attackerTerritory);
 					}
 				}
 			}
@@ -95,27 +94,14 @@ public class AttackController implements ActionListener {
 		return result;
 	}
 
-	private void defenderWin(Territory attackerTerritory,Territory defenderTerritory) {
-		if (attackerTerritory.getArmyCount() == 1) {
-			Player attacker = attackerTerritory.getOwner();
-			Player defender = defenderTerritory.getOwner();
+	private void defenderWin(Territory attackerTerritory) {
 
-			attacker.getCountriesOwned().remove(attackerTerritory);
-			defender.getCountriesOwned().add(attackerTerritory);
-
-			attackerTerritory.setOwner(defender);
-
-			int armyCnt = defenderTerritory.getArmyCount();
-			defenderTerritory.setArmyCount(armyCnt - 1);
-			System.out.println(attacker.getName() + " lost the territory " + attackerTerritory.getCountryName());
-		} else if (attackerTerritory.getArmyCount() > 1) {
-			int armyCnt = attackerTerritory.getArmyCount();
-			attackerTerritory.setArmyCount(armyCnt - 1);
-			System.out.println(attackerTerritory.getOwner().getName() + " lost the 1 army");
-		}
+		int armyCnt = attackerTerritory.getArmyCount();
+		attackerTerritory.setArmyCount(armyCnt - 1);
+		System.out.println(attackerTerritory.getOwner().getName() + " lost the 1 army");
 	}
 
-	private void attackerWin(Territory attackerTerritory,Territory defenderTerritory) {
+	private void attackerWin(Territory attackerTerritory, Territory defenderTerritory) {
 		if (defenderTerritory.getArmyCount() == 1) {
 			Player attacker = attackerTerritory.getOwner();
 			Player defender = defenderTerritory.getOwner();
@@ -129,6 +115,9 @@ public class AttackController implements ActionListener {
 			attackerTerritory.setArmyCount(armyCnt - 1);
 
 			System.out.println(defender.getName() + " lost the territory " + defenderTerritory.getCountryName());
+			System.out.println(
+					"Attacker " + attacker.getName() + " owned new territory " + defenderTerritory.getCountryName());
+
 		} else if (defenderTerritory.getArmyCount() > 1) {
 			// Decrease the army in territory
 			int armyCnt = defenderTerritory.getArmyCount();

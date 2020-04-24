@@ -48,8 +48,6 @@ public class FortifyPanelView extends JPanel implements Observer {
 		JLabel armyCntLabel = new JLabel("Select army count:");
 		JButton moveButton = createMoveButton();
 		finishFortifyButton = new ViewUtility().createGamePhaseButton("Finish");
-		finishFortifyButton.addActionListener(GameController.getInstance());
-
 		add(sourceLabel);
 		add(sourceComboList);
 		add(destinationLabel);
@@ -144,8 +142,9 @@ public class FortifyPanelView extends JPanel implements Observer {
 				int destArmyCnt = destinationTerritory.getArmyCount();
 				sourceTerritory.setArmyCount(sourceArmyCnt - selectedArmyCount);
 				destinationTerritory.setArmyCount(destArmyCnt + selectedArmyCount);
+				BoardView.mainBoardFrame.repaint();
+				BoardView.mainBoardFrame.revalidate();
 			}
-			board.getNextPlayer();
 		});
 		return moveButton;
 	}

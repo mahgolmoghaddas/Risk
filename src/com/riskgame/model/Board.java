@@ -44,7 +44,6 @@ public class Board extends Observable implements Observer, Externalizable {
 
 	public void setCardDeck(List<Card> cardDeck) {
 		this.cardDeck = cardDeck;
-		boardDataChanged();
 	}
 
 	/**
@@ -89,7 +88,7 @@ public class Board extends Observable implements Observer, Externalizable {
 		return this.nextPlayer;
 	}
 
-	public void initializeGame(World world, ArrayList<Player> playerList, ArrayList<Card> cardDeck) {
+	public void initializeGame(World world, ArrayList<Player> playerList, List<Card> cardDeck) {
 		this.world = world;
 		this.playerList = playerList;
 		this.cardDeck = cardDeck;

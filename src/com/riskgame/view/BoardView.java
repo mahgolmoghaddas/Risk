@@ -59,6 +59,7 @@ public class BoardView implements Observer {
 	FortifyPanelView fortifyPanel;
 	JButton endAttackButton;
 	JButton saveGameButton;
+	JButton pickUpCardButton;
 
 	Map<Integer, JTextField> armiesField = new HashMap<>();
 	Map<Integer, JLabel> diceList = new HashMap<>();
@@ -87,7 +88,6 @@ public class BoardView implements Observer {
 			playerPanel.setPreferredSize(getPreferredSizeForBoardPanel());
 			mainBoardFrame.getContentPane().add(worldMapPanel, "Center");
 			mainBoardFrame.getContentPane().add(playerPanel);
-//			mainBoardFrame.add(createSaveGameButton(), BorderLayout.WEST);
 			mainBoardFrame.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -104,6 +104,8 @@ public class BoardView implements Observer {
 			showAttackBoard(board);
 		} else if (GamePhase.FORTIFY.equals(GameController.getInstance().getGamePhase())) {
 			showFortifyBoard(board);
+		} else if (GamePhase.PICKCARD.equals(GameController.getInstance().getGamePhase())) {
+			showCardPickup(board);
 		}
 	}
 
@@ -221,8 +223,11 @@ public class BoardView implements Observer {
 			if (reinforceButton != null) {
 				messagePanel.remove(reinforceButton);
 			}
-			if (fortifyPanel != null) {
-				mainBoardFrame.remove(fortifyPanel);
+//			if (fortifyPanel != null) {
+//				mainBoardFrame.remove(fortifyPanel);
+//			}
+			if (pickUpCardButton != null) {
+				mainBoardFrame.remove(pickUpCardButton);
 			}
 			if (messagePanel != null && messagePanel.getComponents().length > 0) {
 				messagePanel.removeAll();
@@ -287,7 +292,7 @@ public class BoardView implements Observer {
 		if (messagePanel != null) {
 			mainBoardFrame.remove(messagePanel);
 		}
-		messagePanel = createMessagePanel(updateAttackMessage(message));
+		messagePanel = createMessagePanel(updateMessage(message));
 
 		if (attackButton != null) {
 			mainBoardFrame.remove(attackButton);
@@ -329,6 +334,45 @@ public class BoardView implements Observer {
 		mainBoardFrame.add(fortifyPanel);
 		mainBoardFrame.repaint();
 		mainBoardFrame.revalidate();
+	}
+
+	/**
+	 * This method shows the BoardView for the Fortify Phase
+	 * 
+	 * @param board
+	 */
+	public void showCardPickup(Board board) {
+		System.out.println("DISPLAYING CARD PICKUP");
+		if (fortifyPanel != null) {
+			mainBoardFrame.remove(fortifyPanel);
+		}
+		if (pickUpCardButton != null) {
+			mainBoardFrame.remove(pickUpCardButton);
+		}
+		if (messagePanel != null && messagePanel.getComponents().length > 0) {
+			messagePanel.removeAll();
+			mainBoardFrame.remove(messagePanel);
+		}
+		pickUpCardButton = new JButton("Pick up card");
+		pickUpCardButton.addActionListener(actionListener -> {
+			int occupiedTerritoryAfterAttack = board.getActivePlayer().getCountriesOwned().size();
+			System.out.println("Pre attack occupiedTerritories " + board.getActivePlayer().getOccupiedTerritories()
+					+ " post attack OccupiedTerritories::" + occupiedTerritoryAfterAttack);
+			if (board.getActivePlayer().getOccupiedTerritories() < occupiedTerritoryAfterAttack) {
+				board.getActivePlayer().setOccupiedTerritories(occupiedTerritoryAfterAttack);
+				GameController.getInstance().handleCardPickUpCase(board);
+			} else {
+				messagePanel = createMessagePanel(updateMessage("No new territories occupied.You cannot draw card"));
+				mainBoardFrame.add(messagePanel);
+				mainBoardFrame.repaint();
+				mainBoardFrame.revalidate();
+				board.getNextPlayer();
+				GameController.getInstance().actionPerformed(null);
+			}
+		});
+		mainBoardFrame.add(pickUpCardButton);
+		mainBoardFrame.revalidate();
+		mainBoardFrame.repaint();
 	}
 
 	/**
@@ -438,7 +482,7 @@ public class BoardView implements Observer {
 		return activePlayerLabel;
 	}
 
-	private JLabel updateAttackMessage(String message) {
+	private JLabel updateMessage(String message) {
 		JLabel activePlayerLabel = new JLabel();
 		activePlayerLabel.setText(message);
 		activePlayerLabel.setForeground(Color.decode("#525b5c"));

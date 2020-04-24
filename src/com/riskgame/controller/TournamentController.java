@@ -2,6 +2,7 @@ package com.riskgame.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.riskgame.model.Board;
 import com.riskgame.model.Card;
@@ -11,7 +12,6 @@ import com.riskgame.model.TournamentModel;
 import com.riskgame.model.World;
 import com.riskgame.strategy.PlayerStrategy;
 import com.riskgame.utility.DiceUtility;
-import com.riskgame.utility.GamePhase;
 import com.riskgame.utility.GameUtility;
 import com.riskgame.view.TournamentPhaseView;
 import com.riskgame.view.TournamentView;
@@ -107,7 +107,7 @@ public class TournamentController {
 	private Board executePreSetup(ArrayList<Player> playerList, World world) {
 		Board board = new Board();
 		try {
-			ArrayList<Card> cardDeck = gameUtility.buildCardDeck(world);
+			List<Card> cardDeck = gameUtility.buildCardDeck(world);
 			board.initializeGame(world, playerList, cardDeck);
 			gameController.assignArmiesToPlayer(playerList);
 			gameController.distributeTerritories(playerList, world);

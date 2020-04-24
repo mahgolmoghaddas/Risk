@@ -20,7 +20,7 @@ import com.riskgame.utility.PlayerType;
  * @version 1.0.0.0
  */
 public class Player extends Observable implements Serializable {
-	
+
 	private static final long serialVersionUID = -2061369666732092915L;
 	private int playerId;
 	private String playerName;
@@ -33,6 +33,7 @@ public class Player extends Observable implements Serializable {
 	private int startDiceNo;
 	private PlayerType playerType;
 	private PlayerStrategy playerStrategy;
+	private int occupiedTerr;
 
 	/**
 	 * The parameterized constructor takes player id and name as parameters
@@ -135,17 +136,6 @@ public class Player extends Observable implements Serializable {
 		playerDataChanged();
 	}
 
-	/**
-	 * this method adds the armies exchanged with cards
-	 * 
-	 * @param armiesFromCards, which is the number of armies that will be added to
-	 *                         the player
-	 */
-	public void addArmiesFromCards(int armiesFromCards) {
-		this.armiesHeld += armiesFromCards;
-		playerDataChanged();
-	}
-
 	public Integer getStartDiceNo() {
 		return startDiceNo;
 	}
@@ -170,7 +160,6 @@ public class Player extends Observable implements Serializable {
 
 	public void setPlayerScore(Score playerScore) {
 		this.playerScore = playerScore;
-		playerDataChanged();
 	}
 
 	public List<Card> getCardsHeld() {
@@ -179,7 +168,6 @@ public class Player extends Observable implements Serializable {
 
 	public void setCardsHeld(List<Card> cardsHeld) {
 		this.cardsHeld = cardsHeld;
-		playerDataChanged();
 	}
 
 	public String getPlayerName() {
@@ -201,6 +189,14 @@ public class Player extends Observable implements Serializable {
 
 	public void setColor(Color color) {
 		this.color = color;
+	}
+
+	public int getOccupiedTerritories() {
+		return occupiedTerr;
+	}
+
+	public void setOccupiedTerritories(int occupiedTerr) {
+		this.occupiedTerr = occupiedTerr;
 	}
 
 	public void playerDataChanged() {

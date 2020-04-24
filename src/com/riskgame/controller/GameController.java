@@ -82,34 +82,42 @@ public class GameController implements ActionListener {
 	public void actionPerformed(ActionEvent actionEvent) {
 
 		try {
-			this.gamePhase = gameUtility.getNextPhase(this.gamePhase);
-			if (GamePhase.START.equals(this.gamePhase)) {
+			gamePhase = gameUtility.getNextPhase(gamePhase);
+			System.out.println("NEXT PHASE " + gamePhase);
+			if (GamePhase.START.equals(gamePhase)) {
 				System.out.println("************START PHASE************");
 				NewGameView newGameView = new NewGameView();
 				newGameView.launchNewGameFrame();
-			} else if (GamePhase.SETUP.equals(this.gamePhase)) {
+			} else if (GamePhase.SETUP.equals(gamePhase)) {
 
 				System.out.println("************SETUP PHASE**************");
 				initiateBoardAndPlayGame();
 
-			} else if (GamePhase.REINFORCE.equals(this.gamePhase)) {
-
+			} else if (GamePhase.REINFORCE.equals(gamePhase)) {
 				System.out.println("************REINFORCE PHASE**************");
 				board.setGamePhase(GamePhase.REINFORCE);
 				Player activePlayer = board.getActivePlayer();
 				if (PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
-					gameUtility.calculateReinforcementForPlayers(activePlayer,board);
+					activePlayer.setOccupiedTerritories(activePlayer.getCountriesOwned().size());
+					System.out.println("setting occupiedTerritories during reinforcement::"+activePlayer.getCountriesOwned().size());
+					gameUtility.calculateReinforcementForPlayers(activePlayer, board);
 				} else {
 					autoRunReinforceToFortify(activePlayer);
 				}
 
-			} else if (GamePhase.ATTACK.equals(this.gamePhase)) {
+			} else if (GamePhase.ATTACK.equals(gamePhase)) {
+
 				System.out.println("************ATTACK PHASE**************");
 				board.setGamePhase(GamePhase.ATTACK);
 
-			} else if (GamePhase.FORTIFY.equals(this.gamePhase)) {
+			} else if (GamePhase.FORTIFY.equals(gamePhase)) {
+
 				System.out.println("************FORTIFY PHASE**************");
 				board.setGamePhase(GamePhase.FORTIFY);
+
+			} else if (GamePhase.PICKCARD.equals(gamePhase)) {
+				System.out.println("************PICKCARD PHASE**************");
+				board.setGamePhase(GamePhase.PICKCARD);
 			}
 
 		} catch (Exception e) {
@@ -124,7 +132,7 @@ public class GameController implements ActionListener {
 	 */
 	public void initiateBoardAndPlayGame() {
 		try {
-			ArrayList<Card> cardDeck = gameUtility.buildCardDeck(world);
+			List<Card> cardDeck = gameUtility.buildCardDeck(world);
 			System.out.println("Card Deck " + cardDeck.toString());
 
 			// Assign armies for each player
@@ -210,9 +218,9 @@ public class GameController implements ActionListener {
 		try {
 			PlayerStrategy playerStrategy = activePlayer.getPlayerStrategy();
 
-			playerStrategy.runReinforcePhase(activePlayer,board);
-			playerStrategy.runAttackPhase(activePlayer,board);
-			playerStrategy.runFortifyPhase(activePlayer,board);
+			playerStrategy.runReinforcePhase(activePlayer, board);
+			playerStrategy.runAttackPhase(activePlayer, board);
+			playerStrategy.runFortifyPhase(activePlayer, board);
 			this.gamePhase = GamePhase.SETUP;
 			board.getNextPlayer();
 		} catch (Exception e) {
@@ -240,7 +248,27 @@ public class GameController implements ActionListener {
 	public boolean isSavedGame() {
 		return isSavedGame;
 	}
+
 	public Board getBoard() {
 		return this.board;
+	}
+
+	public void handleCardPickUpCase(Board board) {
+		try {
+			System.out.println("Active player picking card");
+			if (board != null && board.getCardDeck() != null && !board.getCardDeck().isEmpty()) {
+				Card card = board.getCardDeck().get(0);
+				board.getActivePlayer().getCardsHeld().add(card);
+				board.getCardDeck().remove(0);
+				System.out.println("Card Deck size after picking card " + board.getCardDeck().size());
+			} else {
+				System.out.println("Card Deck is empty");
+			}
+			board.getNextPlayer();
+			GameController.getInstance().actionPerformed(null);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

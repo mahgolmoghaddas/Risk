@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.riskgame.model.Board;
@@ -69,10 +70,10 @@ public class GameUtility {
 	 * @param world
 	 * @return ArrayList of card for each territory
 	 */
-	public ArrayList<Card> buildCardDeck(World world) {
+	public List<Card> buildCardDeck(World world) {
 		System.out.println("************Building the Territory Card Deck**************");
 		gameLogs.log("***Building the Territory Card Deck****");
-		ArrayList<Card> cardDeck = new ArrayList<Card>();
+		List<Card> cardDeck = new LinkedList<Card>();
 		try {
 			if (world != null) {
 				HashSet<Territory> territorySet = world.getTerritories();
@@ -90,7 +91,10 @@ public class GameUtility {
 					}
 				}
 			}
-			gameLogs.log("*** Territory Card Deck with total "+cardDeck.size()+" territory cards Built****");
+			System.out.println("***Shuffled the card Deck for the Game and set in the board*****");
+			gameLogs.log("***Shuffled the card Deck for the Game and set in the board*****");
+			Collections.shuffle(cardDeck);
+			gameLogs.log("*** Territory Card Deck with total " + cardDeck.size() + " territory cards Built****");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -171,7 +175,7 @@ public class GameUtility {
 		}
 	}
 
-	public int calculateBonusFromContinent(Player player,Board board) {
+	public int calculateBonusFromContinent(Player player, Board board) {
 		int reinforcement = 0;
 		World world = board.getWorld();
 		if (world != null) {
@@ -217,11 +221,11 @@ public class GameUtility {
 		return playersHaveArmies;
 	}
 
-	public void calculateReinforcementForPlayers(Player player,Board board) {
+	public void calculateReinforcementForPlayers(Player player, Board board) {
 		try {
 			int reinforcement = 0;
 			reinforcement = calculateBonusFromOccupiedTerritories(player);
-			reinforcement += calculateBonusFromContinent(player,board);
+			reinforcement += calculateBonusFromContinent(player, board);
 			player.setArmiesHeld(reinforcement);
 			System.out.println("Reinforcement received by player " + player.getName() + "::" + reinforcement);
 		} catch (
@@ -248,7 +252,7 @@ public class GameUtility {
 		return sortedTerritorySet;
 	}
 
-	public HashSet<Territory> getDefenderTerritories(Territory attackerTerritory,Board board) {
+	public HashSet<Territory> getDefenderTerritories(Territory attackerTerritory, Board board) {
 		HashSet<Territory> defenderTerritories = new HashSet<>();
 		try {
 			HashSet<String> neighboursTerr = attackerTerritory.getNeighborsTerritory();
@@ -268,7 +272,7 @@ public class GameUtility {
 		return defenderTerritories;
 	}
 
-	public HashSet<Territory> getDestinationTerritories(Territory sourceTerritory,Board board) {
+	public HashSet<Territory> getDestinationTerritories(Territory sourceTerritory, Board board) {
 		HashSet<Territory> destinationTerritories = new HashSet<>();
 		try {
 			HashSet<String> neighboursTerr = sourceTerritory.getNeighborsTerritory();

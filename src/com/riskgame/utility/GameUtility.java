@@ -32,7 +32,7 @@ public class GameUtility {
 	/**
 	 * This method returns Color as per the playerID
 	 * 
-	 * @param playerCount
+	 * @param playerId
 	 * @return
 	 */
 	public Color getPlayerColorById(int playerId) {

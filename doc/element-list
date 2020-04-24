@@ -1,6 +1,7 @@
 com.riskgame.controller
 com.riskgame.enums
 com.riskgame.model
+com.riskgame.strategy
 com.riskgame.test
 com.riskgame.utility
 com.riskgame.view

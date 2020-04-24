@@ -34,7 +34,7 @@ public class RandomPlayerStrategy extends PlayerStrategy {
 	 * aggressive or conservative player for the single game
 	 * 
 	 * @return
-	 * @throws Exception @param
+	 * @param player
 	 */
 	public PlayerStrategy generateRandomPlayerStrategy(Player player) {
 		PlayerStrategy playerStrategy = null;

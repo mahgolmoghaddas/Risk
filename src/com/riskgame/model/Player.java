@@ -207,5 +207,9 @@ public class Player extends Observable implements Serializable {
 		setChanged();
 		notifyObservers();
 	}
+	
+	public void setPlayerName(String name) {
+		playerName=name;
+	}
 
 }

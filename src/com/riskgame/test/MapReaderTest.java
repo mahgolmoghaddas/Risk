@@ -15,17 +15,41 @@ import static org.junit.Assert.assertTrue;
  *
  */
 public class MapReaderTest {
-    public String path1="map\\World.map";
-    public String path2="map\\WrongMap.map";
+	
+	World world;
+	private String worldName1;
+	private String worldName2;
+	static MapReader map=new MapReader();
+	File mapFile1;
+	File mapFile2;
+	
+	@Before
+	
+	public void beforeCLass() {
+		worldName1="resources//map//World.map";
+		worldName2="resources//map//InvalidMap.map";
+		mapFile1=new File(worldName1);
+		mapFile2=new File(worldName2);
+	}
     @Test
     public void validMapTest() {
-        MapReader map = new MapReader();
-//        assertTrue(map.isValidMap(new World()));
+        
+       try {
+		assertTrue(map.isValidMap(mapFile1));
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
     }
     @Test
-    public void mapg(){
-        MapReader map = new MapReader();
-//       assertFalse(map.isValidMap(new World(), path2));
+    public void InvalidMapTest(){
+        
+      try {
+		assertFalse(map.isValidMap(mapFile2));
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
     }
 
 

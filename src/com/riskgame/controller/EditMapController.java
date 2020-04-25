@@ -50,7 +50,9 @@ public class EditMapController implements ActionListener {
 	public EditMapController(EditMapView editMapView) {
 		this.world=editMapView.world;
 	}
-	
+	public EditMapController() {
+		
+	}
 	
 
 

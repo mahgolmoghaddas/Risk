@@ -11,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * This class provides test cases for MapReader module.
  * 
- * @author Jasmeet
+ * @author Mahgol
  *
  */
 public class MapReaderTest {
@@ -20,12 +20,12 @@ public class MapReaderTest {
     @Test
     public void validMapTest() {
         MapReader map = new MapReader();
-//        assertTrue(map.mapValidity(new World(), path1));
+//        assertTrue(map.isValidMap(new World()));
     }
     @Test
     public void mapg(){
         MapReader map = new MapReader();
-//       assertFalse(map.mapValidity(new World(), path2));
+//       assertFalse(map.isValidMap(new World(), path2));
     }
 
 

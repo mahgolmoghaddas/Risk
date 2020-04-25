@@ -111,7 +111,7 @@ public class PlayerSelectionView extends JPanel {
 				if (playerName == null || playerName.isEmpty()) {
 					playerName = "Player" + i;
 				}
-				Player player = new Player(i, playerName, playerType);
+				Player player = new Player(i, playerName);
 				player.setColor(gameUtility.getPlayerColorById(i));
 				this.playerList.add(player);
 			}

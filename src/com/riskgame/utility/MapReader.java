@@ -43,7 +43,20 @@ public class MapReader {
 		this.mainWindowView=MainWindowView.getInstance();
 	}
 
+public World fileMap(String file) {
+	World world=null;
+	File mapFile=new File(file);
+	try {
+		if (isValidMap(mapFile)) {
+			world = createWorldMap();
 
+		}
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return world;
+}
 
 
 

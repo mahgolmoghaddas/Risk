@@ -145,7 +145,7 @@ public class EditMapController implements ActionListener {
                 			return;
 			
                 		if(inputCountries[0].getNeighborsTerritory().contains(countryAdjacentName)) {
-                			System.out.println(countryAdjacentName+" and "+countryName+" are already neighbors ");
+                			System.out.println("countries specified were already neighbors ");
                 			return;
 			}
 			
@@ -155,7 +155,7 @@ public class EditMapController implements ActionListener {
                 			array.add(countryName);
                 			inputCountries[1].getNeighborsTerritory().addAll(array);
                 			
-                			System.out.println(countryAdjacentName+" and "+countryName+" are now neighbors ");
+                			System.out.println("countries specified are now neighbors ");
                 			loop=false;
                 		}try {
 							viewUtility.createWorldMapTable(world);

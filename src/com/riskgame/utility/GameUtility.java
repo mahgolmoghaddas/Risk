@@ -94,7 +94,6 @@ public class GameUtility {
 				}
 			}
 			System.out.println("***Shuffled the card Deck for the Game and set in the board*****");
-			gameLogs.log("***Shuffled the card Deck for the Game and set in the board*****");
 			Collections.shuffle(cardDeck);
 			gameLogs.log("*** Territory Card Deck with total " + cardDeck.size() + " territory cards Built****");
 		} catch (Exception e) {

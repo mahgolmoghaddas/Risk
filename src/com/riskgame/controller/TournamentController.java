@@ -55,7 +55,7 @@ public class TournamentController {
 								tournamentModel.getTotalTurns());
 						gameResultMap.put("GAME" + j, gameResult);
 					}
-					tournamentResult.put("MAP" + i, gameResultMap);
+					tournamentResult.put("MAP" + (i+1), gameResultMap);
 				}
 				gameLogs.log("Tournament Result " + tournamentResult);
 			} else {
@@ -84,13 +84,17 @@ public class TournamentController {
 			gameLogs.log(" [SETUP PHASE END]");
 
 			gameLogs.log(" [ACTUAL GAME PLAY PHASE START] ");
-			while (turnCount <= maxAllowedTurn && gameUtility.hasPlayerWon(board)) {// Need to add 1 more case here
+			while (turnCount <= maxAllowedTurn) {// Need to add 1 more case here
 				Player activePlayer = board.getActivePlayer();
 				gameLogs.log("############CURRENT PLAYER IS " + activePlayer.getName() + "############");
-				autoRunReinforceToFortify(activePlayer,board);
+				autoRunReinforceToFortify(activePlayer, board);
+				if (gameUtility.hasPlayerWon(board)) {
+					break;
+				}
 				turnCount++;
+
 			}
-			gameLogs.log(" [ACTUAL GAME PLAY PHASE START] ");
+			gameLogs.log(" [ACTUAL GAME PLAY PHASE END] ");
 			System.out.println("Turn COUNT...." + turnCount);
 
 			if (turnCount > maxAllowedTurn) {
@@ -152,7 +156,7 @@ public class TournamentController {
 		}
 	}
 
-	private void autoRunReinforceToFortify(Player activePlayer,Board board) {
+	private void autoRunReinforceToFortify(Player activePlayer, Board board) {
 		try {
 			PlayerStrategy playerStrategy = activePlayer.getPlayerStrategy();
 

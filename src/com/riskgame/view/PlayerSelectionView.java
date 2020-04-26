@@ -105,6 +105,8 @@ public class PlayerSelectionView extends JPanel {
 
 	public ArrayList<Player> getPlayerList() {
 		if (!this.playerNameMap.isEmpty() && !playerTypeMap.isEmpty()) {
+			System.out.println("Total PlayersCount");
+			this.playerList.clear();
 			for (int i = 1; i <= playersCount; i++) {
 				String playerName = playerNameMap.get(i);
 				PlayerType playerType = playerTypeMap.get(i);
@@ -115,7 +117,7 @@ public class PlayerSelectionView extends JPanel {
 				player.setColor(gameUtility.getPlayerColorById(i));
 				this.playerList.add(player);
 			}
-			System.out.println("****Created Player List for the game ********");
+			System.out.println("****Created Player List for the game ********"+playerList.size());
 		} else {
 			System.out.println("Something is null");
 		}

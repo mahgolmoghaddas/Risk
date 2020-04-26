@@ -257,11 +257,12 @@ public class GameController implements ActionListener {
 
 	public void handleCardPickUpCase(Board board) {
 		try {
-			System.out.println("Active player picking card");
+			System.out.println("Active player picking card"+board.getActivePlayer().getPlayerName());
 			if (board != null && board.getCardDeck() != null && !board.getCardDeck().isEmpty()) {
 				Card card = board.getCardDeck().get(0);
 				board.getActivePlayer().getCardsHeld().add(card);
 				board.getCardDeck().remove(0);
+				System.out.println("Active player picked card::"+card.getTerritoryName()+" CardType::"+card.getCardType());
 				System.out.println("Card Deck size after picking card " + board.getCardDeck().size());
 			} else {
 				System.out.println("Card Deck is empty");

@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.riskgame.controller"},{"l":"com.riskgame.enums"},{"l":"com.riskgame.model"},{"l":"com.riskgame.strategy"},{"l":"com.riskgame.test"},{"l":"com.riskgame.utility"},{"l":"com.riskgame.view"}]
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.riskgame.builder"},{"l":"com.riskgame.controller"},{"l":"com.riskgame.enums"},{"l":"com.riskgame.model"},{"l":"com.riskgame.strategy"},{"l":"com.riskgame.test"},{"l":"com.riskgame.utility"},{"l":"com.riskgame.view"}]

@@ -2,7 +2,11 @@ package com.riskgame.utility;
 
 import java.util.Comparator;
 import com.riskgame.model.Territory;
-
+/**
+ * This is the class used for comparison between territories.
+ * @author Jasmeet
+ *
+ */
 public class TerritoriesArmiesComparator implements Comparator<Territory>{
 
 	@Override

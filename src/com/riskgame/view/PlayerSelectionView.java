@@ -15,7 +15,11 @@ import javax.swing.JTextField;
 import com.riskgame.model.Player;
 import com.riskgame.utility.GameUtility;
 import com.riskgame.utility.PlayerType;
-
+/**
+ * This is the class used to keep record of players count and tournament.
+ * @author Jasmeet
+ *
+ */
 public class PlayerSelectionView extends JPanel {
 
 	private GameUtility gameUtility = new GameUtility();

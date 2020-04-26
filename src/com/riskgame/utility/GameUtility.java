@@ -341,4 +341,17 @@ public class GameUtility {
 		return destinationTerritories;
 	}
 
+	/**
+	 * This method checks if the active player has owned all 42 countries
+	 * 
+	 * @param board
+	 * @return
+	 */
+	public boolean hasPlayerWon(Board board) {
+		if (board.getActivePlayer().getCountriesOwned().size() == 42) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

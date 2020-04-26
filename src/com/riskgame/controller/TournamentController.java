@@ -1,3 +1,4 @@
+
 package com.riskgame.controller;
 
 import java.util.ArrayList;
@@ -83,7 +84,7 @@ public class TournamentController {
 			gameLogs.log(" [SETUP PHASE END]");
 
 			gameLogs.log(" [ACTUAL GAME PLAY PHASE START] ");
-			while (turnCount <= maxAllowedTurn) {// Need to add 1 more case here
+			while (turnCount <= maxAllowedTurn && gameUtility.hasPlayerWon(board)) {// Need to add 1 more case here
 				Player activePlayer = board.getActivePlayer();
 				gameLogs.log("############CURRENT PLAYER IS " + activePlayer.getName() + "############");
 				autoRunReinforceToFortify(activePlayer,board);
@@ -95,7 +96,7 @@ public class TournamentController {
 			if (turnCount > maxAllowedTurn) {
 				gameResult = "DRAW";
 			} else {
-				gameResult = "WINNER SOMEBODY";// TODO modify this
+				gameResult = board.getActivePlayer().getPlayerType().toString();
 			}
 
 		} catch (Exception e) {

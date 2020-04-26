@@ -33,6 +33,8 @@ public class Player extends Observable implements Serializable {
 	private int startDiceNo;
 	private PlayerType playerType;
 	private PlayerStrategy playerStrategy;
+	private int occupiedTerritories;
+
 
 	/**
 	 * The parameterized constructor takes player id and name as parameters
@@ -210,6 +212,14 @@ public class Player extends Observable implements Serializable {
 	
 	public void setPlayerName(String name) {
 		playerName=name;
+	}
+	
+	public int getOccupiedTerritories() {
+		return occupiedTerritories;
+	}
+
+	public void setOccupiedTerritories(int occupiedTerritories) {
+		this.occupiedTerritories = occupiedTerritories;
 	}
 
 }

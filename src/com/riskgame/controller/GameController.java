@@ -99,7 +99,8 @@ public class GameController implements ActionListener {
 				Player activePlayer = board.getActivePlayer();
 				if (PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
 					activePlayer.setOccupiedTerritories(activePlayer.getCountriesOwned().size());
-					System.out.println("setting occupiedTerritories during reinforcement::"+activePlayer.getCountriesOwned().size());
+					System.out.println("Setting occupiedTerritories during reinforcement::"
+							+ activePlayer.getCountriesOwned().size());
 					gameUtility.calculateReinforcementForPlayers(activePlayer, board);
 				} else {
 					autoRunReinforceToFortify(activePlayer);

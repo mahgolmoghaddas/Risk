@@ -10,42 +10,27 @@ import java.io.ObjectOutputStream;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.riskgame.builder.GameBuilder;
 import com.riskgame.model.Board;
 import com.riskgame.view.BoardView;
 
 /**
- * This class handles the actions that saves the Game and do the corresponding actions
+ * This class handles the actions that saves the Game and do the corresponding
+ * actions
  * 
- * @author Himani
+ * @author Pushpa
  *
  */
 public class SaveGameController implements ActionListener {
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		
-		FileNameExtensionFilter extFilter = new FileNameExtensionFilter("Serialization  (*.ser)", "*.ser");
-		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setFileFilter(extFilter);
-		fileChooser.setDialogTitle("Specify a file to save");
-		int userSelection = fileChooser.showSaveDialog(BoardView.mainBoardFrame.getContentPane());
-		if (userSelection == JFileChooser.APPROVE_OPTION) {
-			File fileToSave = fileChooser.getSelectedFile();
-			System.out.println("Save as file: " + fileToSave.getAbsolutePath());
-			saveFile(GameController.getInstance().getBoard(), fileToSave);
-			System.out.println("File saved successfully in "+fileToSave.getAbsolutePath());
-		}
+	private GameBuilder gameBuilder;
+
+	public SaveGameController(GameBuilder gameBuilder) {
+		this.gameBuilder = gameBuilder;
 	}
 
-	private void saveFile(Board board, File file) {
-		try {
-			FileOutputStream fileOut = new FileOutputStream(file);
-			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-			out.writeObject(board);
-			out.close();
-			fileOut.close();
-		} catch (IOException i) {
-			i.printStackTrace();
-		}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		this.gameBuilder.saveGame();
 	}
 }

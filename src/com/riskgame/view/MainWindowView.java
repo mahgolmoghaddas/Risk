@@ -17,6 +17,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import com.riskgame.builder.RiskGameBuilder;
 import com.riskgame.controller.GameController;
 import com.riskgame.controller.LoadGameController;
 import com.riskgame.controller.TournamentController;
@@ -117,7 +118,7 @@ public class MainWindowView extends JFrame {
 
 		JMenuItem loadSavedGame = new JMenuItem("Load saved Game");
 		loadSavedGame.setCursor(cursor);
-		loadSavedGame.addActionListener(new LoadGameController());
+		loadSavedGame.addActionListener(new LoadGameController(new RiskGameBuilder()));
 
 		JMenuItem exitMenuItem = new JMenuItem("Exit");
 		exitMenuItem.setCursor(cursor);

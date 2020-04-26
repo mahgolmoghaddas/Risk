@@ -25,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.riskgame.builder.RiskGameBuilder;
 import com.riskgame.controller.GameController;
 import com.riskgame.controller.SaveGameController;
 import com.riskgame.model.Board;
@@ -626,7 +627,7 @@ public class BoardView implements Observer {
 		JButton saveButton = new JButton("Save Game");
 		try {
 			Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
-			saveButton.addActionListener(new SaveGameController());
+			saveButton.addActionListener(new SaveGameController(new RiskGameBuilder()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -56,7 +56,7 @@ public class AggressiveStrategyTest {
 		}
 		countriesOwnedDefender=new HashSet<Territory>(temp);
 }
-	
+	//checks if the attacker army count is less than 1 cannot attack and the result of attack is null
 	
 	@Test
 	public void aggressiveStrategy() {
@@ -69,4 +69,7 @@ public class AggressiveStrategyTest {
 		assertNull(resultOfAttack);
 		
 	}
+	
+	
+	
 }

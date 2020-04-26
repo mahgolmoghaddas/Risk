@@ -20,35 +20,36 @@ import com.riskgame.utility.PlayerType;
 import junit.framework.Assert;
 
 public class PlayerTest {
-	String worldName;
-	World world;
-	MapReader map=new MapReader();
+	static String worldName;
+	static World world;
+	static MapReader map=new MapReader();
 	Player player;
 	AggressivePlayerStrategy aggressive;
 	HashSet<Territory>  countriesOwned;
-	ArrayList<Territory> countries=new ArrayList<Territory>();
+	ArrayList<Territory> temp=new ArrayList<Territory>();
+	
 	@BeforeClass
-	public void beforeClass() {
+	public static void beforeClass() {
 		worldName="resources//map//World.map";
 		world=map.fileMap(worldName);
 	}
 	
 	@Before
 	public void init() {
-	
-	player=new Player(98, "Mahgol", PlayerType.AGGRESIVE);
-
-	player.setCountriesOwned(countriesOwned);
-	countries.add(world.getTerritoryByName("India"));
-	countries.add(world.getTerritoryByName("Alberta"));
-	countries.add(world.getTerritoryByName("Ontario"));
-	countries.add(world.getTerritoryByName("Quebec"));
-	countriesOwned=new HashSet<Territory> (countries);
+		Territory[] countries= {world.getTerritoryByName("India"),world.getTerritoryByName("Alberta"), world.getTerritoryByName("Ontario"),world.getTerritoryByName("Quebec")};
+		for(Territory c:countries) {
+			temp.add(c);
+		}
+		countriesOwned=new HashSet<Territory>(temp);
 	
 }
 	
 	@Test
 	public void PlayerTestMethod() {
+		player=new Player(98, "Mahgol", PlayerType.AGGRESIVE);
+
+		player.setCountriesOwned(countriesOwned);
+		
 		HashSet<Territory> attackerTerritories = player.getCountriesOwned();
 		assertNotNull(attackerTerritories);
 	}

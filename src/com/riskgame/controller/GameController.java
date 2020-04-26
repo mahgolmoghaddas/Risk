@@ -263,7 +263,7 @@ public class GameController implements ActionListener {
 				board.getActivePlayer().getCardsHeld().add(card);
 				board.getCardDeck().remove(0);
 				System.out.println("Active player picked card::"+card.getTerritoryName()+" CardType::"+card.getCardType());
-				System.out.println("Card Deck size after picking card " + board.getCardDeck().size());
+				System.out.println("Card Deck size after picking card " + board.getCardDeck().size()); 
 			} else {
 				System.out.println("Card Deck is empty");
 			}

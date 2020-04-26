@@ -1,6 +1,7 @@
 package com.riskgame.test;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,39 +20,53 @@ import com.riskgame.utility.PlayerType;
 
 public class AggressiveStrategyTest {
 	
-	String worldName;
-	World world;
-	MapReader map=new MapReader();
+	Board board=new Board();
+	static String worldName;
+	static World world;
+	static MapReader map=new MapReader();
 	Player player;
-	Board board;
-	AggressivePlayerStrategy aggressive;
-	HashSet<Territory>  countriesOwned;
-	ArrayList<Territory> countries=new ArrayList<Territory>();
+	AggressivePlayerStrategy aggressive=new AggressivePlayerStrategy();
+	HashSet<Territory>  countriesOwnedAttacker;
+	HashSet<Territory>  countriesOwnedDefender;
+	ArrayList<Territory> temp=new ArrayList<Territory>();
+	
 	@BeforeClass
-	public void beforeClass() {
+	public static void beforeClass() {
 		worldName="resources//map//World.map";
 		world=map.fileMap(worldName);
 	}
 	
 	@Before
 	public void init() {
-	board=new Board();
-	player=new Player(98, "Mahgol", PlayerType.AGGRESIVE);
-
-	player.setCountriesOwned(countriesOwned);
-	countries.add(world.getTerritoryByName("India"));
-	countries.add(world.getTerritoryByName("Alberta"));
-	countries.add(world.getTerritoryByName("Ontario"));
-	countries.add(world.getTerritoryByName("Quebec"));
-	countriesOwned=new HashSet<Territory> (countries);
-	
+		
+		int i=0;
+		Territory[] countriesAttacker= {world.getTerritoryByName("India"),world.getTerritoryByName("Alberta")};
+		for(Territory c:countriesAttacker) {
+			c.setArmyCount(i++);
+			temp.add(c);
+		}
+		countriesOwnedAttacker=new HashSet<Territory>(temp);
+		
+		
+		int j=3;
+		Territory[] countriesDefender= { world.getTerritoryByName("Ontario"),world.getTerritoryByName("Quebec")};
+		for(Territory c:countriesDefender) {
+			c.setArmyCount(j++);
+			temp.add(c);
+		}
+		countriesOwnedDefender=new HashSet<Territory>(temp);
 }
 	
 	
 	@Test
 	public void aggressiveStrategy() {
-		aggressive.runAttackPhase(player, board);
+		Player attacker=new Player(98, "Mahgol", PlayerType.AGGRESIVE);
+		attacker.setCountriesOwned(countriesOwnedAttacker);
+		Player defender=new Player(88, "Sara");
+		defender.setCountriesOwned(countriesOwnedDefender);
+		aggressive.runAttackPhase(attacker ,board);
 		String resultOfAttack=aggressive.attackResult;
-		assertNotNull(resultOfAttack);
+		assertNull(resultOfAttack);
+		
 	}
 }

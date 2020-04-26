@@ -1,3 +1,4 @@
+
 package com.riskgame.controller;
 
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class TournamentController {
 								tournamentModel.getTotalTurns());
 						gameResultMap.put("GAME" + j, gameResult);
 					}
-					tournamentResult.put("MAP" + i, gameResultMap);
+					tournamentResult.put("MAP" + (i+1), gameResultMap);
 				}
 				gameLogs.log("Tournament Result " + tournamentResult);
 			} else {
@@ -86,16 +87,20 @@ public class TournamentController {
 			while (turnCount <= maxAllowedTurn) {// Need to add 1 more case here
 				Player activePlayer = board.getActivePlayer();
 				gameLogs.log("############CURRENT PLAYER IS " + activePlayer.getName() + "############");
-				autoRunReinforceToFortify(activePlayer,board);
+				autoRunReinforceToFortify(activePlayer, board);
+				if (gameUtility.hasPlayerWon(board)) {
+					break;
+				}
 				turnCount++;
+
 			}
-			gameLogs.log(" [ACTUAL GAME PLAY PHASE START] ");
+			gameLogs.log(" [ACTUAL GAME PLAY PHASE END] ");
 			System.out.println("Turn COUNT...." + turnCount);
 
 			if (turnCount > maxAllowedTurn) {
 				gameResult = "DRAW";
 			} else {
-				gameResult = "WINNER SOMEBODY";// TODO modify this
+				gameResult = board.getActivePlayer().getPlayerType().toString();
 			}
 
 		} catch (Exception e) {
@@ -151,7 +156,7 @@ public class TournamentController {
 		}
 	}
 
-	private void autoRunReinforceToFortify(Player activePlayer,Board board) {
+	private void autoRunReinforceToFortify(Player activePlayer, Board board) {
 		try {
 			PlayerStrategy playerStrategy = activePlayer.getPlayerStrategy();
 

@@ -34,8 +34,7 @@ public class CheaterPlayerStrategy extends PlayerStrategy {
 			initializeTransientVariable();
 		}
 		
-		gameLogs.log("***[START] Auto Reinforcement phase for Player " + activePlayer.getPlayerName() + " *****");
-		gameLogs.log("*** RUNNING REINFORCE IN CHEATER MODE*****");
+		gameLogs.log("***[START] Auto Reinforcement phase for Player#CHEATER " + activePlayer.getPlayerName() + " *****");
 		try {
 			gameUtility.calculateReinforcementForPlayers(activePlayer,board);
 			// Sort the activePlayers territory
@@ -79,8 +78,7 @@ public class CheaterPlayerStrategy extends PlayerStrategy {
 			initializeTransientVariable();
 		}
 		
-		gameLogs.log("***[START] Auto Attack phase for Player " + activePlayer.getPlayerName() + " *****");
-		gameLogs.log("*** RUNNING ATTACK IN CHEATER MODE*****");
+		gameLogs.log("***[START] Auto Attack phase for Player##CHEATER" + activePlayer.getPlayerName() + " *****");
 		AttackController attackController = new AttackController();
 		boolean attackedOnce = false;
 		try {
@@ -123,8 +121,6 @@ public class CheaterPlayerStrategy extends PlayerStrategy {
 		}
 
 		System.out.println("***[END] Auto Attack phase for Player " + activePlayer.getPlayerName() + " *****");
-		gameLogs.log("***[END] Auto Attack phase for Player " + activePlayer.getPlayerName() + " *****");
-
 	}
 
 

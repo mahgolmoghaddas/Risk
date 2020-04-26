@@ -158,6 +158,7 @@ public class GameController implements ActionListener {
 	 * allocated for the players in the game.
 	 */
 	public void assignArmiesToPlayer(ArrayList<Player> playerList) throws Exception {
+		System.out.println("Total players in the game:::"+playerList.size());
 		if (playerList != null && !playerList.isEmpty()) {
 			int numberOfArmies = gameUtility.getNumberOfArmiesForEachPlayer(playerList.size());
 			gameLogs.log("[Pre setup phase] Assigning " + numberOfArmies + " armies to each player ");

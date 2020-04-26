@@ -112,8 +112,6 @@ public abstract class PlayerStrategy implements Serializable {
 			e.printStackTrace();
 		}
 		System.out.println("***[END] Auto Fortify phase for Player " + activePlayer.getPlayerName() + " *****");
-		gameLogs.log("***[END] Auto Fortify phase for Player " + activePlayer.getPlayerName() + " *****");
-
 	}
 
 	public abstract void runReinforcePhase(Player player,Board board);

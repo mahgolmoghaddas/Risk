@@ -94,7 +94,6 @@ public class GameUtility {
 				}
 			}
 			System.out.println("***Shuffled the card Deck for the Game and set in the board*****");
-			gameLogs.log("***Shuffled the card Deck for the Game and set in the board*****");
 			Collections.shuffle(cardDeck);
 			gameLogs.log("*** Territory Card Deck with total " + cardDeck.size() + " territory cards Built****");
 		} catch (Exception e) {
@@ -341,4 +340,17 @@ public class GameUtility {
 		return destinationTerritories;
 	}
 
+	/**
+	 * This method checks if the active player has owned all 42 countries
+	 * 
+	 * @param board
+	 * @return
+	 */
+	public boolean hasPlayerWon(Board board) {
+		if (board.getActivePlayer().getCountriesOwned().size() == 42) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

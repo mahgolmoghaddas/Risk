@@ -48,6 +48,7 @@ public class BoardView implements Observer {
 
 	private Board board;
 	private ViewUtility viewUtility = new ViewUtility();
+	GameUtility gameUtility = new GameUtility();
 	public static JFrame mainBoardFrame;
 	DicePanel diceRollPanel;
 	JPanel finishSetupPanel;
@@ -117,7 +118,7 @@ public class BoardView implements Observer {
 		if (o instanceof Board) {
 			board = (Board) o;
 
-			if (!GamePhase.SETUP.equals(GameController.getInstance().getGamePhase()) && hasPlayerWon(board)) {
+			if (!GamePhase.SETUP.equals(GameController.getInstance().getGamePhase()) && gameUtility.hasPlayerWon(board)) {
 				JOptionPane.showMessageDialog(mainBoardFrame, board.getActivePlayer().getName() + " has won the game.");
 			} else {
 				if (GamePhase.SETUP.equals(GameController.getInstance().getGamePhase())) {
@@ -136,19 +137,6 @@ public class BoardView implements Observer {
 		}
 	}
 
-	/**
-	 * This method checks if the active player has owned all 42 countries
-	 * 
-	 * @param board
-	 * @return
-	 */
-	public boolean hasPlayerWon(Board board) {
-		if (board.getActivePlayer().getCountriesOwned().size() == 42) {
-			return true;
-		} else {
-			return false;
-		}
-	}
 
 	/**
 	 * This method displays the board view as per the Board data which includes

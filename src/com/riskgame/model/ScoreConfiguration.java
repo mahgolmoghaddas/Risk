@@ -5,18 +5,24 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
+
 /**
- * This class provides the data for getting bonus score as per the number of territories occupied by the player. It also provides the winningCriteria for the game
+ * This class provides the data for getting bonus score as per the number of
+ * territories occupied by the player. It also provides the winningCriteria for
+ * the game
+ * 
  * @author gauta
  *
  */
-public class ScoreConfiguration implements Serializable{
+public class ScoreConfiguration implements Serializable {
 
 	private static final long serialVersionUID = 4655217509828827732L;
 
 	private static HashMap<String, Integer> territoryReinforcementMap;
-	
-	private static HashMap<Integer,Integer> winnigCriteria;
+
+	private static HashMap<Integer, Integer> winnigCriteria;
+
+	private static HashMap<String, Integer> cardReinforcementBonusMap;
 
 	static {
 		territoryReinforcementMap = new HashMap<>();
@@ -31,6 +37,13 @@ public class ScoreConfiguration implements Serializable{
 		territoryReinforcementMap.put("33-35", 11);
 		territoryReinforcementMap.put("36-38", 12);
 		territoryReinforcementMap.put("39-41", 13);
+
+		cardReinforcementBonusMap = new HashMap<>();
+		cardReinforcementBonusMap.put("Infantry", 4);
+		cardReinforcementBonusMap.put("Cavalry", 6);
+		cardReinforcementBonusMap.put("Artillery", 8);
+		cardReinforcementBonusMap.put("All", 10);
+
 	}
 
 	public int getOccupiedTerritoryBonus(int occupiedTerritories) {
@@ -66,4 +79,7 @@ public class ScoreConfiguration implements Serializable{
 		return reinforcement;
 	}
 
+	public static int getCardBonus(String cardType) {
+		return cardReinforcementBonusMap.get(cardType);
+	}
 }

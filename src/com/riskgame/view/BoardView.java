@@ -5,35 +5,36 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.imageio.ImageIO;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.plaf.basic.BasicButtonUI;
 
 import com.riskgame.controller.GameController;
 import com.riskgame.controller.SaveGameController;
 import com.riskgame.model.Board;
+import com.riskgame.model.Card;
 import com.riskgame.model.Player;
 import com.riskgame.model.Territory;
+import com.riskgame.utility.CardType;
 import com.riskgame.utility.DiceType;
 import com.riskgame.utility.GamePhase;
+import com.riskgame.utility.GameUtility;
 import com.riskgame.utility.ViewUtility;
 
 /**
@@ -61,6 +62,7 @@ public class BoardView implements Observer {
 	JButton saveGameButton;
 	JButton pickUpCardButton;
 	JButton cardTradeButton;
+	JPanel cardPanel;
 
 	Map<Integer, JTextField> armiesField = new HashMap<>();
 	Map<Integer, JLabel> diceList = new HashMap<>();
@@ -114,19 +116,37 @@ public class BoardView implements Observer {
 	public void update(Observable o, Object arg) {
 		if (o instanceof Board) {
 			board = (Board) o;
-			if (GamePhase.SETUP.equals(GameController.getInstance().getGamePhase())) {
-				if (saveGameButton != null) {
-					saveGameButton.setVisible(false);
-				}
+
+			if (!GamePhase.SETUP.equals(GameController.getInstance().getGamePhase()) && hasPlayerWon(board)) {
+				JOptionPane.showMessageDialog(mainBoardFrame, board.getActivePlayer().getName() + " has won the game.");
 			} else {
+				if (GamePhase.SETUP.equals(GameController.getInstance().getGamePhase())) {
+					if (saveGameButton != null) {
+						saveGameButton.setVisible(false);
+					}
+				} else {
 
-				if (saveGameButton != null) {
-					saveGameButton.setVisible(true);
+					if (saveGameButton != null) {
+						saveGameButton.setVisible(true);
+					}
 				}
+				mainBoardFrame.revalidate();
+				executeByPhase(board);
 			}
-			mainBoardFrame.revalidate();
-			executeByPhase(board);
+		}
+	}
 
+	/**
+	 * This method checks if the active player has owned all 42 countries
+	 * 
+	 * @param board
+	 * @return
+	 */
+	public boolean hasPlayerWon(Board board) {
+		if (board.getActivePlayer().getCountriesOwned().size() == 42) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -231,6 +251,9 @@ public class BoardView implements Observer {
 			if (cardTradeButton != null) {
 				mainBoardFrame.remove(cardTradeButton);
 			}
+			if (cardPanel != null) {
+				mainBoardFrame.remove(cardPanel);
+			}
 			if (messagePanel != null && messagePanel.getComponents().length > 0) {
 				messagePanel.removeAll();
 				mainBoardFrame.remove(messagePanel);
@@ -243,7 +266,26 @@ public class BoardView implements Observer {
 
 			cardTradeButton = new JButton("Trade Card");
 			cardTradeButton.addActionListener(actionEvent -> {
+				Player player = board.getActivePlayer();
+				if (player.getCardsHeld() != null && !player.getCardsHeld().isEmpty()) {
+					if (cardPanel != null) {
+						mainBoardFrame.remove(cardPanel);
+					}
+					createCardPanel(board);
+					mainBoardFrame.add(cardPanel);
+					mainBoardFrame.repaint();
+					mainBoardFrame.revalidate();
+				} else {
+					if (messagePanel != null && messagePanel.getComponents().length > 0) {
+						messagePanel.removeAll();
+						mainBoardFrame.remove(messagePanel);
+					}
 
+					messagePanel = createMessagePanel(updateMessage("Players has no card to trade"));
+					mainBoardFrame.add(messagePanel);
+					mainBoardFrame.repaint();
+					mainBoardFrame.revalidate();
+				}
 			});
 
 			mainBoardFrame.add(cardTradeButton);
@@ -254,6 +296,85 @@ public class BoardView implements Observer {
 
 		Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void createCardPanel(Board board) {
+
+		DefaultListModel<String> infantryModel = new DefaultListModel<>();
+		DefaultListModel<String> artilleryModel = new DefaultListModel<>();
+		DefaultListModel<String> cavalryModel = new DefaultListModel<>();
+		Player player = board.getActivePlayer();
+		if (player.getCardsHeld() != null && !player.getCardsHeld().isEmpty()) {
+			for (Card card : player.getCardsHeld()) {
+				if (CardType.INFANTRY.equals(card.getCardType())) {
+					infantryModel.addElement(card.getTerritoryName());
+				} else if (CardType.CAVALRY.equals(card.getCardType())) {
+					artilleryModel.addElement(card.getTerritoryName());
+				} else {
+					cavalryModel.addElement(card.getTerritoryName());
+				}
+			}
+
+			JList<String> infantryList = new JList<>(infantryModel);
+			JList<String> artilleryList = new JList<>(artilleryModel);
+			JList<String> cavalryList = new JList<>(cavalryModel);
+			infantryList.setBounds(100, 100, 75, 75);
+			artilleryList.setBounds(100, 100, 75, 75);
+			cavalryList.setBounds(100, 100, 75, 75);
+
+			JButton tradeCardButton = new JButton("Trade");
+			tradeCardButton.addActionListener(actionEvent -> {
+
+				if (messagePanel != null && messagePanel.getComponents().length > 0) {
+					messagePanel.removeAll();
+					mainBoardFrame.remove(messagePanel);
+				}
+
+				Map<CardType, List<String>> cardDetails = new HashMap<>();
+				List<String> infantryCards = new ArrayList<>();
+				List<String> cavalryCards = new ArrayList<>();
+				List<String> artilleryCards = new ArrayList<>();
+				if (infantryList.getSelectedIndex() != -1) {
+					infantryCards = infantryList.getSelectedValuesList();
+				}
+				if (artilleryList.getSelectedIndex() != -1) {
+					artilleryCards = artilleryList.getSelectedValuesList();
+				}
+				if (cavalryList.getSelectedIndex() != -1) {
+					cavalryCards = cavalryList.getSelectedValuesList();
+				}
+				int totalSelectedSize = infantryCards.size() + artilleryCards.size() + cavalryCards.size();
+
+				if (totalSelectedSize != 3) {
+					// append message panel here
+					messagePanel = createMessagePanel(updateMessage("You need 3 cards to trade."));
+					mainBoardFrame.add(messagePanel);
+					mainBoardFrame.revalidate();
+				} else {
+					if (!infantryCards.isEmpty()) {
+						cardDetails.put(CardType.INFANTRY, infantryCards);
+					}
+					if (!artilleryCards.isEmpty()) {
+						cardDetails.put(CardType.ARTILLERY, artilleryCards);
+					}
+					if (!cavalryCards.isEmpty()) {
+						cardDetails.put(CardType.CAVALRY, cavalryCards);
+					}
+					System.out.println("Calculating Bonus from Cards");
+					new GameUtility().calculateBonusFromCards(cardDetails, board);
+				}
+
+			});
+
+			cardPanel = new JPanel();
+			cardPanel.add(new JLabel("Infantry:"));
+			cardPanel.add(infantryList);
+			cardPanel.add(new JLabel("Cavalry:"));
+			cardPanel.add(cavalryList);
+			cardPanel.add(new JLabel("Artillery:"));
+			cardPanel.add(artilleryList);
+			cardPanel.add(tradeCardButton);
 		}
 	}
 
@@ -278,7 +399,9 @@ public class BoardView implements Observer {
 			if (cardTradeButton != null) {
 				mainBoardFrame.remove(cardTradeButton);
 			}
-
+			if (cardPanel != null) {
+				mainBoardFrame.remove(cardPanel);
+			}
 			attackPanel = new AttackPanelView(board);
 			Dimension dim = new Dimension();
 			dim.setSize(mainBoardFrame.getWidth() - 350, 90);
@@ -521,4 +644,35 @@ public class BoardView implements Observer {
 		}
 		return saveButton;
 	}
+
+	public void createPlayersCard(Board board) {
+		JComboBox infantryCards = new JComboBox();
+		JComboBox cavalryCards = new JComboBox();
+		JComboBox artilleryCards = new JComboBox();
+
+		try {
+			infantryCards.addItem("SELECT");
+			cavalryCards.addItem("SELECT");
+			artilleryCards.addItem("SELECT");
+
+			if (board != null && board.getActivePlayer() != null) {
+				Player activePlayer = board.getActivePlayer();
+				List<Card> playerCards = activePlayer.getCardsHeld();
+
+				if (playerCards != null && playerCards.size() >= 3) {
+
+					for (Card card : playerCards) {
+						// show view here
+					}
+
+				} else {
+					System.out.println("Insufficient cards for trading");
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }

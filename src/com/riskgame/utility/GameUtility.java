@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.riskgame.model.Board;
 import com.riskgame.model.Card;
@@ -203,9 +205,56 @@ public class GameUtility {
 
 	}
 
-	public int calculateBonusFromCards() {
+	public void calculateBonusFromCards(Map<CardType, List<String>> tradedCards, Board board) {
+
 		int reinforcement = 0;
-		return reinforcement;
+		try {
+			System.out.println("Calculating and assining Bonus From Traded cards to player");
+			if (tradedCards != null && !tradedCards.isEmpty()) {
+
+				if (tradedCards.size() == 1) {
+					CardType cardType = tradedCards.keySet().iterator().next();
+					reinforcement = ScoreConfiguration.getCardBonus(cardType.getCardTypeValue());
+				} else if (tradedCards.size() == 3) {
+					reinforcement = ScoreConfiguration.getCardBonus("All");
+				} else {
+					System.out.println("Neither set of 3 cards nor all 3 cards are same");
+				}
+
+				System.out.println("Reinforcement Bonus from traded cards " + reinforcement);
+				World world = board.getWorld();
+				Player activePlayer = board.getActivePlayer();
+				int armiesHeld = activePlayer.getArmiesHeld();
+				activePlayer.setArmiesHeld(armiesHeld + reinforcement);
+
+				Iterator<Entry<CardType, List<String>>> cardIterator = tradedCards.entrySet().iterator();
+				boolean allocatedTerrBonus = false;
+				while (cardIterator.hasNext()) {
+
+					Entry<CardType, List<String>> entry = cardIterator.next();
+
+					List<String> territoryList = entry.getValue();
+					for (int i = 0; i <= territoryList.size(); i++) {
+
+						Territory territory = world.getTerritoryByName(territoryList.get(i));
+						if (activePlayer.getCountriesOwned().contains(territory)) {
+							System.out.println(territory.getCountryName() + " is owned by "
+									+ activePlayer.getPlayerName() + ". Autoplacing 2 armies in this territory");
+							int armyCnt = territory.getArmyCount();
+							territory.setArmyCount(armyCnt + 2);
+							allocatedTerrBonus = true;
+							break;
+						}
+					}
+					if (allocatedTerrBonus) {
+						break;
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public boolean playersHaveArmies(Board board) {

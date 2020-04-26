@@ -20,7 +20,7 @@ import com.riskgame.utility.PlayerType;
  * @version 1.0.0.0
  */
 public class Player extends Observable implements Serializable {
-	
+
 	private static final long serialVersionUID = -2061369666732092915L;
 	private int playerId;
 	private String playerName;
@@ -33,6 +33,7 @@ public class Player extends Observable implements Serializable {
 	private int startDiceNo;
 	private PlayerType playerType;
 	private PlayerStrategy playerStrategy;
+	private int occupiedTerritories;
 
 	/**
 	 * The parameterized constructor takes player id and name as parameters
@@ -207,9 +208,16 @@ public class Player extends Observable implements Serializable {
 		setChanged();
 		notifyObservers();
 	}
-	
+
 	public void setPlayerName(String name) {
-		playerName=name;
+		playerName = name;
 	}
 
+	public int getOccupiedTerritories() {
+		return occupiedTerritories;
+	}
+
+	public void setOccupiedTerritories(int occupiedTerritories) {
+		this.occupiedTerritories = occupiedTerritories;
+	}
 }

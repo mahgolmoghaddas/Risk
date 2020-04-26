@@ -26,7 +26,7 @@ public class AggressivePlayerStrategy extends PlayerStrategy {
 	private transient GameUtility gameUtility = new GameUtility();
 	private transient DiceUtility diceUtility = new DiceUtility();
 	transient GameLogs gameLogs = GameLogs.getInstance();
-
+	public String attackResult;
 		
 	@Override
 	public void runReinforcePhase(Player activePlayer,Board board) {
@@ -105,7 +105,7 @@ public class AggressivePlayerStrategy extends PlayerStrategy {
 								NavigableSet<Integer> attackerDiceRoll = diceUtility.autoRollDice(3);
 								NavigableSet<Integer> defenderDiceRoll = diceUtility.autoRollDice(2);
 
-								String attackResult = attackController.decideAttackWinner(attacker, attackerDiceRoll,
+								attackResult = attackController.decideAttackWinner(attacker, attackerDiceRoll,
 										defender, defenderDiceRoll);
 								gameLogs.log("Attack Result::" + attackResult);
 							} else {

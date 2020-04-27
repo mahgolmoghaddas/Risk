@@ -73,6 +73,7 @@ public class ScoreConfiguration implements Serializable {
 
 			System.out
 					.println("Reinforcement for Occupied Territories " + occupiedTerritories + " is " + reinforcement);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

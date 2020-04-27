@@ -43,7 +43,7 @@ public class AggressivePlayerStrategy extends PlayerStrategy {
 			// Sort the activePlayers territory
 			HashSet<Territory> playersTerritorySet = activePlayer.getCountriesOwned();
 			playersTerritorySet = gameUtility.sortTerritoryByArmiesASC(playersTerritorySet);
-
+			gameLogs.log("Armies received for reinforcement:::"+activePlayer.getArmiesHeld());
 			if (playersTerritorySet != null && !playersTerritorySet.isEmpty()) {
 				Iterator<Territory> playersTerritoryIterator = playersTerritorySet.iterator();
 				while (playersTerritoryIterator.hasNext()) {

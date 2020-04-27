@@ -3,6 +3,7 @@ package com.riskgame.utility;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -226,33 +227,38 @@ public class GameUtility {
 				int armiesHeld = activePlayer.getArmiesHeld();
 				activePlayer.setArmiesHeld(armiesHeld + reinforcement);
 
-				Iterator<Entry<CardType, List<String>>> cardIterator = tradedCards.entrySet().iterator();
-				boolean allocatedTerrBonus = false;
-				while (cardIterator.hasNext()) {
-
-					Entry<CardType, List<String>> entry = cardIterator.next();
-
-					List<String> territoryList = entry.getValue();
-					for (int i = 0; i <= territoryList.size(); i++) {
-
-						Territory territory = world.getTerritoryByName(territoryList.get(i));
-						if (activePlayer.getCountriesOwned().contains(territory)) {
-							System.out.println(territory.getCountryName() + " is owned by "
-									+ activePlayer.getPlayerName() + ". Autoplacing 2 armies in this territory");
-							int armyCnt = territory.getArmyCount();
-							territory.setArmyCount(armyCnt + 2);
-							allocatedTerrBonus = true;
-							break;
-						}
-					}
-					if (allocatedTerrBonus) {
-						break;
-					}
-				}
+				bonusForTradedCardsTerritory(tradedCards, world, activePlayer);
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void bonusForTradedCardsTerritory(Map<CardType, List<String>> tradedCards, World world,
+			Player activePlayer) {
+		Iterator<Entry<CardType, List<String>>> cardIterator = tradedCards.entrySet().iterator();
+		boolean allocatedTerrBonus = false;
+		while (cardIterator.hasNext()) {
+
+			Entry<CardType, List<String>> entry = cardIterator.next();
+
+			List<String> territoryList = entry.getValue();
+			for (int i = 0; i <= territoryList.size(); i++) {
+
+				Territory territory = world.getTerritoryByName(territoryList.get(i));
+				if (activePlayer.getCountriesOwned().contains(territory)) {
+					System.out.println(territory.getCountryName() + " is owned by " + activePlayer.getPlayerName()
+							+ ". Autoplacing 2 armies in this territory");
+					int armyCnt = territory.getArmyCount();
+					territory.setArmyCount(armyCnt + 2);
+					allocatedTerrBonus = true;
+					break;
+				}
+			}
+			if (allocatedTerrBonus) {
+				break;
+			}
 		}
 	}
 
@@ -273,9 +279,11 @@ public class GameUtility {
 		try {
 			int reinforcement = 0;
 			reinforcement = calculateBonusFromOccupiedTerritories(player);
+			gameLogs.log("Reinforcement received by Territories" + reinforcement);
 			reinforcement += calculateBonusFromContinent(player, board);
 			player.setArmiesHeld(reinforcement);
 			System.out.println("Reinforcement received by player " + player.getName() + "::" + reinforcement);
+			gameLogs.log("Reinforcement received by player " + player.getName() + "::" + reinforcement);
 		} catch (
 
 		Exception e) {
@@ -351,6 +359,92 @@ public class GameUtility {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	public void tradeCardAutomatically(Board board) {
+		try {
+			Player player = board.getActivePlayer();
+			if (player.getCardsHeld() != null && !player.getCardsHeld().isEmpty()
+					&& player.getCardsHeld().size() >= 3) {
+				boolean isCardTraded = false;
+				int reinforcement = 0;
+				List<Card> infantryCards = new ArrayList<>();
+				List<Card> cavalryCards = new ArrayList<>();
+				List<Card> artilleryCards = new ArrayList<>();
+				List<Card> tradedCards = new ArrayList<>();
+
+				for (Card card : player.getCardsHeld()) {
+					if (card.getCardType().equals(CardType.INFANTRY)) {
+						infantryCards.add(card);
+					}
+					if (card.getCardType().equals(CardType.CAVALRY)) {
+						cavalryCards.add(card);
+					}
+					if (card.getCardType().equals(CardType.ARTILLERY)) {
+						artilleryCards.add(card);
+					}
+				}
+				if (infantryCards.size() > 0 && cavalryCards.size() > 0 && artilleryCards.size() > 0) {
+					reinforcement = ScoreConfiguration.getCardBonus("All");
+					tradedCards.add(infantryCards.get(0));
+					tradedCards.add(artilleryCards.get(0));
+					tradedCards.add(cavalryCards.get(0));
+					isCardTraded = true;
+				} else {
+					if (artilleryCards.size() >= 3) {
+						reinforcement = ScoreConfiguration.getCardBonus(CardType.ARTILLERY.getCardTypeValue());
+						tradedCards.add(artilleryCards.get(0));
+						tradedCards.add(artilleryCards.get(1));
+						tradedCards.add(artilleryCards.get(2));
+						isCardTraded = true;
+					} else if (cavalryCards.size() >= 3) {
+						reinforcement = ScoreConfiguration.getCardBonus(CardType.CAVALRY.getCardTypeValue());
+						tradedCards.add(cavalryCards.get(0));
+						tradedCards.add(cavalryCards.get(1));
+						tradedCards.add(cavalryCards.get(2));
+						isCardTraded = true;
+					} else if (infantryCards.size() >= 3) {
+						reinforcement = ScoreConfiguration.getCardBonus(CardType.INFANTRY.getCardTypeValue());
+						tradedCards.add(infantryCards.get(0));
+						tradedCards.add(infantryCards.get(1));
+						tradedCards.add(infantryCards.get(2));
+						isCardTraded = true;
+					} else {
+						System.out.println("Neither set of 3 cards nor all 3 cards are same");
+						gameLogs.log("Neither set of 3 cards nor all 3 cards are same");
+					}
+				}
+				gameLogs.log("BONUS FROM TRADED CARDS " + reinforcement);
+				System.out.println("BONUS FROM TRADED CARDS " + reinforcement);
+				System.out.println("Players card before trading " + player.getCardsHeld().size());
+				if (isCardTraded) {
+					player.getCardsHeld().removeAll(tradedCards);
+					System.out.println("Players card after trading " + player.getCardsHeld().size());
+				}
+			} else {
+				System.out.println(board.getActivePlayer().getPlayerName() + " doesnt have enough cards for trading");
+				gameLogs.log(board.getActivePlayer().getPlayerName() + " doesnt have enough cards for trading");
+			}
+		} catch (Exception e) {
+		}
+	}
+
+	public void handleCardPickUpCase(Board board) {
+		try {
+			System.out.println("Active player picking card" + board.getActivePlayer().getPlayerName());
+			if (board != null && board.getCardDeck() != null && !board.getCardDeck().isEmpty()) {
+				Card card = board.getCardDeck().get(0);
+				board.getActivePlayer().getCardsHeld().add(card);
+				board.getCardDeck().remove(0);
+				System.out.println(
+						"Active player picked card::" + card.getTerritoryName() + " CardType::" + card.getCardType());
+				System.out.println("Card Deck size after picking card " + board.getCardDeck().size());
+			} else {
+				System.out.println("Card Deck is empty");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

@@ -119,7 +119,8 @@ public class BoardView implements Observer {
 		if (o instanceof Board) {
 			board = (Board) o;
 
-			if (!GamePhase.SETUP.equals(GameController.getInstance().getGamePhase()) && gameUtility.hasPlayerWon(board)) {
+			if (!GamePhase.SETUP.equals(GameController.getInstance().getGamePhase())
+					&& gameUtility.hasPlayerWon(board)) {
 				JOptionPane.showMessageDialog(mainBoardFrame, board.getActivePlayer().getName() + " has won the game.");
 			} else {
 				if (GamePhase.SETUP.equals(GameController.getInstance().getGamePhase())) {
@@ -137,7 +138,6 @@ public class BoardView implements Observer {
 			}
 		}
 	}
-
 
 	/**
 	 * This method displays the board view as per the Board data which includes
@@ -391,6 +391,10 @@ public class BoardView implements Observer {
 			if (cardPanel != null) {
 				mainBoardFrame.remove(cardPanel);
 			}
+			if (reinforceButton != null) {
+				messagePanel.remove(reinforceButton);
+			}
+
 			attackPanel = new AttackPanelView(board);
 			Dimension dim = new Dimension();
 			dim.setSize(mainBoardFrame.getWidth() - 350, 90);
@@ -484,15 +488,15 @@ public class BoardView implements Observer {
 					+ " post attack OccupiedTerritories::" + occupiedTerritoryAfterAttack);
 			if (board.getActivePlayer().getOccupiedTerritories() < occupiedTerritoryAfterAttack) {
 				board.getActivePlayer().setOccupiedTerritories(occupiedTerritoryAfterAttack);
-				GameController.getInstance().handleCardPickUpCase(board);
+				gameUtility.handleCardPickUpCase(board);
 			} else {
 				messagePanel = createMessagePanel(updateMessage("No new territories occupied.You cannot draw card"));
 				mainBoardFrame.add(messagePanel);
 				mainBoardFrame.repaint();
 				mainBoardFrame.revalidate();
-				board.getNextPlayer();
-				GameController.getInstance().actionPerformed(null);
 			}
+			board.getNextPlayer();
+			GameController.getInstance().actionPerformed(null);
 		});
 		mainBoardFrame.add(pickUpCardButton);
 		mainBoardFrame.revalidate();

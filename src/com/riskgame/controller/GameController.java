@@ -3,9 +3,11 @@ package com.riskgame.controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.riskgame.model.Board;
 import com.riskgame.model.Card;
@@ -17,6 +19,7 @@ import com.riskgame.model.Territory;
 import com.riskgame.model.TurnManager;
 import com.riskgame.model.World;
 import com.riskgame.strategy.PlayerStrategy;
+import com.riskgame.utility.CardType;
 import com.riskgame.utility.GamePhase;
 import com.riskgame.utility.GameUtility;
 import com.riskgame.utility.PlayerType;
@@ -97,10 +100,11 @@ public class GameController implements ActionListener {
 				System.out.println("************REINFORCE PHASE**************");
 				board.setGamePhase(GamePhase.REINFORCE);
 				Player activePlayer = board.getActivePlayer();
+				activePlayer.setOccupiedTerritories(activePlayer.getCountriesOwned().size());
+				System.out.println(
+						"Setting occupiedTerritories during reinforcement::" + activePlayer.getCountriesOwned().size());
+
 				if (PlayerType.HUMAN.equals(activePlayer.getPlayerType())) {
-					activePlayer.setOccupiedTerritories(activePlayer.getCountriesOwned().size());
-					System.out.println("Setting occupiedTerritories during reinforcement::"
-							+ activePlayer.getCountriesOwned().size());
 					gameUtility.calculateReinforcementForPlayers(activePlayer, board);
 				} else {
 					autoRunReinforceToFortify(activePlayer);
@@ -158,7 +162,7 @@ public class GameController implements ActionListener {
 	 * allocated for the players in the game.
 	 */
 	public void assignArmiesToPlayer(ArrayList<Player> playerList) throws Exception {
-		System.out.println("Total players in the game:::"+playerList.size());
+		System.out.println("Total players in the game:::" + playerList.size());
 		if (playerList != null && !playerList.isEmpty()) {
 			int numberOfArmies = gameUtility.getNumberOfArmiesForEachPlayer(playerList.size());
 			gameLogs.log("[Pre setup phase] Assigning " + numberOfArmies + " armies to each player ");
@@ -219,10 +223,21 @@ public class GameController implements ActionListener {
 	public void autoRunReinforceToFortify(Player activePlayer) {
 		try {
 			PlayerStrategy playerStrategy = activePlayer.getPlayerStrategy();
-
+			
+			gameUtility.tradeCardAutomatically(board);
 			playerStrategy.runReinforcePhase(activePlayer, board);
 			playerStrategy.runAttackPhase(activePlayer, board);
 			playerStrategy.runFortifyPhase(activePlayer, board);
+			int occupiedTerritoryAfterAttack = activePlayer.getCountriesOwned().size();
+			System.out.println("Pre attack occupiedTerritories " + board.getActivePlayer().getOccupiedTerritories()
+					+ " post attack OccupiedTerritories::" + occupiedTerritoryAfterAttack);
+			if (activePlayer.getOccupiedTerritories() < occupiedTerritoryAfterAttack) {
+				activePlayer.setOccupiedTerritories(occupiedTerritoryAfterAttack);
+				System.out.println("****AUTOMATICALLY PICK CARD*****");
+				gameUtility.handleCardPickUpCase(board);
+			} else {
+				System.out.println("***Cannot withdraw cards***");
+			}
 			this.gamePhase = GamePhase.SETUP;
 			board.getNextPlayer();
 		} catch (Exception e) {
@@ -253,25 +268,5 @@ public class GameController implements ActionListener {
 
 	public Board getBoard() {
 		return this.board;
-	}
-
-	public void handleCardPickUpCase(Board board) {
-		try {
-			System.out.println("Active player picking card"+board.getActivePlayer().getPlayerName());
-			if (board != null && board.getCardDeck() != null && !board.getCardDeck().isEmpty()) {
-				Card card = board.getCardDeck().get(0);
-				board.getActivePlayer().getCardsHeld().add(card);
-				board.getCardDeck().remove(0);
-				System.out.println("Active player picked card::"+card.getTerritoryName()+" CardType::"+card.getCardType());
-				System.out.println("Card Deck size after picking card " + board.getCardDeck().size()); 
-			} else {
-				System.out.println("Card Deck is empty");
-			}
-			board.getNextPlayer();
-			GameController.getInstance().actionPerformed(null);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 }

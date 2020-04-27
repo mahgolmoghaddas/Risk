@@ -3,7 +3,10 @@ package com.riskgame.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.riskgame.model.Board;
 import com.riskgame.model.Card;
@@ -17,6 +20,8 @@ import com.riskgame.utility.GameUtility;
 import com.riskgame.view.TournamentPhaseView;
 import com.riskgame.view.TournamentView;
 
+import sun.net.www.content.image.gif;
+
 /**
  * This class handles the Tournament mode Implementation for the Game
  * 
@@ -28,7 +33,7 @@ public class TournamentController {
 	private GameLogs gameLogs = GameLogs.getInstance();
 	private GameController gameController = GameController.getInstance();
 	private GameUtility gameUtility = new GameUtility();
-	private HashMap<String, HashMap<String, String>> tournamentResult = new HashMap<>();
+	private HashMap<String, HashMap<String, String>> tournamentResult = new LinkedHashMap<>();
 	DiceUtility diceUtility = new DiceUtility();
 
 	public void displayTournamentOptions() {
@@ -45,19 +50,23 @@ public class TournamentController {
 					&& tournamentModel.getTotalTurns() >= 10) {
 
 				for (int i = 0; i < tournamentModel.getWorldList().size(); i++) {
-					gameResultMap = new HashMap<>();
+					gameResultMap = new LinkedHashMap<>();
 					World world = tournamentModel.getWorldList().get(i);
 					for (int j = 1; j <= tournamentModel.getNoOfGame(); j++) {
 
 						gameLogs.log("****STARTED GAME " + j + " FOR MAP " + (i + 1));
+						ArrayList<Player> playerList = tournamentModel.getPlayerList();
+						if (j > 1) {
+							playerList = resetPlayerData(playerList);
+						}
 
-						String gameResult = startGame(tournamentModel.getPlayerList(), world,
-								tournamentModel.getTotalTurns());
+						String gameResult = startGame(playerList, world, tournamentModel.getTotalTurns());
 						gameResultMap.put("GAME" + j, gameResult);
 					}
-					tournamentResult.put("MAP" + (i+1), gameResultMap);
+					tournamentResult.put("MAP" + (i + 1), gameResultMap);
 				}
-				gameLogs.log("Tournament Result " + tournamentResult);
+				gameLogs.log("*****************Tournament Result *******************");
+				printResult(tournamentResult);
 			} else {
 				gameLogs.log("Required data for the tournament not provided.....");
 			}
@@ -160,14 +169,69 @@ public class TournamentController {
 		try {
 			PlayerStrategy playerStrategy = activePlayer.getPlayerStrategy();
 
+			gameUtility.tradeCardAutomatically(board);
 			playerStrategy.runReinforcePhase(activePlayer, board);
 			playerStrategy.runAttackPhase(activePlayer, board);
 			playerStrategy.runFortifyPhase(activePlayer, board);
+
+			int occupiedTerritoryAfterAttack = activePlayer.getCountriesOwned().size();
+			System.out.println("Pre attack occupiedTerritories " + board.getActivePlayer().getOccupiedTerritories()
+					+ " post attack OccupiedTerritories::" + occupiedTerritoryAfterAttack);
+			if (activePlayer.getOccupiedTerritories() < occupiedTerritoryAfterAttack) {
+				activePlayer.setOccupiedTerritories(occupiedTerritoryAfterAttack);
+				System.out.println("****AUTOMATICALLY PICK CARD*****");
+				gameUtility.handleCardPickUpCase(board);
+			} else {
+				System.out.println("***Cannot withdraw cards***");
+			}
 			board.getNextPlayer();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
+	}
+
+	private void printResult(HashMap<String, HashMap<String, String>> tournamentResult) {
+		try {
+
+			if (tournamentResult != null && !tournamentResult.isEmpty()) {
+
+				Iterator<Entry<String, HashMap<String, String>>> mapIterator = tournamentResult.entrySet().iterator();
+
+				while (mapIterator.hasNext()) {
+
+					Entry<String, HashMap<String, String>> mapEntry = mapIterator.next();
+
+					gameLogs.log("****" + mapEntry.getKey() + "****");
+					HashMap<String, String> gamesResult = mapEntry.getValue();
+					if (gamesResult != null && !gamesResult.isEmpty()) {
+						Iterator<Entry<String, String>> gameIterator = gamesResult.entrySet().iterator();
+
+						while (gameIterator.hasNext()) {
+							Entry<String, String> gameResult = gameIterator.next();
+							gameLogs.log(gameResult.getKey() + "==>" + gameResult.getValue());
+						}
+					}
+
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private ArrayList<Player> resetPlayerData(ArrayList<Player> playerList) {
+
+		ArrayList<Player> resetPlayerList = new ArrayList<>();
+		if (playerList != null && !playerList.isEmpty()) {
+
+			for (Player player : playerList) {
+				Player resetPlayer = new Player(player.getId(), player.getPlayerName(), player.getPlayerType());
+				resetPlayerList.add(resetPlayer);
+			}
+		}
+		return resetPlayerList;
 	}
 
 }

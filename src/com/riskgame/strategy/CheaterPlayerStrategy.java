@@ -40,7 +40,9 @@ public class CheaterPlayerStrategy extends PlayerStrategy {
 			// Sort the activePlayers territory
 			int armiesHeld = activePlayer.getArmiesHeld();
 			System.out.println("*******Doubled The allocated Reinforced Armies****** ");
+			gameLogs.log("*******Doubled The allocated Reinforced Armies*****");
 			activePlayer.setArmiesHeld(armiesHeld * 2);
+			gameLogs.log("Armies received for reinforcement:::"+activePlayer.getArmiesHeld());
 
 			HashSet<Territory> playersTerritorySet = activePlayer.getCountriesOwned();
 			playersTerritorySet = gameUtility.sortTerritoryByArmiesASC(playersTerritorySet);
